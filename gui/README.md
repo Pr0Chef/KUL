@@ -150,8 +150,34 @@ The app remembers your choices for the next start.
 
 ## The Inputs tab
 
-Everything a run reads, edited in the app and saved into the selected config's own files. The tab has three
+Everything a run reads, edited in the app and saved into the selected config's own files. The tab has four
 pages; the selected config is named at the top.
+
+![Inputs: clocks of chi_async_bridge taken from its RTL, with periods and their relationship set in the app](../docs/images/gui/inputs_clocks.png)
+
+- **Clocks:** the design's clocks, from its RTL and its SDC.
+  - The app finds the top module (`DESIGN_NAME`) among `VERILOG_FILES` and reads its ports, in ANSI or
+    non-ANSI Verilog/SystemVerilog. An input counts as a clock if it is used in `posedge`/`negedge`, drives a
+    clock pin of an instance (`.clock(clock)`), or is named like one; the line at the top says which and why
+    (for CVA6: `clk_i`, from `posedge clk_i`).
+  - The SDC is run in `tclsh` with the SDC commands replaced by stubs that record what they define, so
+    variables, `expr` and `foreach` work as in OpenROAD. Every clock it defines is listed with its port (or
+    *virtual*), period, frequency and the line it is on; generated clocks are listed too.
+  - A clock port from the RTL with no clock yet is a row with an empty period: type a period to create the
+    clock (and rename it if you like). **Add clock…** adds a clock on any input, or a virtual clock for input and
+    output delays.
+  - Changing the period of a clock defined in the file edits it where it is set: the `set clk_period …` line
+    it uses, or the number in its `create_clock` line. Clocks that share a period variable change together
+    (ethmac's virtual clocks follow their real ones).
+  - *How the clocks relate* has a row for each pair of clocks on ports: *Timed together*, *Asynchronous*,
+    *Logically exclusive* or *Physically exclusive*. Relations the file already sets with `set_clock_groups` are
+    shown and left alone.
+  - What you set here is written to one block in the SDC, between `# >>> ORFS Flow Runner: clocks` and
+    `# <<< ORFS Flow Runner: clocks` (`create_clock` and `set_clock_groups` lines), placed after the file's own
+    clock definitions. The block is rewritten on each change; the rest of the file is not touched. Clocks are
+    saved with the SDC, from this page or **Constraints**.
+
+![Inputs: the six clocks of ethmac and their logically exclusive groups, read from its SDC](../docs/images/gui/inputs_clocks_ethmac.png)
 
 ![Inputs: the SDC of nangate45 CVA6 checked against the synthesized design](../docs/images/gui/inputs_constraints.png)
 
@@ -161,18 +187,19 @@ pages; the selected config is named at the top.
   - *Quick settings* has a field for every value the file sets with `set` (`clk_name`, `clk_port`, `clk_period`,
     `input_delay`, …) and for a number in `create_clock -period`. The clock period shows its frequency, in ps on
     asap7 and ns elsewhere.
-  - Port names come from the synthesized netlist (`1_synth.v` or `1_2_yosys.v`), so they are known once
-    synthesis has run. Then a `…port…` setting such as `clk_port` is a list of the design's input ports, and a
-    name that isn't a port is shown in red. Before synthesis it is a plain text field.
+  - Port names come from the synthesized netlist (`1_synth.v` or `1_2_yosys.v`) once synthesis has run, and
+    from the top module's RTL before that. A `…port…` setting such as `clk_port` is a list of the design's input
+    ports, and a name that isn't a port is shown in red. A clock period is labelled with its clock's name.
   - A variable the file sets but no command uses is marked *set but not used*. CVA6's SDCs, for example, set
     `input_delay` and `output_delay` but never apply them.
   - *Input and output delays* says whether the file has `set_input_delay` and `set_output_delay`.
-    **Add input and output delays** appends the lines ORFS's own SDCs use:
+    **Add input and output delays** asks which clock to use when there is more than one, then appends the
+    lines ORFS's own SDCs use:
     `set_input_delay $input_delay -clock $clk_name [all_inputs -no_clocks]` and
     `set_output_delay $output_delay -clock $clk_name [all_outputs]`, plus `set input_delay`/`set output_delay`
     at 20 % of the clock period if the file doesn't set them. **Delay for specific ports…** lists the inputs or
-    outputs to tick and adds a `set_…_delay … [get_ports {…}]` line after the general one, so it overrides it
-    for those ports. Both only change the editor; save to keep them.
+    outputs to tick, with the clock they belong to, and adds a `set_…_delay … [get_ports {…}]` line after the
+    general one, so it overrides it for those ports (for example, ports of a second clock domain). Both only change the editor; save to keep them.
   - **Check with OpenROAD** reads the SDC as it is in the editor, unsaved changes included, into OpenROAD with
     the synthesized design (`1_synth.odb`), the same way the flow does. It lists every clock with its period and
     the number of ports it is on, any OpenROAD warning or error (for example `port 'clk_x' not found`), and
@@ -250,8 +277,12 @@ the original stays as it was. Run to `floorplan` and compare the two in **Report
 **Tighten the clock:** **Inputs → Constraints**, change `clk_period`, save. From stage is set to *Re-run from
 synth*, since ORFS reads the SDC during synthesis. Use a separate copy first if other configs share the SDC.
 
-**Constrain inputs and outputs:** after synthesis, **Inputs → Constraints**: if it says *no set_input_delay uses
-it*, press **Add input and output delays**, set `input_delay` and `output_delay`, add **Delay for specific
+**Set up the clocks of a new design:** **Inputs → Clocks** lists the clock ports found in the top module's RTL.
+Type a period for each, set how each pair relates (for example *Asynchronous* for clocks from separate sources),
+add a virtual clock for the I/O if you want one, and save.
+
+**Constrain inputs and outputs:** **Inputs → Constraints**: if it says *no set_input_delay uses it*, press
+**Add input and output delays**, set `input_delay` and `output_delay`, add **Delay for specific
 ports…** for ports that need their own value, then **Check with OpenROAD** and save.
 
 **Fix the pins or macros:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
@@ -320,6 +351,9 @@ takes 352 to 464 s) caps the saving.
 | `read_slang` not found (CVA6) | **Debug** shows *read_slang missing*: build Yosys with the slang frontend (repo README, Step 1) |
 | Make variables show *make error* | the config doesn't parse; the message is in **Debug output**. If a save in **Inputs** caused it, use **Undo save** |
 | Run and the config menus are greyed out | **Inputs** has unsaved changes: save or revert them |
+| **Clocks** says *tclsh was not found* | `sudo apt install tcl`; the `.deb` installs it |
+| **Clocks** says reading the SDC *stopped early* | the SDC uses something only the flow has, such as `get_cells` on the netlist; clocks defined before that line are still shown |
+| A clock port is missing from **Clocks** | it isn't used with `posedge`, connected to a clock pin, or named like a clock; add it with **Add clock…** |
 | A value set in **Flow settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
 
@@ -332,6 +366,7 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | --- | --- |
 | `gui/orfs_app.py` | the app |
 | `gui/inputs_tab.py` | the Inputs tab |
+| `gui/sdc_clocks.py` | reads clock ports from the RTL and clocks from an SDC (with `tclsh`), and writes the clocks block |
 | `gui/flow_gui.py` | the CVA6 web console; the app reuses its metric definitions, so keep both together |
 | `gui/install_launcher.sh` | adds or removes a menu and Desktop launcher for running from the checkout |
 | `gui/packaging/build_deb.sh` | builds the `.deb`; `orfs-flow-runner.desktop` and `.svg` are its menu entry and icon |
