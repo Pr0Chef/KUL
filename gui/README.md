@@ -9,7 +9,8 @@ run here gives the same result as the same `make` command in a terminal.
 ![ORFS Flow Runner synthesising CVA6](../docs/images/gui/running_parallel.png)
 
 The illustrated user guide, [docs/ORFS_Flow_Runner_user_guide.pdf](../docs/ORFS_Flow_Runner_user_guide.pdf), walks
-through every part of the app with screenshots from real CVA6 runs, including a stock against parallel `abc_new`
+through every part of the app with screenshots from real runs: setting the inputs (section 6: clocks, constraints,
+IO pins, flow settings, files) and a stock against parallel `abc_new`
 comparison ([A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) below).
 
 Contents: [Install](#install) · [Requirements](#requirements) · [Step by step](#step-by-step) · [The menus](#the-menus) ·
@@ -363,7 +364,7 @@ The four netlists are identical apart from the Yosys version comment (115,493 in
 is real in the cleanest pair but small on average, and the run-to-run noise on this machine is as large as the
 effect: runs 3 and 4 used 20 to 27% more CPU time for the same work, so the machine had slowed down, and in that pair
 the parallel `abc_new` was slower. Treat it as `abc_new` between 0.85× and 1.29× and the whole synthesis about 1.1×,
-until it is repeated on a quiet machine with more runs. The guide's section 7 has the method and the discussion.
+until it is repeated on a quiet machine with more runs. The guide's section 8 has the method and the discussion.
 
 ![Wall time of each run](../docs/images/gui/chart_wall.png)
 

@@ -363,7 +363,7 @@ The four netlists are identical apart from the Yosys version comment. The parall
 pair, but the machine slowed down during runs 3 and 4 (20 to 27% more CPU time for the same work), and in that pair
 the parallel `abc_new` was slower. On average `abc_new` is 1.02× and the whole synthesis 1.12× faster, with noise as
 large as the effect, so more runs on a quiet machine are needed before quoting a single number. The method, charts and
-discussion are in section 7 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
+discussion are in section 8 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
 through to GDS with this build has not been done yet.
 
 ## Status
