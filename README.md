@@ -327,17 +327,29 @@ netlists. The speedup is limited by serial Yosys work around ABC, chiefly whole-
 `write_xaiger2` and `portarcs` (about 740 s). The design, the two bugs found on CVA6 and the open work are in
 [docs/Parallel_abc_new_in_Yosys.pdf](docs/Parallel_abc_new_in_Yosys.pdf).
 
-A full ORFS synthesis of hierarchical CVA6, run from the desktop app with each build in turn
-(`config_hier_stock.mk` and `config_hier_parallel.mk`, `NUM_CORES=8`), gives:
+A full ORFS synthesis of hierarchical CVA6 was run four times from the desktop app, from scratch, in the order stock
+Yosys, parallel `abc_new`, parallel `abc_new`, stock Yosys (`config_hier_stock.mk` and `config_hier_parallel.mk`,
+`NUM_CORES=8`, an i5-1235U host in a VirtualBox VM with 8 vCPUs):
 
-| Build | Whole synthesis | `1_2_yosys` step | `abc_new` |
-| --- | --- | --- | --- |
-| Stock Yosys 0.69+274 | 47 min 55 s | 2,771 s | 1,496 s |
-| Submodule 0.69+280, parallel `abc_new` | 39 min 9 s | 2,291 s | 1,150 s |
+| Run | Build | Whole synthesis | `1_2_yosys` step | `abc_new` | Yosys CPU time |
+| --- | --- | --- | --- | --- | --- |
+| 1 | stock | 2,562 s | 2,510 s | 1,427 s | 3,054 s |
+| 2 | parallel | 2,255 s | 2,198 s | 1,105 s | 3,076 s |
+| 3 | parallel | 2,873 s | 2,800 s | 1,711 s | 3,890 s |
+| 4 | stock | 3,159 s | 3,084 s | 1,453 s | 3,664 s |
 
-The two netlists are identical apart from the Yosys version comment. The method and charts are in section 7 of
-[docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run through to GDS with this build has
-not been done yet.
+| Comparison (stock time / parallel time) | Whole synthesis | `abc_new` |
+| --- | --- | --- |
+| Runs 1 and 2, machine at normal speed (CPU time about 3,060 s) | 1.14× | 1.29× |
+| Runs 4 and 3, machine slower (CPU time 3,660 to 3,890 s) | 1.10× | 0.85× |
+| Mean of the two runs of each build | 1.12× | 1.02× |
+
+The four netlists are identical apart from the Yosys version comment. The parallel build was faster in the cleanest
+pair, but the machine slowed down during runs 3 and 4 (20 to 27% more CPU time for the same work), and in that pair
+the parallel `abc_new` was slower. On average `abc_new` is 1.02× and the whole synthesis 1.12× faster, with noise as
+large as the effect, so more runs on a quiet machine are needed before quoting a single number. The method, charts and
+discussion are in section 7 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
+through to GDS with this build has not been done yet.
 
 ## Status
 
