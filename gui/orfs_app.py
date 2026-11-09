@@ -2,7 +2,8 @@
 """ORFS Flow Runner: a desktop app to run OpenROAD-flow-scripts designs from RTL to GDS.
 
 Pick a platform, design and config from the designs in the ORFS flow directory, the number of
-CPU cores, and the stage range, then run. Reports, logs and debug information have their own tabs.
+CPU cores, and the stage range, then run. The Inputs tab edits the design's constraints, flow settings
+and files; reports, logs and debug information have their own tabs.
 
 Usage: python3 gui/orfs_app.py [--flow DIR]   (or orfs-flow-runner, when installed from the .deb)
 
@@ -30,8 +31,9 @@ from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from flow_gui import CHECK_COLUMNS, METRICS, evaluate, load_metrics, step_info  # noqa: E402
+from inputs_tab import InputsTab  # noqa: E402
 
-VERSION = "1.0.1"
+VERSION = "1.1.0"
 APP_ID = "orfs-flow-runner"
 GUI_DIR = Path(__file__).resolve().parent
 ROOT = GUI_DIR.parent
@@ -287,6 +289,7 @@ class App(Gtk.Window):
         self.vars = {}
         self.vars_gen = 0
         self.job = None
+        self.inputs_unsaved = False
         self.settings = self.load_settings()
         self.connect("delete-event", self.on_close)
 
@@ -308,10 +311,12 @@ class App(Gtk.Window):
         paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL, position=380)
         paned.pack1(self.build_side(), False, False)
         self.nb = Gtk.Notebook()
-        self.nb.append_page(self.build_console(), Gtk.Label(label="Run output"))
-        self.nb.append_page(self.build_reports(), Gtk.Label(label="Reports"))
-        self.nb.append_page(self.build_logs(), Gtk.Label(label="Logs"))
-        self.nb.append_page(self.build_debug(), Gtk.Label(label="Debug"))
+        self.inputs = InputsTab(self, MAKE_VARS, CACHE_DIR / "backups")
+        self.pages = {"inputs": self.inputs.widget, "console": self.build_console(), "reports": self.build_reports(),
+                      "logs": self.build_logs(), "debug": self.build_debug()}
+        for key, label in (("inputs", "Inputs"), ("console", "Run output"), ("reports", "Reports"),
+                           ("logs", "Logs"), ("debug", "Debug")):
+            self.nb.append_page(self.pages[key], Gtk.Label(label=label))
         self.nb.connect("switch-page", lambda nb, page, n: GLib.idle_add(self.refresh_tab, n))
         paned.pack2(self.nb, True, False)
 
@@ -725,6 +730,7 @@ class App(Gtk.Window):
         cfg = self.config_rel()
         self.vars = {}
         self.update_plan()
+        self.inputs.config_changed(cfg)
         if not cfg:
             return
         self.settings.update(platform=self.platform_cb.get_active_id(), design=self.design_cb.get_active_id(),
@@ -734,6 +740,53 @@ class App(Gtk.Window):
         gen = self.vars_gen
         self.set_status(f"Reading make variables for {cfg}…")
         threading.Thread(target=self.fetch_vars, args=(gen, cfg), daemon=True).start()
+
+    def select_config(self, name):
+        """Re-read the designs folder and select config `name` of the current design."""
+        self.platforms = discover(self.flow)
+        self.settings["config"] = name
+        self.on_design()
+
+    def reload_designs(self):
+        """Pick up config files added or removed in the app, keeping the selection."""
+        found = discover(self.flow)
+        if found != self.platforms:
+            self.select_config(self.config_cb.get_active_id())
+
+    def make_env(self):
+        return flow_env(self.tools())
+
+    def inputs_dirty(self, dirty):
+        """Unsaved inputs: keep the selection and block runs until they are saved or reverted."""
+        if dirty == self.inputs_unsaved:
+            return
+        self.inputs_unsaved = dirty
+        tip = "Save or revert the changes in Inputs first" if dirty else None
+        for cb in (self.platform_cb, self.design_cb, self.config_cb):
+            cb.set_sensitive(not dirty)
+            cb.set_tooltip_text(tip)
+        self.update_plan()
+
+    def inputs_saved(self, verb, what, stage):
+        """After a save in Inputs: re-read the results folders and point From stage at the first stale stage."""
+        eff = self.inputs.effective
+        self.vars_gen += 1
+        self.on_vars(self.vars_gen, {k: eff[k] for k in MAKE_VARS if k in eff}, None)
+        if verb == "Restored":
+            return f"Restored {what} as it was before the last save. From stage is unchanged."
+        if not stage:
+            return (f"{verb} {what}. No flow variable changed and no stage reads this file directly, so From stage "
+                    "is unchanged.")
+        i = STAGE_NAMES.index(stage)
+        has = self.stage_has_output()
+        built = [s for s in STAGE_NAMES[i:] if has[s]]
+        if not built:
+            return f"{verb} {what}. Nothing from {stage} on is built yet, so the next run uses the new inputs."
+        frm = self.from_cb.get_active_id()
+        if frm == "continue" or STAGE_NAMES.index(frm) > i:
+            self.from_cb.set_active_id(stage)
+        return (f"{verb} {what}. {', '.join(built)} {'was' if len(built) == 1 else 'were'} built with the old "
+                f"inputs, so From stage is now “Re-run from {stage}”.")
 
     def config_rel(self):
         p, d, c = self.platform_cb.get_active_id(), self.design_cb.get_active_id(), self.config_cb.get_active_id()
@@ -792,6 +845,8 @@ class App(Gtk.Window):
         cfg = self.config_rel()
         if not cfg:
             return [], [], "Pick a design."
+        if self.inputs_unsaved:
+            return [], [], "Inputs has unsaved changes: save or revert them first."
         plat = self.platforms.get(self.platform_cb.get_active_id(), {})
         if not plat.get("available"):
             return [], [], "This platform's PDK is not in the flow directory."
@@ -836,6 +891,7 @@ class App(Gtk.Window):
         busy = bool(self.job and self.job.running())
         self.run_btn.set_sensitive(not err and not busy)
         self.stop_btn.set_sensitive(busy)
+        self.inputs.set_busy(busy)
 
     def on_run(self, *_):
         cmds, notes, err = self.plan()
@@ -857,7 +913,7 @@ class App(Gtk.Window):
         buf = self.console.get_buffer()
         buf.set_text("")
         self.console_title.set_text(f"{self.config_rel()}  ·  log: {log}")
-        self.nb.set_current_page(0)
+        self.show_page("console")
         self.update_plan()
         self.tick_status()
 
@@ -930,7 +986,7 @@ class App(Gtk.Window):
                             + (f" · step {step}" if step else "")
                             + (f" · {', '.join(tools)}" if tools else "")
                             + f" · using {fmt_bytes(rss)} · {fmt_bytes(avail)} free")
-            if self.nb.get_current_page() == 2 and self.follow_log.get_active():
+            if self.current_page() == "logs" and self.follow_log.get_active():
                 self.follow_open_log()
         self.gui_cb_fill()
         return True
@@ -951,12 +1007,20 @@ class App(Gtk.Window):
             self.gui_btn.set_sensitive(bool(have))
 
     # ---------- tab contents ----------
+    def current_page(self, n=None):
+        page = self.nb.get_nth_page(self.nb.get_current_page() if n is None else n)
+        return next((k for k, w in self.pages.items() if w is page), None)
+
+    def show_page(self, key):
+        self.nb.set_current_page(self.nb.page_num(self.pages[key]))
+
     def refresh_tab(self, n):
-        if n == 1:
+        page = self.current_page(n)
+        if page == "reports":
             self.refresh_reports()
-        elif n == 2:
+        elif page == "logs":
             self.refresh_logs()
-        elif n == 3:
+        elif page == "debug":
             self.refresh_issues()
         return False
 
@@ -1075,7 +1139,7 @@ class App(Gtk.Window):
 
     def on_issue(self, tv, path, _col):
         row = self.issues_store[path]
-        self.nb.set_current_page(2)
+        self.show_page("logs")
         self.open_in_browser(self.logs_fb, Path(row[4]))
         self.logs_fb["filter"].set_text(row[1])
 
@@ -1189,6 +1253,9 @@ class App(Gtk.Window):
         return ok
 
     def on_close(self, *_):
+        if self.inputs.is_dirty() and not self.confirm("Quit without saving the changes in Inputs?",
+                                                        "They are lost if you quit now."):
+            return True
         if self.job and self.job.running():
             if not self.confirm("A run is still going. Stop it and quit?",
                                 "The flow is stopped; finished stages are kept."):

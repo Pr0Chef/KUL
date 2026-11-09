@@ -231,7 +231,7 @@ screenshots of real CVA6 runs is [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORF
 
 ```bash
 gui/packaging/build_deb.sh                           # builds dist/orfs-flow-runner_<version>_all.deb
-sudo apt install ./dist/orfs-flow-runner_1.0.1_all.deb   # installs under /opt, with its dependencies
+sudo apt install ./dist/orfs-flow-runner_1.1.0_all.deb   # installs under /opt, with its dependencies
 orfs-flow-runner                                     # or start ORFS Flow Runner from the app menu
 python3 gui/orfs_app.py --flow /path/to/OpenROAD-flow-scripts/flow   # without installing
 ```
@@ -255,6 +255,12 @@ peak memory. Every run is logged to `~/.local/share/orfs-flow-runner/run_logs/`.
 
 The tabs on the right:
 
+- **Inputs**: edit what the run reads without a terminal: the SDC (with quick fields for the clock period and
+  delays), every ORFS flow variable with its description and the value the flow uses (floorplan size,
+  utilization, placement density, routing layers and so on), and the design's files, with templates for IO pin
+  constraints and macro placement. **New config…** makes a variant with its own results folder. Saves keep a
+  backup and set **From stage** to the first stage the change affects
+  ([details](gui/README.md#the-inputs-tab)).
 - **Run output**: the live output of the run, errors in red and warnings in amber.
 - **Reports**: *QoR checks* (setup and hold slack, slew, cap and fanout violations, DRC, antenna, flow errors,
   final GDS, then all metrics by stage) and *Report files* (the design's `reports/` folder, with a line filter).

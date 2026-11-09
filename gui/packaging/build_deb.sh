@@ -17,9 +17,10 @@ STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 ROOTFS="$STAGE/$NAME"
 
-# orfs_app.py imports the metrics code from flow_gui.py, so both are installed.
-install -Dm644 "$GUI/orfs_app.py" "$ROOTFS/opt/$NAME/orfs_app.py"
-install -Dm644 "$GUI/flow_gui.py" "$ROOTFS/opt/$NAME/flow_gui.py"
+# orfs_app.py imports the metrics code from flow_gui.py and the Inputs tab from inputs_tab.py.
+for f in orfs_app.py flow_gui.py inputs_tab.py; do
+	install -Dm644 "$GUI/$f" "$ROOTFS/opt/$NAME/$f"
+done
 install -Dm644 "$PKG_DIR/$NAME.desktop" "$ROOTFS/usr/share/applications/$NAME.desktop"
 install -Dm644 "$PKG_DIR/$NAME.svg" "$ROOTFS/usr/share/icons/hicolor/scalable/apps/$NAME.svg"
 install -d "$ROOTFS/usr/bin"
@@ -42,7 +43,8 @@ Installed-Size: $(du -sk "$ROOTFS" | cut -f1)
 Maintainer: $MAINTAINER
 Description: Desktop app to run OpenROAD-flow-scripts designs from RTL to GDS
  Pick a platform, design and config from an ORFS flow folder, the CPU cores and the
- stage range, then run. Reports, logs and debug information have their own tabs.
+ stage range, then run. The Inputs tab edits the design's SDC, flow settings and files.
+ Reports, logs and debug information have their own tabs.
  OpenROAD, Yosys and an OpenROAD-flow-scripts checkout must be installed separately.
 EOF
 # Byte-compile at install time so the app does not try to write __pycache__ under /opt.
