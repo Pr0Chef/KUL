@@ -1,9 +1,10 @@
 # ORFS Flow Runner
 
-A desktop app that runs any OpenROAD-flow-scripts (ORFS) design from RTL to GDS. You pick the design, CPU cores
-and stage range from drop-down menus, press Run, and read the results in separate **Reports**, **Logs** and
-**Debug** tabs. It drives the stock ORFS Makefile, so a run here gives the same result as the same `make` command
-in a terminal.
+A desktop app that runs any OpenROAD-flow-scripts (ORFS) design from RTL to GDS. You set the design's inputs
+(SDC, floorplan and other flow settings, constraint files) in the **Inputs** tab, pick the design, CPU cores and
+stage range from drop-down menus, press Run, and read the results in separate **Reports**, **Logs** and **Debug**
+tabs. No terminal is needed. It drives the stock ORFS Makefile and saves inputs into the design's own files, so a
+run here gives the same result as the same `make` command in a terminal.
 
 ![ORFS Flow Runner synthesising CVA6](../docs/images/gui/running_parallel.png)
 
@@ -12,7 +13,7 @@ through every part of the app with screenshots from real CVA6 runs, including a 
 comparison ([A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) below).
 
 Contents: [Install](#install) · [Requirements](#requirements) · [Step by step](#step-by-step) · [The menus](#the-menus) ·
-[The tabs](#the-tabs) · [Common tasks](#common-tasks) · [A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) ·
+[The Inputs tab](#the-inputs-tab) · [The tabs](#the-tabs) · [Common tasks](#common-tasks) · [A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) ·
 [Troubleshooting](#troubleshooting) · [Files](#files)
 
 ## Install
@@ -31,7 +32,7 @@ The app ships as a Debian package for Ubuntu (and other Debian-based systems). I
 2. **Install it.** apt also installs GTK, PyGObject, make and KLayout if they are missing:
 
    ```bash
-   sudo apt install ./dist/orfs-flow-runner_1.0.1_all.deb
+   sudo apt install ./dist/orfs-flow-runner_1.1.0_all.deb
    ```
 
 3. **Install OpenROAD, Yosys and an ORFS checkout** if you don't have them; the package doesn't include them
@@ -147,10 +148,58 @@ and finished stages are kept.
 
 The app remembers your choices for the next start.
 
+## The Inputs tab
+
+Everything a run reads, edited in the app and saved into the selected config's own files. The tab has three
+pages; the selected config is named at the top.
+
+![Inputs: the SDC of nangate45 CVA6 with the clock period changed to 0.8 ns](../docs/images/gui/inputs_constraints.png)
+
+- **Constraints:** the SDC file the config uses (`SDC_FILE`). *Quick settings* has a field for every number the
+  file sets (`set clk_period 1.0`, `set input_delay …`, `create_clock … -period 5`): the clock period shows its
+  frequency, in ps on asap7 and ns elsewhere. Below it is the whole file, which you can edit freely. If other
+  configs use the same SDC, the tab says so; **Use a separate copy for this config** copies it to
+  `constraint_<config>.sdc` and points this config at the copy, so the others are left as they are.
+- **Flow settings:** every ORFS variable (from `scripts/variables.json`) with its value in this config, the value
+  the flow actually uses (`make` resolves it, including included configs and platform defaults), where that value
+  is set, and the first stage that reads it. Hover a row for ORFS's description and default. The list opens on
+  *Common settings* (die and core area, utilization, aspect ratio, margins, IO and macro placement files, PDN,
+  placement density, timing repair, routing layers); pick a stage, *Set in this config* or *All variables*, or
+  search names and descriptions. Click a value to change it; an empty value removes it from this config, so the
+  included file's or the default value applies again. New values go at the end of the config under
+  `# Set in ORFS Flow Runner`; values the config already sets are changed where they are.
+- **Files:** every text file in the design folder (configs, SDC, Tcl, Verilog), plus shared files the config uses,
+  such as the platform's PDN and tapcell scripts (marked *shared with other designs*). Edit and save any of them.
+  **New file…** adds a file from a template:
+  - *IO pin constraints* (`io_constraints.tcl`, sets `IO_CONSTRAINTS`): `set_io_pin_constraint` and `place_pin`
+    examples, and the design's input and output ports, read from the synthesized netlist.
+  - *Macro placement* (`macro_placement.tcl`, sets `MACRO_PLACEMENT_TCL`): one `place_macro` line per macro in the
+    netlist (the 8 SRAMs of CVA6), with names written the way OpenROAD stores them.
+  - an empty Tcl or SDC file.
+
+![Inputs: flow settings with CORE_UTILIZATION changed to 50](../docs/images/gui/inputs_settings.png)
+
+**New config…** (top right) makes `config_<name>.mk` that includes the selected config and sets its own
+`FLOW_VARIANT`, then selects it: a variant to try settings on, with its results in a separate folder.
+
+What happens when you save:
+
+1. The file is written; the old version is kept in `~/.cache/orfs-flow-runner/backups/<date>_<time>/`.
+2. `make` reads the config again. If it no longer parses, the error is shown and **Undo save** puts the old files
+   back.
+3. The app works out the first stage that reads what changed (for example floorplan for `CORE_UTILIZATION`, synth
+   for the SDC). If that stage or a later one is already built, **From stage** is set to re-run from it, and the
+   bar says which stages were built with the old inputs.
+
+While a tab page has unsaved changes, **Run** and the Platform, Design and Config menus are disabled: save or
+revert first. Saving is disabled while a run is going, because the flow reads these files as it runs. If a file
+changed on disk since the app opened it (an editor, `git pull`), saving asks before replacing it.
+
 ## The tabs
 
 ![QoR checks for CVA6 up to global routing](../docs/images/gui/qor.png)
 
+- **Inputs:** the design's constraints, flow settings and files ([above](#the-inputs-tab)).
 - **Run output:** live output of the current run.
 - **Reports:**
   - *QoR checks*: pass/fail tiles at the latest stage with metrics (setup/hold WNS and TNS, setup/hold
@@ -177,8 +226,15 @@ The app remembers your choices for the next start.
 `4 of 8`, From *Continue*, To `finish`. The plan reads *Runs route, finish.* Detailed routing needs about 7 GB, so
 close heavy applications first and check **Debug → Environment → Memory**.
 
-**Re-run placement after changing the config:** edit the design's `config*.mk`, then From *Re-run from place*,
-To `place` or later. Synth and floorplan are reused; place and later stages are rebuilt.
+**Try a different floorplan:** **Inputs → New config…** (for example `util50`), then in **Flow settings** set
+`CORE_UTILIZATION` to `50` (or `DIE_AREA` and `CORE_AREA`) and save. The new config has its own results folder, so
+the original stays as it was. Run to `floorplan` and compare the two in **Reports**.
+
+**Tighten the clock:** **Inputs → Constraints**, change `clk_period`, save. From stage is set to *Re-run from
+synth*, since ORFS reads the SDC during synthesis. Use a separate copy first if other configs share the SDC.
+
+**Fix the pins or macros:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
+commented lines, save, and re-run from floorplan.
 
 **Runs that must survive logging out:** closing the app asks whether to stop its run. Use **Debug → Copy
 command** and start it with `systemd-run --user` as in the repo README's
@@ -241,7 +297,9 @@ takes 352 to 464 s) caps the saving.
 | The Platform menu is empty | the folder isn't an ORFS `flow/` folder: use **Flow folder…** |
 | A stage shows *interrupted* | the step was killed, usually for lack of memory. Look for `oomd` or `oom-kill` in `journalctl --since "1 hour ago"`, use fewer cores, then run again with *Continue* |
 | `read_slang` not found (CVA6) | **Debug** shows *read_slang missing*: build Yosys with the slang frontend (repo README, Step 1) |
-| Make variables show *make error* | the config doesn't parse; the message is in **Debug output** |
+| Make variables show *make error* | the config doesn't parse; the message is in **Debug output**. If a save in **Inputs** caused it, use **Undo save** |
+| Run and the config menus are greyed out | **Inputs** has unsaved changes: save or revert them |
+| A value set in **Flow settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
 
 Limits: one run at a time per window; only runs started from the app show as *running*; viewers show the last
@@ -252,6 +310,7 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | Path | What it is |
 | --- | --- |
 | `gui/orfs_app.py` | the app |
+| `gui/inputs_tab.py` | the Inputs tab |
 | `gui/flow_gui.py` | the CVA6 web console; the app reuses its metric definitions, so keep both together |
 | `gui/install_launcher.sh` | adds or removes a menu and Desktop launcher for running from the checkout |
 | `gui/packaging/build_deb.sh` | builds the `.deb`; `orfs-flow-runner.desktop` and `.svg` are its menu entry and icon |
@@ -259,7 +318,7 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | `orfs/flow/designs/asap7/cva6/config_hier_{stock,parallel}.mk` | the A/B configs above |
 | `~/.config/orfs-flow-runner/settings.json` | last flow folder, menu choices and the programs chosen with **Tools…** |
 | `~/.local/share/orfs-flow-runner/run_logs/` | one full log per run: `<platform>_<design>_<variant>_<from>-<to>_<date>_<time>.log` |
-| `~/.cache/orfs-flow-runner/` | OpenROAD GUI log; safe to delete |
+| `~/.cache/orfs-flow-runner/` | OpenROAD GUI log, and `backups/` with every file the Inputs tab replaced; safe to delete |
 | `<flow>/results/<platform>/<design>/<variant>/` | ORFS results: one `.odb` per stage, `6_final.gds` |
 | `<flow>/logs/…`, `<flow>/reports/…` | ORFS step logs (with metrics JSON) and reports |
 | `gui/.cache/` | web-console renders; safe to delete, ignored by git |
