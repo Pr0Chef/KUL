@@ -1,0 +1,36 @@
+Yosys 0.69+280 (git sha1 7b7e811cb, GNU /usr/bin/c++ 13.3.0) [github.com/YosysHQ/yosys at abc-new-parallel-split]
+Using ABC speed script.
+1. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+2. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x256.lib
+3. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_128x64.lib
+4. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x28.lib
+5. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x25.lib
+6. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+7. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x256.lib
+8. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_128x64.lib
+9. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x28.lib
+10. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x25.lib
+11. Executing SLANG frontend.
+designs/src/cva6/core/cache_subsystem/hpdcache/rtl/src/hwpf_stride/hwpf_stride.sv:158: Warning: asynchronous load value missing for variable '\csr_throttle_q'
+11.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+11.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+11.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+11.4. Executing PROC_INIT pass (extract init attributes).
+11.5. Executing PROC_ROM pass (convert switches to ROMs).
+11.6. Executing PROC_MUX pass (convert decision trees to multiplexers).
+11.7. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+11.8. Executing OPT_EXPR pass (perform const folding).
+12. Executing HIERARCHY pass (managing design hierarchy).
+12.1. Analyzing design hierarchy..
+12.2. Analyzing design hierarchy..
+source /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/designs/nangate45/cva6/canonicalize.tcl
+13. Executing OPT_CLEAN pass (remove unused cells and wires).
+14. Executing RTLIL backend.
+Warnings: 1 unique messages, 4 total
+End of script. Logfile hash: 1ce991105e, time: 27.09s, user: 26.92s, system: 0.80s, MEM: 282.59 MB peak
+Yosys 0.69+280 (git sha1 7b7e811cb, GNU /usr/bin/c++ 13.3.0) [github.com/YosysHQ/yosys at abc-new-parallel-split]
+Time spent: 35% 2x read_slang (9 sec), 26% 1x opt_clean (7 sec), ...
+Elapsed time: 0:27.22[h:]min:sec. CPU time: user 27.04 sys 0.82 (102%). Peak memory: 289376KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_1_yosys_canonicalize .rtlil       27       28     1.02      282 19afdfb5cf

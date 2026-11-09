@@ -1,0 +1,951 @@
+Yosys 0.69+274 (git sha1 7513f8df8, GNU /usr/bin/c++ 13.3.0)
+Using ABC speed script.
+1. Executing RTLIL frontend.
+2. Executing HIERARCHY pass (managing design hierarchy).
+2.1. Analyzing design hierarchy..
+2.2. Analyzing design hierarchy..
+3. Executing SYNTH pass.
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+3.1.1. Analyzing design hierarchy..
+3.1.2. Analyzing design hierarchy..
+3.2. Executing PROC pass (convert processes to netlists).
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+3.3. Executing CHECK pass (checking for obvious problems).
+3.4. Executing FLATTEN pass (flatten design).
+3.5. Executing OPT_EXPR pass (perform const folding).
+3.6. Executing CHECK pass (checking for obvious problems).
+3.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.8. Executing OPT pass (performing simple optimizations).
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+3.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+3.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.8.8. Executing OPT_EXPR pass (perform const folding).
+3.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+3.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.8.12. Executing OPT_MERGE pass (detect identical cells).
+3.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+3.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.8.15. Executing OPT_EXPR pass (perform const folding).
+3.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+3.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.8.19. Executing OPT_MERGE pass (detect identical cells).
+3.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+3.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.8.22. Executing OPT_EXPR pass (perform const folding).
+3.8.23. Rerunning OPT passes. (Maybe there is more to do..)
+3.8.24. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.8.25. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.8.26. Executing OPT_MERGE pass (detect identical cells).
+3.8.27. Executing OPT_DFF pass (perform DFF optimizations).
+3.8.28. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.8.29. Executing OPT_EXPR pass (perform const folding).
+3.8.30. Rerunning OPT passes. (Maybe there is more to do..)
+3.8.31. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.8.32. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.8.33. Executing OPT_MERGE pass (detect identical cells).
+3.8.34. Executing OPT_DFF pass (perform DFF optimizations).
+3.8.35. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.8.36. Executing OPT_EXPR pass (perform const folding).
+3.8.37. Finished fast OPT passes. (There is nothing left to do.)
+3.9. Executing FSM pass (extract and optimize FSM).
+3.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+3.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+3.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+3.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+3.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+3.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+3.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+3.10. Executing OPT pass (performing simple optimizations).
+3.10.1. Executing OPT_EXPR pass (perform const folding).
+3.10.2. Executing OPT_MERGE pass (detect identical cells).
+3.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.10.5. Executing OPT_MERGE pass (detect identical cells).
+3.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+3.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.10.8. Executing OPT_EXPR pass (perform const folding).
+3.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+3.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.10.12. Executing OPT_MERGE pass (detect identical cells).
+3.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+3.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.10.15. Executing OPT_EXPR pass (perform const folding).
+3.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+3.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.10.19. Executing OPT_MERGE pass (detect identical cells).
+3.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+3.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.10.22. Executing OPT_EXPR pass (perform const folding).
+3.10.23. Finished fast OPT passes. (There is nothing left to do.)
+3.11. Executing WREDUCE pass (reducing word size of cells).
+3.12. Executing PEEPOPT pass (run peephole optimizers).
+3.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.14. Executing ALUMACC pass (create $alu and $macc cells).
+3.15. Executing SHARE pass (SAT-based resource sharing).
+3.16. Executing OPT pass (performing simple optimizations).
+3.16.1. Executing OPT_EXPR pass (perform const folding).
+3.16.2. Executing OPT_MERGE pass (detect identical cells).
+3.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.16.5. Executing OPT_MERGE pass (detect identical cells).
+3.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+3.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.16.8. Executing OPT_EXPR pass (perform const folding).
+3.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+3.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+3.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+3.16.12. Executing OPT_MERGE pass (detect identical cells).
+3.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+3.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.16.15. Executing OPT_EXPR pass (perform const folding).
+3.16.16. Finished fast OPT passes. (There is nothing left to do.)
+3.17. Executing MEMORY pass.
+3.17.1. Executing OPT_MEM pass (optimize memories).
+3.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+3.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+3.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+3.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+3.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+3.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+3.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+3.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+3.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+4. Executing TRIBUF pass.
+5. Executing OPT_CLEAN pass (remove unused cells and wires).
+source /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/scripts/synth_wrap_operators.tcl
+6. Executing TECHMAP pass (map to technology primitives).
+6.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+6.2. Continuing TECHMAP pass.
+6.73. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+6.74. Executing OPT_EXPR pass (perform const folding).
+6.115. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+6.116. Executing OPT_EXPR pass (perform const folding).
+7. Generating architectural options for $alu
+7.1. Executing WRAPCELL pass. (wrap selected cells)
+7.2. Executing TECHMAP pass (map to technology primitives).
+7.2.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+7.2.2. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/choices/han-carlson.v
+7.2.3. Continuing TECHMAP pass.
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.\j [4:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$655608': $auto$proc_dlatch.cc:557:proc_dlatch$658323
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.\j [31:5]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$655608': $auto$proc_dlatch.cc:559:proc_dlatch$658326
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.\j [3:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$659333': $auto$proc_dlatch.cc:557:proc_dlatch$660560
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.\j [31:4]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$659333': $auto$proc_dlatch.cc:559:proc_dlatch$660563
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100010.\j [4:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100010.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$661047': $auto$proc_dlatch.cc:557:proc_dlatch$662367
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100010.\j [31:5]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100010.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$661047': $auto$proc_dlatch.cc:559:proc_dlatch$662370
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001110.\j [2:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001110.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$665277': $auto$proc_dlatch.cc:557:proc_dlatch$665757
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001110.\j [31:3]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001110.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$665277': $auto$proc_dlatch.cc:559:proc_dlatch$665760
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100001.\j [4:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100001.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$666478': $auto$proc_dlatch.cc:557:proc_dlatch$667738
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100001.\j [31:5]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100001.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$666478': $auto$proc_dlatch.cc:559:proc_dlatch$667741
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.\j [2:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$670145': $auto$proc_dlatch.cc:557:proc_dlatch$670700
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.\j [31:3]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$670145': $auto$proc_dlatch.cc:559:proc_dlatch$670703
+7.3. Executing TECHMAP pass (map to technology primitives).
+7.3.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+7.3.2. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/choices/kogge-stone.v
+7.3.3. Continuing TECHMAP pass.
+7.4. Executing TECHMAP pass (map to technology primitives).
+7.4.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+7.4.2. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/choices/sklansky.v
+7.4.3. Continuing TECHMAP pass.
+7.5. Executing TECHMAP pass (map to technology primitives).
+7.5.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+7.5.2. Continuing TECHMAP pass.
+8. Generating architectural options for $macc
+8.1. Executing WRAPCELL pass. (wrap selected cells)
+8.2. Executing TECHMAP pass (map to technology primitives).
+8.2.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+8.2.2. Executing Verilog-2005 frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/scripts/synth_wrap_operators-booth.v
+8.2.3. Continuing TECHMAP pass.
+8.3. Executing TECHMAP pass (map to technology primitives).
+8.3.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+8.3.2. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/choices/han-carlson.v
+8.3.3. Continuing TECHMAP pass.
+9. Executing OPT pass (performing simple optimizations).
+9.1. Executing OPT_EXPR pass (perform const folding).
+9.2. Executing OPT_MERGE pass (detect identical cells).
+9.3. Executing OPT_DFF pass (perform DFF optimizations).
+9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+9.5. Rerunning OPT passes. (Removed registers in this run.)
+9.6. Executing OPT_EXPR pass (perform const folding).
+9.7. Executing OPT_MERGE pass (detect identical cells).
+9.8. Executing OPT_DFF pass (perform DFF optimizations).
+9.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+9.10. Rerunning OPT passes. (Removed registers in this run.)
+9.11. Executing OPT_EXPR pass (perform const folding).
+9.12. Executing OPT_MERGE pass (detect identical cells).
+9.13. Executing OPT_DFF pass (perform DFF optimizations).
+9.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+9.15. Rerunning OPT passes. (Removed registers in this run.)
+9.16. Executing OPT_EXPR pass (perform const folding).
+9.17. Executing OPT_MERGE pass (detect identical cells).
+9.18. Executing OPT_DFF pass (perform DFF optimizations).
+9.19. Executing OPT_CLEAN pass (remove unused cells and wires).
+9.20. Rerunning OPT passes. (Removed registers in this run.)
+9.21. Executing OPT_EXPR pass (perform const folding).
+9.22. Executing OPT_MERGE pass (detect identical cells).
+9.23. Executing OPT_DFF pass (perform DFF optimizations).
+9.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+9.25. Finished fast OPT passes.
+10. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+11. Executing OPT pass (performing simple optimizations).
+11.1. Executing OPT_EXPR pass (perform const folding).
+11.2. Executing OPT_MERGE pass (detect identical cells).
+11.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+11.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+11.5. Executing OPT_MERGE pass (detect identical cells).
+11.6. Executing OPT_SHARE pass.
+11.7. Executing OPT_DFF pass (perform DFF optimizations).
+11.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+11.9. Executing OPT_EXPR pass (perform const folding).
+11.10. Rerunning OPT passes. (Maybe there is more to do..)
+11.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+11.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+11.13. Executing OPT_MERGE pass (detect identical cells).
+11.14. Executing OPT_SHARE pass.
+11.15. Executing OPT_DFF pass (perform DFF optimizations).
+11.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+11.17. Executing OPT_EXPR pass (perform const folding).
+11.18. Rerunning OPT passes. (Maybe there is more to do..)
+11.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+11.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+11.21. Executing OPT_MERGE pass (detect identical cells).
+11.22. Executing OPT_SHARE pass.
+11.23. Executing OPT_DFF pass (perform DFF optimizations).
+11.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+11.25. Executing OPT_EXPR pass (perform const folding).
+11.26. Finished fast OPT passes. (There is nothing left to do.)
+12. Executing TECHMAP pass (map to technology primitives).
+12.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+12.2. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/choices/han-carlson.v
+12.3. Continuing TECHMAP pass.
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000001.\j' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000001.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$745576': $auto$proc_dlatch.cc:557:proc_dlatch$745614
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000110.\j [1:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000110.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$745642': $auto$proc_dlatch.cc:557:proc_dlatch$745831
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000110.\j [31:2]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000110.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$745642': $auto$proc_dlatch.cc:559:proc_dlatch$745834
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000010.\j' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000010.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$745852': $auto$proc_dlatch.cc:557:proc_dlatch$745905
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000011.\j [0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000011.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$745932': $auto$proc_dlatch.cc:557:proc_dlatch$746031
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000011.\j [31:1]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000011.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$745932': $auto$proc_dlatch.cc:559:proc_dlatch$746034
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000100.\j [0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000100.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$746057': $auto$proc_dlatch.cc:557:proc_dlatch$746180
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000100.\j [31:1]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000100.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$746057': $auto$proc_dlatch.cc:559:proc_dlatch$746183
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000111.\j [1:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000111.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$746358': $auto$proc_dlatch.cc:557:proc_dlatch$746580
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000111.\j [31:2]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000111.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$746358': $auto$proc_dlatch.cc:559:proc_dlatch$746583
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011101.\j [3:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011101.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$746671': $auto$proc_dlatch.cc:557:proc_dlatch$747763
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011101.\j [31:4]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011101.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$746671': $auto$proc_dlatch.cc:559:proc_dlatch$747766
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.\j [3:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$747867': $auto$proc_dlatch.cc:557:proc_dlatch$749094
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.\j [31:4]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000100000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$747867': $auto$proc_dlatch.cc:559:proc_dlatch$749097
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011111.\j [3:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011111.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$749221': $auto$proc_dlatch.cc:557:proc_dlatch$750397
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011111.\j [31:4]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011111.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$749221': $auto$proc_dlatch.cc:559:proc_dlatch$750400
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011110.\j [3:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011110.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$750699': $auto$proc_dlatch.cc:557:proc_dlatch$751842
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011110.\j [31:4]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011110.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$750699': $auto$proc_dlatch.cc:559:proc_dlatch$751845
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.\j [2:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$752006': $auto$proc_dlatch.cc:557:proc_dlatch$752561
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.\j [31:3]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000010000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$752006': $auto$proc_dlatch.cc:559:proc_dlatch$752564
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.\j [4:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$753807': $auto$proc_dlatch.cc:557:proc_dlatch$756522
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.\j [31:5]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000001000000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$753807': $auto$proc_dlatch.cc:559:proc_dlatch$756525
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011010.\j [3:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011010.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$757035': $auto$proc_dlatch.cc:557:proc_dlatch$758010
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011010.\j [31:4]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000011010.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$757035': $auto$proc_dlatch.cc:559:proc_dlatch$758013
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001101.\j [2:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001101.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$758073': $auto$proc_dlatch.cc:557:proc_dlatch$758511
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001101.\j [31:3]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001101.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$758073': $auto$proc_dlatch.cc:559:proc_dlatch$758514
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001000.\j [1:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$758551': $auto$proc_dlatch.cc:557:proc_dlatch$758806
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001000.\j [31:2]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000001000.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$758551': $auto$proc_dlatch.cc:559:proc_dlatch$758809
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000101.\j [1:0]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000101.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$759117': $auto$proc_dlatch.cc:557:proc_dlatch$759273
+Warning: Latch inferred for signal `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000101.\j [31:2]' from process `$paramod\_80_lcu_han_carlson\WIDTH=32'00000000000000000000000000000101.$proc$/usr/local/bin/../share/yosys/choices/han-carlson.v:18$759117': $auto$proc_dlatch.cc:559:proc_dlatch$759276
+Took 190 seconds: source /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/scripts/synth_wrap_operators.tcl
+13. Executing OPT pass (performing simple optimizations).
+13.1. Executing OPT_EXPR pass (perform const folding).
+13.2. Executing OPT_MERGE pass (detect identical cells).
+13.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+13.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+13.5. Executing OPT_MERGE pass (detect identical cells).
+13.6. Executing OPT_DFF pass (perform DFF optimizations).
+13.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+13.8. Executing OPT_EXPR pass (perform const folding).
+13.9. Rerunning OPT passes. (Maybe there is more to do..)
+13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+13.12. Executing OPT_MERGE pass (detect identical cells).
+13.13. Executing OPT_DFF pass (perform DFF optimizations).
+13.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+13.15. Executing OPT_EXPR pass (perform const folding).
+13.16. Rerunning OPT passes. (Maybe there is more to do..)
+13.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+13.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+13.19. Executing OPT_MERGE pass (detect identical cells).
+13.20. Executing OPT_DFF pass (perform DFF optimizations).
+13.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+13.22. Executing OPT_EXPR pass (perform const folding).
+13.23. Rerunning OPT passes. (Maybe there is more to do..)
+13.24. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+13.25. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+13.26. Executing OPT_MERGE pass (detect identical cells).
+13.27. Executing OPT_DFF pass (perform DFF optimizations).
+13.28. Executing OPT_CLEAN pass (remove unused cells and wires).
+13.29. Executing OPT_EXPR pass (perform const folding).
+13.30. Finished fast OPT passes. (There is nothing left to do.)
+14. Executing EXTRACT_FA pass (find and extract full/half adders).
+15. Executing TECHMAP pass (map to technology primitives).
+15.1. Executing Verilog-2005 frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/yoSys/cells_adders_R.v
+15.2. Continuing TECHMAP pass.
+16. Executing TECHMAP pass (map to technology primitives).
+16.1. Executing Verilog-2005 frontend: /usr/local/bin/../share/yosys/techmap.v
+16.2. Continuing TECHMAP pass.
+17. Executing OPT pass (performing simple optimizations).
+17.1. Executing OPT_EXPR pass (perform const folding).
+17.2. Executing OPT_MERGE pass (detect identical cells).
+17.3. Executing OPT_DFF pass (perform DFF optimizations).
+17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+17.5. Finished fast OPT passes.
+18. Executing DFFLEGALIZE pass (convert FFs and LATCHes to types supported by the target).
+19. Executing TECHMAP pass (map to technology primitives).
+19.1. Executing Verilog-2005 frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/yoSys/cells_latch_R.v
+19.2. Continuing TECHMAP pass.
+20. Executing DFFLIBMAP pass (mapping DFF/DLATCH cells to sequential cells from liberty file).
+20.1. Executing DFFLEGALIZE pass (convert FFs and LATCHes to types supported by the target).
+21. Executing OPT pass (performing simple optimizations).
+21.1. Executing OPT_EXPR pass (perform const folding).
+21.2. Executing OPT_MERGE pass (detect identical cells).
+21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+21.5. Executing OPT_MERGE pass (detect identical cells).
+21.6. Executing OPT_DFF pass (perform DFF optimizations).
+21.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+21.8. Executing OPT_EXPR pass (perform const folding).
+21.9. Rerunning OPT passes. (Maybe there is more to do..)
+21.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+21.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+21.12. Executing OPT_MERGE pass (detect identical cells).
+21.13. Executing OPT_DFF pass (perform DFF optimizations).
+21.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+21.15. Executing OPT_EXPR pass (perform const folding).
+21.16. Finished fast OPT passes. (There is nothing left to do.)
+22. Executing SETUNDEF pass (replace undef values with defined constants).
+abc_new -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x256.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_128x64.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x28.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x25.lib -dont_use *x1p*_ASAP7* -dont_use *xp*_ASAP7* -dont_use SDF* -dont_use ICG* -constr ./objects/asap7/cva6/flat_stock/abc.constr
+Warning: Feature 'abc_new' is experimental.
+23. Executing ABC_NEW pass.
+23.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.2. Executing BOX_DERIVE pass. (derive modules for boxes)
+23.3. Executing ABC9_OPS pass (helper functions for ABC9).
+23.4. Executing ABC9_OPS pass (helper functions for ABC9).
+23.5. Mapping module 'ALU_33_0_33_0_33_unused_CO_X_Y[0]_HAN_CARLSON'.
+23.5.1. Executing ABC9_OPS pass (helper functions for ABC9).
+Warning: Feature 'write_xaiger2' is experimental.
+23.5.2. Executing XAIGER2 backend.
+23.5.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.5.4. Executing ABC9.
+23.5.5. Executing AIGER frontend.
+23.5.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.6. Executing PORTARCS pass. (derive propagation arcs)
+23.7. Executing ABC9_OPS pass (helper functions for ABC9).
+23.8. Mapping module 'ALU_16_0_1_0_16_unused_CO_X_HAN_CARLSON'.
+23.8.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.8.2. Executing XAIGER2 backend.
+23.8.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.8.4. Executing ABC9.
+23.8.5. Executing AIGER frontend.
+23.8.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.9. Executing PORTARCS pass. (derive propagation arcs)
+23.10. Executing ABC9_OPS pass (helper functions for ABC9).
+23.11. Mapping module 'ALU_32_0_32_0_32_unused_CO_X_HAN_CARLSON'.
+23.11.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.11.2. Executing XAIGER2 backend.
+23.11.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.11.4. Executing ABC9.
+23.11.5. Executing AIGER frontend.
+23.11.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.12. Executing PORTARCS pass. (derive propagation arcs)
+23.13. Executing ABC9_OPS pass (helper functions for ABC9).
+23.14. Mapping module 'ALU_32_1_32_1_32_unused_CO_X_HAN_CARLSON'.
+23.14.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.14.2. Executing XAIGER2 backend.
+23.14.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.14.4. Executing ABC9.
+23.14.5. Executing AIGER frontend.
+23.14.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.15. Executing PORTARCS pass. (derive propagation arcs)
+23.16. Executing ABC9_OPS pass (helper functions for ABC9).
+23.17. Mapping module 'ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_HAN_CARLSON'.
+23.17.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.17.2. Executing XAIGER2 backend.
+23.17.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.17.4. Executing ABC9.
+23.17.5. Executing AIGER frontend.
+23.17.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.18. Executing PORTARCS pass. (derive propagation arcs)
+23.19. Executing ABC9_OPS pass (helper functions for ABC9).
+23.20. Mapping module 'ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_HAN_CARLSON'.
+23.20.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.20.2. Executing XAIGER2 backend.
+23.20.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.20.4. Executing ABC9.
+23.20.5. Executing AIGER frontend.
+23.20.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.21. Executing PORTARCS pass. (derive propagation arcs)
+23.22. Executing ABC9_OPS pass (helper functions for ABC9).
+23.23. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON'.
+23.23.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.23.2. Executing XAIGER2 backend.
+23.23.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.23.4. Executing ABC9.
+23.23.5. Executing AIGER frontend.
+23.23.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.24. Executing PORTARCS pass. (derive propagation arcs)
+23.25. Executing ABC9_OPS pass (helper functions for ABC9).
+23.26. Mapping module 'ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_HAN_CARLSON'.
+23.26.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.26.2. Executing XAIGER2 backend.
+23.26.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.26.4. Executing ABC9.
+23.26.5. Executing AIGER frontend.
+23.26.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.27. Executing PORTARCS pass. (derive propagation arcs)
+23.28. Executing ABC9_OPS pass (helper functions for ABC9).
+23.29. Mapping module 'ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON'.
+23.29.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.29.2. Executing XAIGER2 backend.
+23.29.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.29.4. Executing ABC9.
+23.29.5. Executing AIGER frontend.
+23.29.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.30. Executing PORTARCS pass. (derive propagation arcs)
+23.31. Executing ABC9_OPS pass (helper functions for ABC9).
+23.32. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_Y_HAN_CARLSON'.
+23.32.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.32.2. Executing XAIGER2 backend.
+23.32.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.32.4. Executing ABC9.
+23.32.5. Executing AIGER frontend.
+23.32.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.33. Executing PORTARCS pass. (derive propagation arcs)
+23.34. Executing ABC9_OPS pass (helper functions for ABC9).
+23.35. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON'.
+23.35.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.35.2. Executing XAIGER2 backend.
+23.35.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.35.4. Executing ABC9.
+23.35.5. Executing AIGER frontend.
+23.35.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.36. Executing PORTARCS pass. (derive propagation arcs)
+23.37. Executing ABC9_OPS pass (helper functions for ABC9).
+23.38. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON'.
+23.38.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.38.2. Executing XAIGER2 backend.
+23.38.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.38.4. Executing ABC9.
+23.38.5. Executing AIGER frontend.
+23.38.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.39. Executing PORTARCS pass. (derive propagation arcs)
+23.40. Executing ABC9_OPS pass (helper functions for ABC9).
+23.41. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_Y_HAN_CARLSON'.
+23.41.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.41.2. Executing XAIGER2 backend.
+23.41.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.41.4. Executing ABC9.
+23.41.5. Executing AIGER frontend.
+23.41.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.42. Executing PORTARCS pass. (derive propagation arcs)
+23.43. Executing ABC9_OPS pass (helper functions for ABC9).
+23.44. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_Y_HAN_CARLSON'.
+23.44.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.44.2. Executing XAIGER2 backend.
+23.44.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.44.4. Executing ABC9.
+23.44.5. Executing AIGER frontend.
+23.44.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.45. Executing PORTARCS pass. (derive propagation arcs)
+23.46. Executing ABC9_OPS pass (helper functions for ABC9).
+23.47. Mapping module 'ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON'.
+23.47.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.47.2. Executing XAIGER2 backend.
+23.47.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.47.4. Executing ABC9.
+23.47.5. Executing AIGER frontend.
+23.47.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.48. Executing PORTARCS pass. (derive propagation arcs)
+23.49. Executing ABC9_OPS pass (helper functions for ABC9).
+23.50. Mapping module 'ALU_64_0_64_0_64_unused_CO_X_HAN_CARLSON'.
+23.50.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.50.2. Executing XAIGER2 backend.
+23.50.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.50.4. Executing ABC9.
+23.50.5. Executing AIGER frontend.
+23.50.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.51. Executing PORTARCS pass. (derive propagation arcs)
+23.52. Executing ABC9_OPS pass (helper functions for ABC9).
+23.53. Mapping module 'cva6'.
+23.53.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.53.2. Executing XAIGER2 backend.
+23.53.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.53.4. Executing ABC9.
+23.53.5. Executing AIGER frontend.
+23.53.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.54. Mapping module 'ALU_64_0_64_0_64_unused_CO_X_BRENT_KUNG'.
+23.54.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.54.2. Executing XAIGER2 backend.
+23.54.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.54.4. Executing ABC9.
+23.54.5. Executing AIGER frontend.
+23.54.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.55. Executing PORTARCS pass. (derive propagation arcs)
+23.56. Executing ABC9_OPS pass (helper functions for ABC9).
+23.57. Mapping module 'ALU_64_0_64_0_64_unused_CO_X_SKLANSKY'.
+23.57.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.57.2. Executing XAIGER2 backend.
+23.57.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.57.4. Executing ABC9.
+23.57.5. Executing AIGER frontend.
+23.57.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.58. Executing PORTARCS pass. (derive propagation arcs)
+23.59. Executing ABC9_OPS pass (helper functions for ABC9).
+23.60. Mapping module 'ALU_64_0_64_0_64_unused_CO_X_KOGGE_STONE'.
+23.60.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.60.2. Executing XAIGER2 backend.
+23.60.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.60.4. Executing ABC9.
+23.60.5. Executing AIGER frontend.
+23.60.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.61. Executing PORTARCS pass. (derive propagation arcs)
+23.62. Executing ABC9_OPS pass (helper functions for ABC9).
+23.63. Mapping module 'ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG'.
+23.63.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.63.2. Executing XAIGER2 backend.
+23.63.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.63.4. Executing ABC9.
+23.63.5. Executing AIGER frontend.
+23.63.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.64. Executing PORTARCS pass. (derive propagation arcs)
+23.65. Executing ABC9_OPS pass (helper functions for ABC9).
+23.66. Mapping module 'ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_SKLANSKY'.
+23.66.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.66.2. Executing XAIGER2 backend.
+23.66.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.66.4. Executing ABC9.
+23.66.5. Executing AIGER frontend.
+23.66.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.67. Executing PORTARCS pass. (derive propagation arcs)
+23.68. Executing ABC9_OPS pass (helper functions for ABC9).
+23.69. Mapping module 'ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE'.
+23.69.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.69.2. Executing XAIGER2 backend.
+23.69.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.69.4. Executing ABC9.
+23.69.5. Executing AIGER frontend.
+23.69.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.70. Executing PORTARCS pass. (derive propagation arcs)
+23.71. Executing ABC9_OPS pass (helper functions for ABC9).
+23.72. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_Y_BRENT_KUNG'.
+23.72.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.72.2. Executing XAIGER2 backend.
+23.72.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.72.4. Executing ABC9.
+23.72.5. Executing AIGER frontend.
+23.72.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.73. Executing PORTARCS pass. (derive propagation arcs)
+23.74. Executing ABC9_OPS pass (helper functions for ABC9).
+23.75. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_Y_SKLANSKY'.
+23.75.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.75.2. Executing XAIGER2 backend.
+23.75.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.75.4. Executing ABC9.
+23.75.5. Executing AIGER frontend.
+23.75.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.76. Executing PORTARCS pass. (derive propagation arcs)
+23.77. Executing ABC9_OPS pass (helper functions for ABC9).
+23.78. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_Y_KOGGE_STONE'.
+23.78.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.78.2. Executing XAIGER2 backend.
+23.78.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.78.4. Executing ABC9.
+23.78.5. Executing AIGER frontend.
+23.78.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.79. Executing PORTARCS pass. (derive propagation arcs)
+23.80. Executing ABC9_OPS pass (helper functions for ABC9).
+23.81. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_Y_BRENT_KUNG'.
+23.81.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.81.2. Executing XAIGER2 backend.
+23.81.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.81.4. Executing ABC9.
+23.81.5. Executing AIGER frontend.
+23.81.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.82. Executing PORTARCS pass. (derive propagation arcs)
+23.83. Executing ABC9_OPS pass (helper functions for ABC9).
+23.84. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_Y_SKLANSKY'.
+23.84.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.84.2. Executing XAIGER2 backend.
+23.84.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.84.4. Executing ABC9.
+23.84.5. Executing AIGER frontend.
+23.84.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.85. Executing PORTARCS pass. (derive propagation arcs)
+23.86. Executing ABC9_OPS pass (helper functions for ABC9).
+23.87. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_Y_KOGGE_STONE'.
+23.87.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.87.2. Executing XAIGER2 backend.
+23.87.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.87.4. Executing ABC9.
+23.87.5. Executing AIGER frontend.
+23.87.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.88. Executing PORTARCS pass. (derive propagation arcs)
+23.89. Executing ABC9_OPS pass (helper functions for ABC9).
+23.90. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_BRENT_KUNG'.
+23.90.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.90.2. Executing XAIGER2 backend.
+23.90.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.90.4. Executing ABC9.
+23.90.5. Executing AIGER frontend.
+23.90.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.91. Executing PORTARCS pass. (derive propagation arcs)
+23.92. Executing ABC9_OPS pass (helper functions for ABC9).
+23.93. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_SKLANSKY'.
+23.93.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.93.2. Executing XAIGER2 backend.
+23.93.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.93.4. Executing ABC9.
+23.93.5. Executing AIGER frontend.
+23.93.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.94. Executing PORTARCS pass. (derive propagation arcs)
+23.95. Executing ABC9_OPS pass (helper functions for ABC9).
+23.96. Mapping module 'ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_KOGGE_STONE'.
+23.96.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.96.2. Executing XAIGER2 backend.
+23.96.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.96.4. Executing ABC9.
+23.96.5. Executing AIGER frontend.
+23.96.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.97. Executing PORTARCS pass. (derive propagation arcs)
+23.98. Executing ABC9_OPS pass (helper functions for ABC9).
+23.99. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_BRENT_KUNG'.
+23.99.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.99.2. Executing XAIGER2 backend.
+23.99.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.99.4. Executing ABC9.
+23.99.5. Executing AIGER frontend.
+23.99.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.100. Executing PORTARCS pass. (derive propagation arcs)
+23.101. Executing ABC9_OPS pass (helper functions for ABC9).
+23.102. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_SKLANSKY'.
+23.102.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.102.2. Executing XAIGER2 backend.
+23.102.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.102.4. Executing ABC9.
+23.102.5. Executing AIGER frontend.
+23.102.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.103. Executing PORTARCS pass. (derive propagation arcs)
+23.104. Executing ABC9_OPS pass (helper functions for ABC9).
+23.105. Mapping module 'ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_KOGGE_STONE'.
+23.105.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.105.2. Executing XAIGER2 backend.
+23.105.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.105.4. Executing ABC9.
+23.105.5. Executing AIGER frontend.
+23.105.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.106. Executing PORTARCS pass. (derive propagation arcs)
+23.107. Executing ABC9_OPS pass (helper functions for ABC9).
+23.108. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_Y_BRENT_KUNG'.
+23.108.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.108.2. Executing XAIGER2 backend.
+23.108.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.108.4. Executing ABC9.
+23.108.5. Executing AIGER frontend.
+23.108.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.109. Executing PORTARCS pass. (derive propagation arcs)
+23.110. Executing ABC9_OPS pass (helper functions for ABC9).
+23.111. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_Y_SKLANSKY'.
+23.111.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.111.2. Executing XAIGER2 backend.
+23.111.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.111.4. Executing ABC9.
+23.111.5. Executing AIGER frontend.
+23.111.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.112. Executing PORTARCS pass. (derive propagation arcs)
+23.113. Executing ABC9_OPS pass (helper functions for ABC9).
+23.114. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_Y_KOGGE_STONE'.
+23.114.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.114.2. Executing XAIGER2 backend.
+23.114.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.114.4. Executing ABC9.
+23.114.5. Executing AIGER frontend.
+23.114.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.115. Executing PORTARCS pass. (derive propagation arcs)
+23.116. Executing ABC9_OPS pass (helper functions for ABC9).
+23.117. Mapping module 'ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG'.
+23.117.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.117.2. Executing XAIGER2 backend.
+23.117.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.117.4. Executing ABC9.
+23.117.5. Executing AIGER frontend.
+23.117.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.118. Executing PORTARCS pass. (derive propagation arcs)
+23.119. Executing ABC9_OPS pass (helper functions for ABC9).
+23.120. Mapping module 'ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_SKLANSKY'.
+23.120.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.120.2. Executing XAIGER2 backend.
+23.120.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.120.4. Executing ABC9.
+23.120.5. Executing AIGER frontend.
+23.120.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.121. Executing PORTARCS pass. (derive propagation arcs)
+23.122. Executing ABC9_OPS pass (helper functions for ABC9).
+23.123. Mapping module 'ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE'.
+23.123.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.123.2. Executing XAIGER2 backend.
+23.123.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.123.4. Executing ABC9.
+23.123.5. Executing AIGER frontend.
+23.123.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.124. Executing PORTARCS pass. (derive propagation arcs)
+23.125. Executing ABC9_OPS pass (helper functions for ABC9).
+23.126. Mapping module 'ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_BRENT_KUNG'.
+23.126.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.126.2. Executing XAIGER2 backend.
+23.126.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.126.4. Executing ABC9.
+23.126.5. Executing AIGER frontend.
+23.126.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.127. Executing PORTARCS pass. (derive propagation arcs)
+23.128. Executing ABC9_OPS pass (helper functions for ABC9).
+23.129. Mapping module 'ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_SKLANSKY'.
+23.129.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.129.2. Executing XAIGER2 backend.
+23.129.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.129.4. Executing ABC9.
+23.129.5. Executing AIGER frontend.
+23.129.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.130. Executing PORTARCS pass. (derive propagation arcs)
+23.131. Executing ABC9_OPS pass (helper functions for ABC9).
+23.132. Mapping module 'ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_KOGGE_STONE'.
+23.132.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.132.2. Executing XAIGER2 backend.
+23.132.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.132.4. Executing ABC9.
+23.132.5. Executing AIGER frontend.
+23.132.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.133. Executing PORTARCS pass. (derive propagation arcs)
+23.134. Executing ABC9_OPS pass (helper functions for ABC9).
+23.135. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG'.
+23.135.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.135.2. Executing XAIGER2 backend.
+23.135.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.135.4. Executing ABC9.
+23.135.5. Executing AIGER frontend.
+23.135.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.136. Executing PORTARCS pass. (derive propagation arcs)
+23.137. Executing ABC9_OPS pass (helper functions for ABC9).
+23.138. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_SKLANSKY'.
+23.138.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.138.2. Executing XAIGER2 backend.
+23.138.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.138.4. Executing ABC9.
+23.138.5. Executing AIGER frontend.
+23.138.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.139. Executing PORTARCS pass. (derive propagation arcs)
+23.140. Executing ABC9_OPS pass (helper functions for ABC9).
+23.141. Mapping module 'ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE'.
+23.141.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.141.2. Executing XAIGER2 backend.
+23.141.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.141.4. Executing ABC9.
+23.141.5. Executing AIGER frontend.
+23.141.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.142. Executing PORTARCS pass. (derive propagation arcs)
+23.143. Executing ABC9_OPS pass (helper functions for ABC9).
+23.144. Mapping module 'ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_BRENT_KUNG'.
+23.144.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.144.2. Executing XAIGER2 backend.
+23.144.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.144.4. Executing ABC9.
+23.144.5. Executing AIGER frontend.
+23.144.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.145. Executing PORTARCS pass. (derive propagation arcs)
+23.146. Executing ABC9_OPS pass (helper functions for ABC9).
+23.147. Mapping module 'ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_SKLANSKY'.
+23.147.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.147.2. Executing XAIGER2 backend.
+23.147.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.147.4. Executing ABC9.
+23.147.5. Executing AIGER frontend.
+23.147.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.148. Executing PORTARCS pass. (derive propagation arcs)
+23.149. Executing ABC9_OPS pass (helper functions for ABC9).
+23.150. Mapping module 'ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_KOGGE_STONE'.
+23.150.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.150.2. Executing XAIGER2 backend.
+23.150.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.150.4. Executing ABC9.
+23.150.5. Executing AIGER frontend.
+23.150.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.151. Executing PORTARCS pass. (derive propagation arcs)
+23.152. Executing ABC9_OPS pass (helper functions for ABC9).
+23.153. Mapping module 'ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_BRENT_KUNG'.
+23.153.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.153.2. Executing XAIGER2 backend.
+23.153.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.153.4. Executing ABC9.
+23.153.5. Executing AIGER frontend.
+23.153.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.154. Executing PORTARCS pass. (derive propagation arcs)
+23.155. Executing ABC9_OPS pass (helper functions for ABC9).
+23.156. Mapping module 'ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_SKLANSKY'.
+23.156.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.156.2. Executing XAIGER2 backend.
+23.156.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.156.4. Executing ABC9.
+23.156.5. Executing AIGER frontend.
+23.156.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.157. Executing PORTARCS pass. (derive propagation arcs)
+23.158. Executing ABC9_OPS pass (helper functions for ABC9).
+23.159. Mapping module 'ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_KOGGE_STONE'.
+23.159.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.159.2. Executing XAIGER2 backend.
+23.159.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.159.4. Executing ABC9.
+23.159.5. Executing AIGER frontend.
+23.159.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.160. Executing PORTARCS pass. (derive propagation arcs)
+23.161. Executing ABC9_OPS pass (helper functions for ABC9).
+23.162. Mapping module 'ALU_32_1_32_1_32_unused_CO_X_BRENT_KUNG'.
+23.162.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.162.2. Executing XAIGER2 backend.
+23.162.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.162.4. Executing ABC9.
+23.162.5. Executing AIGER frontend.
+23.162.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.163. Executing PORTARCS pass. (derive propagation arcs)
+23.164. Executing ABC9_OPS pass (helper functions for ABC9).
+23.165. Mapping module 'ALU_32_1_32_1_32_unused_CO_X_SKLANSKY'.
+23.165.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.165.2. Executing XAIGER2 backend.
+23.165.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.165.4. Executing ABC9.
+23.165.5. Executing AIGER frontend.
+23.165.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.166. Executing PORTARCS pass. (derive propagation arcs)
+23.167. Executing ABC9_OPS pass (helper functions for ABC9).
+23.168. Mapping module 'ALU_32_1_32_1_32_unused_CO_X_KOGGE_STONE'.
+23.168.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.168.2. Executing XAIGER2 backend.
+23.168.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.168.4. Executing ABC9.
+23.168.5. Executing AIGER frontend.
+23.168.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.169. Executing PORTARCS pass. (derive propagation arcs)
+23.170. Executing ABC9_OPS pass (helper functions for ABC9).
+23.171. Mapping module 'ALU_32_0_32_0_32_unused_CO_X_BRENT_KUNG'.
+23.171.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.171.2. Executing XAIGER2 backend.
+23.171.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.171.4. Executing ABC9.
+23.171.5. Executing AIGER frontend.
+23.171.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.172. Executing PORTARCS pass. (derive propagation arcs)
+23.173. Executing ABC9_OPS pass (helper functions for ABC9).
+23.174. Mapping module 'ALU_32_0_32_0_32_unused_CO_X_SKLANSKY'.
+23.174.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.174.2. Executing XAIGER2 backend.
+23.174.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.174.4. Executing ABC9.
+23.174.5. Executing AIGER frontend.
+23.174.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.175. Executing PORTARCS pass. (derive propagation arcs)
+23.176. Executing ABC9_OPS pass (helper functions for ABC9).
+23.177. Mapping module 'ALU_32_0_32_0_32_unused_CO_X_KOGGE_STONE'.
+23.177.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.177.2. Executing XAIGER2 backend.
+23.177.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.177.4. Executing ABC9.
+23.177.5. Executing AIGER frontend.
+23.177.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.178. Executing PORTARCS pass. (derive propagation arcs)
+23.179. Executing ABC9_OPS pass (helper functions for ABC9).
+23.180. Mapping module 'ALU_16_0_1_0_16_unused_CO_X_BRENT_KUNG'.
+23.180.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.180.2. Executing XAIGER2 backend.
+23.180.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.180.4. Executing ABC9.
+23.180.5. Executing AIGER frontend.
+23.180.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.181. Executing PORTARCS pass. (derive propagation arcs)
+23.182. Executing ABC9_OPS pass (helper functions for ABC9).
+23.183. Mapping module 'ALU_16_0_1_0_16_unused_CO_X_SKLANSKY'.
+23.183.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.183.2. Executing XAIGER2 backend.
+23.183.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.183.4. Executing ABC9.
+23.183.5. Executing AIGER frontend.
+23.183.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.184. Executing PORTARCS pass. (derive propagation arcs)
+23.185. Executing ABC9_OPS pass (helper functions for ABC9).
+23.186. Mapping module 'ALU_16_0_1_0_16_unused_CO_X_KOGGE_STONE'.
+23.186.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.186.2. Executing XAIGER2 backend.
+23.186.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.186.4. Executing ABC9.
+23.186.5. Executing AIGER frontend.
+23.186.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.187. Executing PORTARCS pass. (derive propagation arcs)
+23.188. Executing ABC9_OPS pass (helper functions for ABC9).
+23.189. Mapping module 'ALU_33_0_33_0_33_unused_CO_X_Y[0]_BRENT_KUNG'.
+23.189.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.189.2. Executing XAIGER2 backend.
+23.189.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.189.4. Executing ABC9.
+23.189.5. Executing AIGER frontend.
+23.189.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.190. Executing PORTARCS pass. (derive propagation arcs)
+23.191. Executing ABC9_OPS pass (helper functions for ABC9).
+23.192. Mapping module 'ALU_33_0_33_0_33_unused_CO_X_Y[0]_SKLANSKY'.
+23.192.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.192.2. Executing XAIGER2 backend.
+23.192.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.192.4. Executing ABC9.
+23.192.5. Executing AIGER frontend.
+23.192.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.193. Executing PORTARCS pass. (derive propagation arcs)
+23.194. Executing ABC9_OPS pass (helper functions for ABC9).
+23.195. Mapping module 'ALU_33_0_33_0_33_unused_CO_X_Y[0]_KOGGE_STONE'.
+23.195.1. Executing ABC9_OPS pass (helper functions for ABC9).
+23.195.2. Executing XAIGER2 backend.
+23.195.3. Executing ABC9_EXE pass (technology mapping using ABC9).
+23.195.4. Executing ABC9.
+23.195.5. Executing AIGER frontend.
+23.195.6. Executing ABC_OPS_REINTEGRATE pass (reintegrate ABC mapped design into module).
+23.196. Executing PORTARCS pass. (derive propagation arcs)
+23.197. Executing ABC9_OPS pass (helper functions for ABC9).
+23.198. Executing ABC9_OPS pass (helper functions for ABC9).
+Took 2965 seconds: abc_new -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x256.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_128x64.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x28.lib -liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x25.lib -dont_use *x1p*_ASAP7* -dont_use *xp*_ASAP7* -dont_use SDF* -dont_use ICG* -constr ./objects/asap7/cva6/flat_stock/abc.constr
+24. Executing SPLITNETS pass (splitting up multi-bit signals).
+25. Executing OPT_CLEAN pass (remove unused cells and wires).
+26. Executing HILOMAP pass (mapping to constant drivers).
+27. Executing INSBUF pass (insert buffer cells for connected wires).
+28. Executing CHECK pass (checking for obvious problems).
+29. Printing statistics.
+30. Executing CHECK pass (checking for obvious problems).
+31. Executing Verilog backend.
+31.1. Executing BMUXMAP pass.
+31.2. Executing DEMUXMAP pass.
+Warnings: 44 unique messages, 44 total
+Warnings: 2 experimental features used (not excluded with -x).
+End of script. Logfile hash: 3d0d07db22, time: 3967.85s, user: 3300.61s, system: 77.30s, MEM: 1377.24 MB peak
+Yosys 0.69+274 (git sha1 7513f8df8, GNU /usr/bin/c++ 13.3.0)
+Time spent: 30% 65x abc9_exe (1503 sec), 23% 1x abc_new (1126 sec), ...
+Elapsed time: 1:06:09.37[h:]min:sec. CPU time: user 4795.71 sys 86.35 (122%). Peak memory: 1410292KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_2_yosys              .v         3969     4882     1.23     1377 92a63a3c7d

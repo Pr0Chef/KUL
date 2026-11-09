@@ -1,0 +1,2480 @@
+
+29. Printing statistics.
+
+=== ALU_64_0_64_0_64_unused_CO_X_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      373        -      373        - wires
+      562        -      562        - wire bits
+        5        -        5        - public wires
+      194        -      194        - public wire bits
+        5        -        5        - ports
+      194        -      194        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      339  598.766      339  598.766 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+       34   36.176       34   36.176   AOI21_X1
+        3    4.788        3    4.788   AOI221_X1
+       33  140.448       33  140.448   FA_X1
+       60    159.6       60    159.6   HA_X1
+       21   11.172       21   11.172   INV_X1
+       31   24.738       31   24.738   NAND2_X1
+       10    10.64       10    10.64   NAND3_X1
+        9    11.97        9    11.97   NAND4_X1
+        5     3.99        5     3.99   NOR2_X1
+        3    3.192        3    3.192   NOR3_X1
+       24   25.536       24   25.536   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        4    4.256        4    4.256   OR2_X1
+        2    3.192        2    3.192   XNOR2_X1
+       94  150.024       94  150.024   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO_X_BRENT_KUNG': 598.766000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO_X_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      458        -      458        - wires
+      647        -      647        - wire bits
+        5        -        5        - public wires
+      194        -      194        - public wire bits
+        5        -        5        - ports
+      194        -      194        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      449   653.03      449   653.03 cells
+       27   28.728       27   28.728   AND2_X1
+        7     9.31        7     9.31   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+        1    2.394        1    2.394   AOI211_X2
+       54   57.456       54   57.456   AOI21_X1
+       20    31.92       20    31.92   AOI221_X1
+        7   29.792        7   29.792   FA_X1
+       61   162.26       61   162.26   HA_X1
+       24   12.768       24   12.768   INV_X1
+       42   33.516       42   33.516   NAND2_X1
+       25     26.6       25     26.6   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+       10     7.98       10     7.98   NOR2_X1
+        3    3.192        3    3.192   NOR3_X1
+       28   29.792       28   29.792   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       10    10.64       10    10.64   OR2_X1
+       32   51.072       32   51.072   XNOR2_X1
+       90   143.64       90   143.64   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO_X_SKLANSKY': 653.030000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO_X_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      700        -      700        - wires
+      889        -      889        - wire bits
+        5        -        5        - public wires
+      194        -      194        - public wire bits
+        5        -        5        - ports
+      194        -      194        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      695  880.992      695  880.992 cells
+       17   18.088       17   18.088   AND2_X1
+        2     2.66        2     2.66   AND3_X1
+        7   11.172        7   11.172   AND4_X1
+      134  142.576      134  142.576   AOI21_X1
+       12   19.152       12   19.152   AOI221_X1
+        2    8.512        2    8.512   FA_X1
+       62   164.92       62   164.92   HA_X1
+        3    1.596        3    1.596   INV_X1
+      107   85.386      107   85.386   NAND2_X1
+        6    6.384        6    6.384   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+       77   61.446       77   61.446   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+      101  107.464      101  107.464   OAI21_X1
+       11   17.556       11   17.556   OAI221_X1
+       17   18.088       17   18.088   OR2_X1
+        3     3.99        3     3.99   OR3_X1
+        1    1.596        1    1.596   OR4_X1
+       35    55.86       35    55.86   XNOR2_X1
+       92  146.832       92  146.832   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO_X_KOGGE_STONE': 880.992000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      153        -      153        - wire bits
+        5        -        5        - public wires
+       39        -       39        - public wire bits
+        5        -        5        - ports
+       39        -       39        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       83  142.842       83  142.842 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        4    6.384        4    6.384   XOR2_X1
+
+   Chip area for module '\ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG': 142.842000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      153        -      153        - wire bits
+        5        -        5        - public wires
+       39        -       39        - public wire bits
+        5        -        5        - ports
+       39        -       39        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       83  142.842       83  142.842 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        4    6.384        4    6.384   XOR2_X1
+
+   Chip area for module '\ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_SKLANSKY': 142.842000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      153        -      153        - wire bits
+        5        -        5        - public wires
+       39        -       39        - public wire bits
+        5        -        5        - ports
+       39        -       39        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       83  142.842       83  142.842 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        4    6.384        4    6.384   XOR2_X1
+
+   Chip area for module '\ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE': 142.842000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      120        -      120        - wires
+      217        -      217        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      117  194.712      117  194.712 cells
+        3    3.192        3    3.192   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        2    3.192        2    3.192   AND4_X1
+       13   13.832       13   13.832   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        3    2.394        3    2.394   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+       34   54.264       34   54.264   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_Y_BRENT_KUNG': 194.712000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      120        -      120        - wires
+      217        -      217        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      117  194.712      117  194.712 cells
+        3    3.192        3    3.192   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        2    3.192        2    3.192   AND4_X1
+       13   13.832       13   13.832   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        3    2.394        3    2.394   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+       34   54.264       34   54.264   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_Y_SKLANSKY': 194.712000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      122        -      122        - wires
+      219        -      219        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      119  196.574      119  196.574 cells
+        2    2.128        2    2.128   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+       17   18.088       17   18.088   AOI21_X1
+        3    4.788        3    4.788   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        4    2.128        4    2.128   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        1    1.064        1    1.064   NOR3_X1
+        1     1.33        1     1.33   NOR4_X1
+        6    6.384        6    6.384   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        1     1.33        1     1.33   OAI22_X1
+       34   54.264       34   54.264   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_Y_KOGGE_STONE': 196.574000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      123        -      123        - wires
+      220        -      220        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      118  198.702      118  198.702 cells
+        5     5.32        5     5.32   AND2_X1
+        3    4.788        3    4.788   AND4_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        4    2.128        4    2.128   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1     1.33        1     1.33   NOR4_X1
+        5     5.32        5     5.32   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_Y_BRENT_KUNG': 198.702000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      123        -      123        - wires
+      220        -      220        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      118  198.702      118  198.702 cells
+        5     5.32        5     5.32   AND2_X1
+        3    4.788        3    4.788   AND4_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        4    2.128        4    2.128   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1     1.33        1     1.33   NOR4_X1
+        5     5.32        5     5.32   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_Y_SKLANSKY': 198.702000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      124        -      124        - wires
+      221        -      221        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      119  200.298      119  200.298 cells
+        1    1.064        1    1.064   AND2_X1
+        3     3.99        3     3.99   AND3_X1
+        2    3.192        2    3.192   AND4_X1
+       16   17.024       16   17.024   AOI21_X1
+        3    4.788        3    4.788   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        5     2.66        5     2.66   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        1    1.064        1    1.064   NOR3_X1
+        4    4.256        4    4.256   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_Y_KOGGE_STONE': 200.298000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      155        -      155        - wires
+      219        -      219        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      117  197.372      117  197.372 cells
+        4    4.256        4    4.256   AND2_X1
+        2    3.192        2    3.192   AND4_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        4    2.128        4    2.128   INV_X1
+        7    5.586        7    5.586   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_BRENT_KUNG': 197.372000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      155        -      155        - wires
+      219        -      219        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      117  197.372      117  197.372 cells
+        4    4.256        4    4.256   AND2_X1
+        2    3.192        2    3.192   AND4_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        4    2.128        4    2.128   INV_X1
+        7    5.586        7    5.586   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_SKLANSKY': 197.372000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      160        -      160        - wires
+      224        -      224        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      122  201.628      122  201.628 cells
+        2    2.128        2    2.128   AND2_X1
+        2     2.66        2     2.66   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        8    8.512        8    8.512   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        1     1.33        1     1.33   OR3_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_KOGGE_STONE': 201.628000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      152        -      152        - wires
+      216        -      216        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      116  192.584      116  192.584 cells
+        3    3.192        3    3.192   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        5     3.99        5     3.99   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        6     7.98        6     7.98   NAND4_X1
+        4    3.192        4    3.192   NOR2_X1
+        1    1.064        1    1.064   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_BRENT_KUNG': 192.584000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      152        -      152        - wires
+      216        -      216        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      116  192.584      116  192.584 cells
+        3    3.192        3    3.192   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        5     3.99        5     3.99   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        6     7.98        6     7.98   NAND4_X1
+        4    3.192        4    3.192   NOR2_X1
+        1    1.064        1    1.064   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_SKLANSKY': 192.584000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      155        -      155        - wires
+      219        -      219        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      119   195.51      119   195.51 cells
+        2    2.128        2    2.128   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        1    1.596        1    1.596   AND4_X1
+       17   18.088       17   18.088   AOI21_X1
+        3    4.788        3    4.788   AOI221_X1
+        1     1.33        1     1.33   AOI22_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        5     5.32        5     5.32   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1     1.33        1     1.33   NOR4_X1
+        3    3.192        3    3.192   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+        1    1.596        1    1.596   OR4_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_KOGGE_STONE': 195.510000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      212        -      212        - wire bits
+        6        -        6        - public wires
+       99        -       99        - public wire bits
+        6        -        6        - ports
+       99        -       99        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_Y_BRENT_KUNG': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      212        -      212        - wire bits
+        6        -        6        - public wires
+       99        -       99        - public wire bits
+        6        -        6        - ports
+       99        -       99        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_Y_SKLANSKY': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      212        -      212        - wire bits
+        6        -        6        - public wires
+       99        -       99        - public wire bits
+        6        -        6        - ports
+       99        -       99        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_Y_KOGGE_STONE': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      122        -      122        - wires
+      159        -      159        - wire bits
+        5        -        5        - public wires
+       42        -       42        - public wire bits
+        5        -        5        - ports
+       42        -       42        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       86  147.896       86  147.896 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG': 147.896000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      122        -      122        - wires
+      159        -      159        - wire bits
+        5        -        5        - public wires
+       42        -       42        - public wire bits
+        5        -        5        - ports
+       42        -       42        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       86  147.896       86  147.896 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_SKLANSKY': 147.896000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      122        -      122        - wires
+      159        -      159        - wire bits
+        5        -        5        - public wires
+       42        -       42        - public wire bits
+        5        -        5        - ports
+       42        -       42        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       86  147.896       86  147.896 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE': 147.896000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       59        -       59        - wires
+       78        -       78        - wire bits
+        5        -        5        - public wires
+       24        -       24        - public wire bits
+        5        -        5        - ports
+       24        -       24        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       41   69.692       41   69.692 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+        7    7.448        7    7.448   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       14    37.24       14    37.24   HA_X1
+        2    1.064        2    1.064   INV_X1
+        3    2.394        3    2.394   NAND2_X1
+        1     1.33        1     1.33   NAND4_X1
+        3    3.192        3    3.192   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_BRENT_KUNG': 69.692000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       59        -       59        - wires
+       78        -       78        - wire bits
+        5        -        5        - public wires
+       24        -       24        - public wire bits
+        5        -        5        - ports
+       24        -       24        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       41   70.224       41   70.224 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+        6    6.384        6    6.384   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       14    37.24       14    37.24   HA_X1
+        2    1.064        2    1.064   INV_X1
+        2    1.596        2    1.596   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        2    2.128        2    2.128   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_SKLANSKY': 70.224000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       62        -       62        - wires
+       81        -       81        - wire bits
+        5        -        5        - public wires
+       24        -       24        - public wire bits
+        5        -        5        - ports
+       24        -       24        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       44   72.352       44   72.352 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+        7    7.448        7    7.448   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       14    37.24       14    37.24   HA_X1
+        2    1.064        2    1.064   INV_X1
+        2    1.596        2    1.596   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        1     1.33        1     1.33   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        1    1.064        1    1.064   OR2_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_KOGGE_STONE': 72.352000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      150        -      150        - wires
+      212        -      212        - wire bits
+        5        -        5        - public wires
+       67        -       67        - public wire bits
+        5        -        5        - ports
+       67        -       67        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_BRENT_KUNG': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      150        -      150        - wires
+      212        -      212        - wire bits
+        5        -        5        - public wires
+       67        -       67        - public wire bits
+        5        -        5        - ports
+       67        -       67        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_SKLANSKY': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      150        -      150        - wires
+      212        -      212        - wire bits
+        5        -        5        - public wires
+       67        -       67        - public wire bits
+        5        -        5        - ports
+       67        -       67        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_KOGGE_STONE': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      149        -      149        - wires
+      214        -      214        - wire bits
+        6        -        6        - public wires
+       71        -       71        - public wire bits
+        6        -        6        - ports
+       71        -       71        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      113  193.382      113  193.382 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+        1    4.256        1    4.256   FA_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+       33   52.668       33   52.668   XOR2_X1
+
+   Chip area for module '\ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_BRENT_KUNG': 193.382000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      149        -      149        - wires
+      214        -      214        - wire bits
+        6        -        6        - public wires
+       71        -       71        - public wire bits
+        6        -        6        - ports
+       71        -       71        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      113  193.382      113  193.382 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+        1    4.256        1    4.256   FA_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+       33   52.668       33   52.668   XOR2_X1
+
+   Chip area for module '\ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_SKLANSKY': 193.382000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      202        -      202        - wires
+      267        -      267        - wire bits
+        6        -        6        - public wires
+       71        -       71        - public wire bits
+        6        -        6        - ports
+       71        -       71        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      166  245.252      166  245.252 cells
+        9    9.576        9    9.576   AND2_X1
+        2     2.66        2     2.66   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+       23   24.472       23   24.472   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       33    87.78       33    87.78   HA_X1
+       10     5.32       10     5.32   INV_X1
+       14   11.172       14   11.172   NAND2_X1
+        5     5.32        5     5.32   NAND3_X1
+        6     7.98        6     7.98   NAND4_X1
+        3    2.394        3    2.394   NOR2_X1
+        3    3.192        3    3.192   NOR3_X1
+       10    10.64       10    10.64   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+        3    3.192        3    3.192   OR2_X1
+        1     1.33        1     1.33   OR3_X1
+       34   54.264       34   54.264   XOR2_X1
+
+   Chip area for module '\ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_KOGGE_STONE': 245.252000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      236        -      236        - wires
+      426        -      426        - wire bits
+        7        -        7        - public wires
+      197        -      197        - public wire bits
+        7        -        7        - ports
+      197        -      197        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      232  385.966      232  385.966 cells
+        7    7.448        7    7.448   AND2_X1
+        2     2.66        2     2.66   AND3_X1
+        6    9.576        6    9.576   AND4_X1
+       29   30.856       29   30.856   AOI21_X1
+        7   11.172        7   11.172   AOI221_X1
+       64   170.24       64   170.24   HA_X1
+        9    4.788        9    4.788   INV_X1
+       13   10.374       13   10.374   NAND2_X1
+        6    6.384        6    6.384   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1     1.33        1     1.33   NOR4_X1
+       11   11.704       11   11.704   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+        1     1.33        1     1.33   OR3_X1
+        1    1.596        1    1.596   XNOR2_X1
+       64  102.144       64  102.144   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_BRENT_KUNG': 385.966000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      242        -      242        - wires
+      432        -      432        - wire bits
+        7        -        7        - public wires
+      197        -      197        - public wire bits
+        7        -        7        - ports
+      197        -      197        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      238  389.956      238  389.956 cells
+        7    7.448        7    7.448   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        4    6.384        4    6.384   AND4_X1
+       32   34.048       32   34.048   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       64   170.24       64   170.24   HA_X1
+        8    4.256        8    4.256   INV_X1
+       19   15.162       19   15.162   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        9    11.97        9    11.97   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2     2.66        2     2.66   NOR4_X1
+       13   13.832       13   13.832   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.596        1    1.596   XNOR2_X1
+       64  102.144       64  102.144   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_SKLANSKY': 389.956000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      293        -      293        - wires
+      483        -      483        - wire bits
+        7        -        7        - public wires
+      197        -      197        - public wire bits
+        7        -        7        - ports
+      197        -      197        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      289  450.072      289  450.072 cells
+        8    8.512        8    8.512   AND2_X1
+        8    10.64        8    10.64   AND3_X1
+       11   17.556       11   17.556   AND4_X1
+       40    42.56       40    42.56   AOI21_X1
+        7   11.172        7   11.172   AOI221_X1
+       64   170.24       64   170.24   HA_X1
+        9    4.788        9    4.788   INV_X1
+       25    19.95       25    19.95   NAND2_X1
+       10    10.64       10    10.64   NAND3_X1
+        8    10.64        8    10.64   NAND4_X1
+        4    3.192        4    3.192   NOR2_X1
+        4    4.256        4    4.256   NOR3_X1
+        1    2.394        1    2.394   OAI211_X2
+       16   17.024       16   17.024   OAI21_X1
+        6    9.576        6    9.576   OAI221_X1
+        3    3.192        3    3.192   OR2_X1
+        1    1.596        1    1.596   XNOR2_X1
+       64  102.144       64  102.144   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_KOGGE_STONE': 450.072000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_1_32_1_32_unused_CO_X_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      173        -      173        - wires
+      266        -      266        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      155  285.684      155  285.684 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+       15    15.96       15    15.96   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+       17   72.352       17   72.352   FA_X1
+       28    74.48       28    74.48   HA_X1
+        5     2.66        5     2.66   INV_X1
+       14   11.172       14   11.172   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        9    9.576        9    9.576   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+        4    4.256        4    4.256   OR2_X1
+        2    3.192        2    3.192   XNOR2_X1
+       46   73.416       46   73.416   XOR2_X1
+
+   Chip area for module '\ALU_32_1_32_1_32_unused_CO_X_BRENT_KUNG': 285.684000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_1_32_1_32_unused_CO_X_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      203        -      203        - wires
+      296        -      296        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      195  302.974      195  302.974 cells
+       11   11.704       11   11.704   AND2_X1
+        4     5.32        4     5.32   AND3_X1
+       20    21.28       20    21.28   AOI21_X1
+       11   17.556       11   17.556   AOI221_X1
+        6   25.536        6   25.536   FA_X1
+       29    77.14       29    77.14   HA_X1
+       11    5.852       11    5.852   INV_X1
+       16   12.768       16   12.768   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        3    2.394        3    2.394   NOR2_X1
+       12   12.768       12   12.768   OAI21_X1
+        5     7.98        5     7.98   OAI221_X1
+        7    7.448        7    7.448   OR2_X1
+       14   22.344       14   22.344   XNOR2_X1
+       45    71.82       45    71.82   XOR2_X1
+
+   Chip area for module '\ALU_32_1_32_1_32_unused_CO_X_SKLANSKY': 302.974000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_1_32_1_32_unused_CO_X_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      288        -      288        - wires
+      381        -      381        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      283  377.188      283  377.188 cells
+       12   12.768       12   12.768   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+       52   55.328       52   55.328   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+        2    8.512        2    8.512   FA_X1
+       30     79.8       30     79.8   HA_X1
+       42   33.516       42   33.516   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        1     1.33        1     1.33   NAND4_X1
+       26   20.748       26   20.748   NOR2_X1
+       33   35.112       33   35.112   OAI21_X1
+        6    9.576        6    9.576   OAI221_X1
+        9    9.576        9    9.576   OR2_X1
+       16   25.536       16   25.536   XNOR2_X1
+       47   75.012       47   75.012   XOR2_X1
+
+   Chip area for module '\ALU_32_1_32_1_32_unused_CO_X_KOGGE_STONE': 377.188000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO_X_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      173        -      173        - wires
+      266        -      266        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      155  285.684      155  285.684 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+       15    15.96       15    15.96   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+       17   72.352       17   72.352   FA_X1
+       28    74.48       28    74.48   HA_X1
+        5     2.66        5     2.66   INV_X1
+       14   11.172       14   11.172   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        9    9.576        9    9.576   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+        4    4.256        4    4.256   OR2_X1
+        2    3.192        2    3.192   XNOR2_X1
+       46   73.416       46   73.416   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO_X_BRENT_KUNG': 285.684000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO_X_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      203        -      203        - wires
+      296        -      296        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      195  302.974      195  302.974 cells
+       11   11.704       11   11.704   AND2_X1
+        4     5.32        4     5.32   AND3_X1
+       20    21.28       20    21.28   AOI21_X1
+       11   17.556       11   17.556   AOI221_X1
+        6   25.536        6   25.536   FA_X1
+       29    77.14       29    77.14   HA_X1
+       11    5.852       11    5.852   INV_X1
+       16   12.768       16   12.768   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        3    2.394        3    2.394   NOR2_X1
+       12   12.768       12   12.768   OAI21_X1
+        5     7.98        5     7.98   OAI221_X1
+        7    7.448        7    7.448   OR2_X1
+       14   22.344       14   22.344   XNOR2_X1
+       45    71.82       45    71.82   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO_X_SKLANSKY': 302.974000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO_X_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      288        -      288        - wires
+      381        -      381        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      283  377.188      283  377.188 cells
+       12   12.768       12   12.768   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+       52   55.328       52   55.328   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+        2    8.512        2    8.512   FA_X1
+       30     79.8       30     79.8   HA_X1
+       42   33.516       42   33.516   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        1     1.33        1     1.33   NAND4_X1
+       26   20.748       26   20.748   NOR2_X1
+       33   35.112       33   35.112   OAI21_X1
+        6    9.576        6    9.576   OAI221_X1
+        9    9.576        9    9.576   OR2_X1
+       16   25.536       16   25.536   XNOR2_X1
+       47   75.012       47   75.012   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO_X_KOGGE_STONE': 377.188000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_16_0_1_0_16_unused_CO_X_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       62        -       62        - wires
+       92        -       92        - wire bits
+        5        -        5        - public wires
+       35        -       35        - public wire bits
+        5        -        5        - ports
+       35        -       35        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       52  107.198       52  107.198 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+        6    6.384        6    6.384   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+        9   38.304        9   38.304   FA_X1
+       12    31.92       12    31.92   HA_X1
+        2    1.064        2    1.064   INV_X1
+        5     3.99        5     3.99   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        3    3.192        3    3.192   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+        2    3.192        2    3.192   XNOR2_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_16_0_1_0_16_unused_CO_X_BRENT_KUNG': 107.198000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_16_0_1_0_16_unused_CO_X_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       72        -       72        - wires
+      102        -      102        - wire bits
+        5        -        5        - public wires
+       35        -       35        - public wire bits
+        5        -        5        - ports
+       35        -       35        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       65  113.582       65  113.582 cells
+        8    8.512        8    8.512   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        9    9.576        9    9.576   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+        5    21.28        5    21.28   FA_X1
+       13    34.58       13    34.58   HA_X1
+        2    1.064        2    1.064   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        2    2.128        2    2.128   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        2    2.128        2    2.128   OR2_X1
+        7   11.172        7   11.172   XNOR2_X1
+        6    9.576        6    9.576   XOR2_X1
+
+   Chip area for module '\ALU_16_0_1_0_16_unused_CO_X_SKLANSKY': 113.582000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_16_0_1_0_16_unused_CO_X_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      101        -      101        - wires
+      131        -      131        - wire bits
+        5        -        5        - public wires
+       35        -       35        - public wire bits
+        5        -        5        - ports
+       35        -       35        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       96  138.852       96  138.852 cells
+        5     5.32        5     5.32   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+       16   17.024       16   17.024   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+        2    8.512        2    8.512   FA_X1
+       14    37.24       14    37.24   HA_X1
+        1    0.532        1    0.532   INV_X1
+       11    8.778       11    8.778   NAND2_X1
+        5     3.99        5     3.99   NOR2_X1
+       11   11.704       11   11.704   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        6    6.384        6    6.384   OR2_X1
+        1     1.33        1     1.33   OR3_X1
+        7   11.172        7   11.172   XNOR2_X1
+        9   14.364        9   14.364   XOR2_X1
+
+   Chip area for module '\ALU_16_0_1_0_16_unused_CO_X_KOGGE_STONE': 138.852000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_0_33_0_33_unused_CO_X_Y[0]_BRENT_KUNG ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      188        -      188        - wires
+      283        -      283        - wire bits
+        5        -        5        - public wires
+      100        -      100        - public wire bits
+        5        -        5        - ports
+      100        -      100        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      168  300.846      168  300.846 cells
+        3    3.192        3    3.192   AND2_X1
+       13   13.832       13   13.832   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       16   68.096       16   68.096   FA_X1
+       31    82.46       31    82.46   HA_X1
+       10     5.32       10     5.32   INV_X1
+       14   11.172       14   11.172   NAND2_X1
+        5     5.32        5     5.32   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        9    9.576        9    9.576   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        4    4.256        4    4.256   OR2_X1
+        3    4.788        3    4.788   XNOR2_X1
+       47   75.012       47   75.012   XOR2_X1
+
+   Chip area for module '\ALU_33_0_33_0_33_unused_CO_X_Y[0]_BRENT_KUNG': 300.846000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_0_33_0_33_unused_CO_X_Y[0]_SKLANSKY ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      215        -      215        - wires
+      310        -      310        - wire bits
+        5        -        5        - public wires
+      100        -      100        - public wire bits
+        5        -        5        - ports
+      100        -      100        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      206  314.944      206  314.944 cells
+       10    10.64       10    10.64   AND2_X1
+        4     5.32        4     5.32   AND3_X1
+       20    21.28       20    21.28   AOI21_X1
+       11   17.556       11   17.556   AOI221_X1
+        5    21.28        5    21.28   FA_X1
+       31    82.46       31    82.46   HA_X1
+       12    6.384       12    6.384   INV_X1
+       16   12.768       16   12.768   NAND2_X1
+        6    6.384        6    6.384   NAND3_X1
+        5     3.99        5     3.99   NOR2_X1
+        2    2.128        2    2.128   NOR3_X1
+        1     1.33        1     1.33   NOR4_X1
+       13   13.832       13   13.832   OAI21_X1
+        5     7.98        5     7.98   OAI221_X1
+        4    4.256        4    4.256   OR2_X1
+       17   27.132       17   27.132   XNOR2_X1
+       44   70.224       44   70.224   XOR2_X1
+
+   Chip area for module '\ALU_33_0_33_0_33_unused_CO_X_Y[0]_SKLANSKY': 314.944000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_0_33_0_33_unused_CO_X_Y[0]_KOGGE_STONE ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      314        -      314        - wires
+      409        -      409        - wire bits
+        5        -        5        - public wires
+      100        -      100        - public wire bits
+        5        -        5        - ports
+      100        -      100        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      308   404.32      308   404.32 cells
+        9    9.576        9    9.576   AND2_X1
+        3     3.99        3     3.99   AND3_X1
+       50     53.2       50     53.2   AOI21_X1
+        6    9.576        6    9.576   AOI221_X1
+        1     1.33        1     1.33   AOI22_X1
+        1    4.256        1    4.256   FA_X1
+       32    85.12       32    85.12   HA_X1
+       10     5.32       10     5.32   INV_X1
+       37   29.526       37   29.526   NAND2_X1
+       11   11.704       11   11.704   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+       22   17.556       22   17.556   NOR2_X1
+        3    3.192        3    3.192   NOR3_X1
+        2     2.66        2     2.66   NOR4_X1
+       36   38.304       36   38.304   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+       10    10.64       10    10.64   OR2_X1
+        2     2.66        2     2.66   OR3_X1
+        1    1.596        1    1.596   OR4_X1
+       15    23.94       15    23.94   XNOR2_X1
+       50     79.8       50     79.8   XOR2_X1
+
+   Chip area for module '\ALU_33_0_33_0_33_unused_CO_X_Y[0]_KOGGE_STONE': 404.320000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_0_33_0_33_unused_CO_X_Y[0]_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      224        -      224        - wires
+      319        -      319        - wire bits
+        5        -        5        - public wires
+      100        -      100        - public wire bits
+        5        -        5        - ports
+      100        -      100        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      204   333.83      204   333.83 cells
+        5     5.32        5     5.32   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        1    1.596        1    1.596   AND4_X1
+       27   28.728       27   28.728   AOI21_X1
+        3    4.788        3    4.788   AOI221_X1
+       16   68.096       16   68.096   FA_X1
+       31    82.46       31    82.46   HA_X1
+        9    4.788        9    4.788   INV_X1
+       21   16.758       21   16.758   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+       12    9.576       12    9.576   NOR2_X1
+       20    21.28       20    21.28   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        4    4.256        4    4.256   OR2_X1
+        1     1.33        1     1.33   OR3_X1
+        2    3.192        2    3.192   XNOR2_X1
+       48   76.608       48   76.608   XOR2_X1
+
+   Chip area for module '\ALU_33_0_33_0_33_unused_CO_X_Y[0]_HAN_CARLSON': 333.830000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_16_0_1_0_16_unused_CO_X_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       75        -       75        - wires
+      105        -      105        - wire bits
+        5        -        5        - public wires
+       35        -       35        - public wire bits
+        5        -        5        - ports
+       35        -       35        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       65  120.764       65  120.764 cells
+        2    2.128        2    2.128   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        8    8.512        8    8.512   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+        9   38.304        9   38.304   FA_X1
+       12    31.92       12    31.92   HA_X1
+        3    1.596        3    1.596   INV_X1
+        5     3.99        5     3.99   NAND2_X1
+        1    0.798        1    0.798   NOR2_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+        5     5.32        5     5.32   OR2_X1
+        1     1.33        1     1.33   OR3_X1
+        2    3.192        2    3.192   XNOR2_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_16_0_1_0_16_unused_CO_X_HAN_CARLSON': 120.764000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO_X_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      201        -      201        - wires
+      294        -      294        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      183  311.752      183  311.752 cells
+        2    2.128        2    2.128   AND2_X1
+       23   24.472       23   24.472   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+        1     1.33        1     1.33   AOI22_X1
+       17   72.352       17   72.352   FA_X1
+       28    74.48       28    74.48   HA_X1
+        5     2.66        5     2.66   INV_X1
+       21   16.758       21   16.758   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+       10     7.98       10     7.98   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+       15    15.96       15    15.96   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        5     5.32        5     5.32   OR2_X1
+        2    3.192        2    3.192   XNOR2_X1
+       46   73.416       46   73.416   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO_X_HAN_CARLSON': 311.752000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_1_32_1_32_unused_CO_X_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      201        -      201        - wires
+      294        -      294        - wire bits
+        5        -        5        - public wires
+       98        -       98        - public wire bits
+        5        -        5        - ports
+       98        -       98        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      183  311.752      183  311.752 cells
+        2    2.128        2    2.128   AND2_X1
+       23   24.472       23   24.472   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+        1     1.33        1     1.33   AOI22_X1
+       17   72.352       17   72.352   FA_X1
+       28    74.48       28    74.48   HA_X1
+        5     2.66        5     2.66   INV_X1
+       21   16.758       21   16.758   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+       10     7.98       10     7.98   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+       15    15.96       15    15.96   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        5     5.32        5     5.32   OR2_X1
+        2    3.192        2    3.192   XNOR2_X1
+       46   73.416       46   73.416   XOR2_X1
+
+   Chip area for module '\ALU_32_1_32_1_32_unused_CO_X_HAN_CARLSON': 311.752000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      275        -      275        - wires
+      465        -      465        - wire bits
+        7        -        7        - public wires
+      197        -      197        - public wire bits
+        7        -        7        - ports
+      197        -      197        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      271  427.728      271  427.728 cells
+        5     5.32        5     5.32   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+       41   43.624       41   43.624   AOI21_X1
+        6    9.576        6    9.576   AOI221_X1
+       64   170.24       64   170.24   HA_X1
+        8    4.256        8    4.256   INV_X1
+       22   17.556       22   17.556   NAND2_X1
+       10     13.3       10     13.3   NAND4_X1
+        6    4.788        6    4.788   NOR2_X1
+        3    3.192        3    3.192   NOR3_X1
+        2     2.66        2     2.66   NOR4_X1
+       19   20.216       19   20.216   OAI21_X1
+        8   12.768        8   12.768   OAI221_X1
+        3    3.192        3    3.192   OR2_X1
+        3     3.99        3     3.99   OR3_X1
+        2    3.192        2    3.192   OR4_X1
+        1    1.596        1    1.596   XNOR2_X1
+       64  102.144       64  102.144   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_HAN_CARLSON': 427.728000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      149        -      149        - wires
+      214        -      214        - wire bits
+        6        -        6        - public wires
+       71        -       71        - public wire bits
+        6        -        6        - ports
+       71        -       71        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      113  193.382      113  193.382 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+        1    4.256        1    4.256   FA_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+       33   52.668       33   52.668   XOR2_X1
+
+   Chip area for module '\ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_HAN_CARLSON': 193.382000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      150        -      150        - wires
+      212        -      212        - wire bits
+        5        -        5        - public wires
+       67        -       67        - public wire bits
+        5        -        5        - ports
+       67        -       67        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      114  190.988      114  190.988 cells
+        2    2.128        2    2.128   AND2_X1
+        6    9.576        6    9.576   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        6    6.384        6    6.384   OAI21_X1
+        2    3.192        2    3.192   OAI221_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON': 190.988000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       62        -       62        - wires
+       81        -       81        - wire bits
+        5        -        5        - public wires
+       24        -       24        - public wire bits
+        5        -        5        - ports
+       24        -       24        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       44   72.352       44   72.352 cells
+        1    1.064        1    1.064   AND2_X1
+        1    1.596        1    1.596   AND4_X1
+        7    7.448        7    7.448   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       14    37.24       14    37.24   HA_X1
+        2    1.064        2    1.064   INV_X1
+        2    1.596        2    1.596   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        1     1.33        1     1.33   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        1    1.064        1    1.064   OR2_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_HAN_CARLSON': 72.352000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      122        -      122        - wires
+      159        -      159        - wire bits
+        5        -        5        - public wires
+       42        -       42        - public wire bits
+        5        -        5        - ports
+       42        -       42        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       86  147.896       86  147.896 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        3    3.192        3    3.192   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        1    1.596        1    1.596   OR4_X1
+        7   11.172        7   11.172   XOR2_X1
+
+   Chip area for module '\ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON': 147.896000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_32_0_32_unused_CO[30:0]_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      117        -      117        - wires
+      210        -      210        - wire bits
+        6        -        6        - public wires
+       99        -       99        - public wire bits
+        6        -        6        - ports
+       99        -       99        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      112   188.86      112   188.86 cells
+        4    4.256        4    4.256   AND2_X1
+        2    3.192        2    3.192   AND4_X1
+       14   14.896       14   14.896   AOI21_X1
+        4    6.384        4    6.384   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        5     2.66        5     2.66   INV_X1
+        5     3.99        5     3.99   NAND2_X1
+        1    1.064        1    1.064   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        4    4.256        4    4.256   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_32_0_32_unused_CO[30:0]_Y_HAN_CARLSON': 188.860000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      155        -      155        - wires
+      219        -      219        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      119   195.51      119   195.51 cells
+        2    2.128        2    2.128   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        1    1.596        1    1.596   AND4_X1
+       17   18.088       17   18.088   AOI21_X1
+        3    4.788        3    4.788   AOI221_X1
+        1     1.33        1     1.33   AOI22_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        6    4.788        6    4.788   NAND2_X1
+        5     5.32        5     5.32   NAND3_X1
+        3     3.99        3     3.99   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1     1.33        1     1.33   NOR4_X1
+        3    3.192        3    3.192   OAI21_X1
+        3    4.788        3    4.788   OAI221_X1
+        1    1.064        1    1.064   OR2_X1
+        1    1.596        1    1.596   OR4_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON': 195.510000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      160        -      160        - wires
+      224        -      224        - wire bits
+        5        -        5        - public wires
+       69        -       69        - public wire bits
+        5        -        5        - ports
+       69        -       69        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      122  201.628      122  201.628 cells
+        2    2.128        2    2.128   AND2_X1
+        2     2.66        2     2.66   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+       34    90.44       34    90.44   HA_X1
+        3    1.596        3    1.596   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        4    4.256        4    4.256   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+        1    0.798        1    0.798   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        8    8.512        8    8.512   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        1     1.33        1     1.33   OR3_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON': 201.628000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_34_0_32_0_34_unused_CO[32:0]_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      129        -      129        - wires
+      226        -      226        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      124  202.692      124  202.692 cells
+        4    4.256        4    4.256   AND2_X1
+        3    4.788        3    4.788   AND4_X1
+       18   19.152       18   19.152   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+        1     1.33        1     1.33   AOI22_X1
+       34    90.44       34    90.44   HA_X1
+        5     2.66        5     2.66   INV_X1
+        8    6.384        8    6.384   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        4     5.32        4     5.32   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        2     2.66        2     2.66   NOR4_X1
+        6    6.384        6    6.384   OAI21_X1
+        1    1.596        1    1.596   OAI221_X1
+        1     1.33        1     1.33   OR3_X1
+       32   51.072       32   51.072   XOR2_X1
+
+   Chip area for module '\ALU_34_0_32_0_34_unused_CO[32:0]_Y_HAN_CARLSON': 202.692000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_34_0_34_unused_CO[32:0]_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      125        -      125        - wires
+      222        -      222        - wire bits
+        6        -        6        - public wires
+      103        -      103        - public wire bits
+        6        -        6        - ports
+      103        -      103        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      122  197.904      122  197.904 cells
+        2    2.128        2    2.128   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        3    4.788        3    4.788   AND4_X1
+       19   20.216       19   20.216   AOI21_X1
+        1    1.596        1    1.596   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        2    1.064        2    1.064   INV_X1
+       12    9.576       12    9.576   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        1     1.33        1     1.33   NAND4_X1
+        2    2.128        2    2.128   NOR3_X1
+        9    9.576        9    9.576   OAI21_X1
+        1     1.33        1     1.33   OAI22_X1
+        1     1.33        1     1.33   OR3_X1
+       34   54.264       34   54.264   XOR2_X1
+
+   Chip area for module '\ALU_32_0_34_0_34_unused_CO[32:0]_Y_HAN_CARLSON': 197.904000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      119        -      119        - wires
+      153        -      153        - wire bits
+        5        -        5        - public wires
+       39        -       39        - public wire bits
+        5        -        5        - ports
+       39        -       39        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+       83  142.842       83  142.842 cells
+        4    4.256        4    4.256   AND2_X1
+       12   12.768       12   12.768   AOI21_X1
+        5     7.98        5     7.98   AOI221_X1
+       32    85.12       32    85.12   HA_X1
+        6    3.192        6    3.192   INV_X1
+        4    3.192        4    3.192   NAND2_X1
+        2    2.128        2    2.128   NAND3_X1
+        5     6.65        5     6.65   NAND4_X1
+        2    1.596        2    1.596   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+        2    2.128        2    2.128   OAI21_X1
+        4    6.384        4    6.384   OAI221_X1
+        4    6.384        4    6.384   XOR2_X1
+
+   Chip area for module '\ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON': 142.842000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== ALU_64_0_64_0_64_unused_CO_X_HAN_CARLSON ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+      500        -      500        - wires
+      689        -      689        - wire bits
+        5        -        5        - public wires
+      194        -      194        - public wire bits
+        5        -        5        - ports
+      194        -      194        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      466  727.244      466  727.244 cells
+       15    15.96       15    15.96   AND2_X1
+        1     1.33        1     1.33   AND3_X1
+        5     7.98        5     7.98   AND4_X1
+       69   73.416       69   73.416   AOI21_X1
+        2    3.192        2    3.192   AOI221_X1
+       33  140.448       33  140.448   FA_X1
+       60    159.6       60    159.6   HA_X1
+       15     7.98       15     7.98   INV_X1
+       54   43.092       54   43.092   NAND2_X1
+        6    6.384        6    6.384   NAND3_X1
+        2     2.66        2     2.66   NAND4_X1
+       32   25.536       32   25.536   NOR2_X1
+        1    1.064        1    1.064   NOR3_X1
+       51   54.264       51   54.264   OAI21_X1
+        9   14.364        9   14.364   OAI221_X1
+       12   12.768       12   12.768   OR2_X1
+        3     3.99        3     3.99   OR3_X1
+        2    3.192        2    3.192   XNOR2_X1
+       94  150.024       94  150.024   XOR2_X1
+
+   Chip area for module '\ALU_64_0_64_0_64_unused_CO_X_HAN_CARLSON': 727.244000
+     of which used for sequential elements: 0.000000 (0.00%)
+
+=== cva6 ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+   100364        -    91135        - wires
+   105998        -    92085        - wire bits
+     9888        -     9541        - public wires
+    15522        -    10491        - public wire bits
+      359        -       12        - ports
+     5993        -      962        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+    86905 2.39E+05    78752 2.25E+05 cells
+     1231 1.31E+03     1052 1.12E+03   AND2_X1
+      896  1191.68      858  1141.14   AND3_X1
+      262  418.152      185   295.26   AND4_X1
+       11   26.334       11   26.334   AOI211_X2
+     5640  6000.96     4520  4809.28   AOI21_X1
+     1127  1.8E+03      987 1.58E+03   AOI221_X1
+      245   521.36      245   521.36   AOI222_X1
+     3737  4970.21     3720   4947.6   AOI22_X1
+      411  327.978      411  327.978   BUF_X1
+     6635  35298.2     6635  35298.2   DFFR_X1
+       43   228.76       43   228.76   DFFS_X1
+     1820  8230.04     1820  8230.04   DFF_X1
+     1596 6.79E+03     1182 5.03E+03   FA_X1
+     2899  7711.34     1103  2933.98   HA_X1
+     3343 1.78E+03     3064 1.63E+03   INV_X1
+        1    0.532        1    0.532   LOGIC0_X1
+        1    0.532        1    0.532   LOGIC1_X1
+    21799 4.06E+04    21799 4.06E+04   MUX2_X1
+     6837 5.46E+03     6104 4.87E+03   NAND2_X1
+     2318 2.47E+03     2216 2.36E+03   NAND3_X1
+      821  1091.93      719   956.27   NAND4_X1
+     7358 5.87E+03     7121 5.68E+03   NOR2_X1
+     1176 1.25E+03     1122 1.19E+03   NOR3_X1
+      668   888.44      660    877.8   NOR4_X1
+       12   28.728       12   28.728   OAI211_X2
+     7869 8.37E+03     7282 7.75E+03   OAI21_X1
+      521  831.516      364  580.944   OAI221_X1
+       69  146.832       69  146.832   OAI222_X1
+     1408  1872.64     1394  1854.02   OAI22_X1
+       75   139.65       75   139.65   OAI33_X1
+      862  917.168      699  743.736   OR2_X1
+      220    292.6      180    239.4   OR3_X1
+      123  196.308      116  185.136   OR4_X1
+     1795  2864.82     1734 2.77E+03   XNOR2_X1
+     3068  4.9E+03     1240  1979.04   XOR2_X1
+        2  10959.2        2  10959.2   fakeram45_128x64
+        2 2.48E+03        2 2.48E+03   fakeram45_64x25
+        2  6.8E+04        2  6.8E+04   fakeram45_64x256
+        2 2.48E+03        2 2.48E+03   fakeram45_64x28
+       65 1.37E+04       65        - submodules
+        1   72.352        1        -   ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_HAN_CARLSON
+       14 1.69E+03       14        -   ALU_16_0_1_0_16_unused_CO_X_HAN_CARLSON
+        1  190.988        1        -   ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+        2   377.72        2        -   ALU_32_0_32_0_32_unused_CO[30:0]_Y_HAN_CARLSON
+       10  3117.52       10        -   ALU_32_0_32_0_32_unused_CO_X_HAN_CARLSON
+        2   391.02        2        -   ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON
+       14 2.77E+03       14        -   ALU_32_0_34_0_34_unused_CO[32:0]_Y_HAN_CARLSON
+        5   714.21        5        -   ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+        3  443.688        3        -   ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+        3  935.256        3        -   ALU_32_1_32_1_32_unused_CO_X_HAN_CARLSON
+        2   667.66        2        -   ALU_33_0_33_0_33_unused_CO_X_Y[0]_HAN_CARLSON
+        2  386.764        2        -   ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_HAN_CARLSON
+        2  403.256        2        -   ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON
+        2  405.384        2        -   ALU_34_0_32_0_34_unused_CO[32:0]_Y_HAN_CARLSON
+        1  427.728        1        -   ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_HAN_CARLSON
+        1  727.244        1        -   ALU_64_0_64_0_64_unused_CO_X_HAN_CARLSON
+
+   Chip area for module '\cva6': 238682.560000
+     of which used for sequential elements: 43757.000000 (18.33%)
+
+=== design hierarchy ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+    86905 2.39E+05    78752 2.25E+05 cva6
+       44   72.352       44   72.352 ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_HAN_CARLSON
+       65  120.764       65  120.764 ALU_16_0_1_0_16_unused_CO_X_HAN_CARLSON
+      114  190.988      114  190.988 ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+      112   188.86      112   188.86 ALU_32_0_32_0_32_unused_CO[30:0]_Y_HAN_CARLSON
+      183  311.752      183  311.752 ALU_32_0_32_0_32_unused_CO_X_HAN_CARLSON
+      119   195.51      119   195.51 ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON
+      122  197.904      122  197.904 ALU_32_0_34_0_34_unused_CO[32:0]_Y_HAN_CARLSON
+       83  142.842       83  142.842 ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+       86  147.896       86  147.896 ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+      183  311.752      183  311.752 ALU_32_1_32_1_32_unused_CO_X_HAN_CARLSON
+      204   333.83      204   333.83 ALU_33_0_33_0_33_unused_CO_X_Y[0]_HAN_CARLSON
+      113  193.382      113  193.382 ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_HAN_CARLSON
+      122  201.628      122  201.628 ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON
+      124  202.692      124  202.692 ALU_34_0_32_0_34_unused_CO[32:0]_Y_HAN_CARLSON
+      271  427.728      271  427.728 ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_HAN_CARLSON
+      466  727.244      466  727.244 ALU_64_0_64_0_64_unused_CO_X_HAN_CARLSON
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+   100364        -    91135        - wires
+   105998        -    92085        - wire bits
+     9888        -     9541        - public wires
+    15522        -    10491        - public wire bits
+      359        -       12        - ports
+     5993        -      962        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+    86905 2.39E+05    78752 2.25E+05 cells
+     1231 1.31E+03     1052 1.12E+03   AND2_X1
+      896  1191.68      858  1141.14   AND3_X1
+      262  418.152      185   295.26   AND4_X1
+       11   26.334       11   26.334   AOI211_X2
+     5640  6000.96     4520  4809.28   AOI21_X1
+     1127  1.8E+03      987 1.58E+03   AOI221_X1
+      245   521.36      245   521.36   AOI222_X1
+     3737  4970.21     3720   4947.6   AOI22_X1
+      411  327.978      411  327.978   BUF_X1
+     6635  35298.2     6635  35298.2   DFFR_X1
+       43   228.76       43   228.76   DFFS_X1
+     1820  8230.04     1820  8230.04   DFF_X1
+     1596 6.79E+03     1182 5.03E+03   FA_X1
+     2899  7711.34     1103  2933.98   HA_X1
+     3343 1.78E+03     3064 1.63E+03   INV_X1
+        1    0.532        1    0.532   LOGIC0_X1
+        1    0.532        1    0.532   LOGIC1_X1
+    21799 4.06E+04    21799 4.06E+04   MUX2_X1
+     6837 5.46E+03     6104 4.87E+03   NAND2_X1
+     2318 2.47E+03     2216 2.36E+03   NAND3_X1
+      821  1091.93      719   956.27   NAND4_X1
+     7358 5.87E+03     7121 5.68E+03   NOR2_X1
+     1176 1.25E+03     1122 1.19E+03   NOR3_X1
+      668   888.44      660    877.8   NOR4_X1
+       12   28.728       12   28.728   OAI211_X2
+     7869 8.37E+03     7282 7.75E+03   OAI21_X1
+      521  831.516      364  580.944   OAI221_X1
+       69  146.832       69  146.832   OAI222_X1
+     1408  1872.64     1394  1854.02   OAI22_X1
+       75   139.65       75   139.65   OAI33_X1
+      862  917.168      699  743.736   OR2_X1
+      220    292.6      180    239.4   OR3_X1
+      123  196.308      116  185.136   OR4_X1
+     1795  2864.82     1734 2.77E+03   XNOR2_X1
+     3068  4.9E+03     1240  1979.04   XOR2_X1
+        2  10959.2        2  10959.2   fakeram45_128x64
+        2 2.48E+03        2 2.48E+03   fakeram45_64x25
+        2  6.8E+04        2  6.8E+04   fakeram45_64x256
+        2 2.48E+03        2 2.48E+03   fakeram45_64x28
+       65 1.37E+04       65        - submodules
+        1   72.352        1        -   ALU_14_0_7_0_14_unused_CO[12:0]_X_Y_HAN_CARLSON
+       14 1.69E+03       14        -   ALU_16_0_1_0_16_unused_CO_X_HAN_CARLSON
+        1  190.988        1        -   ALU_32_0_32_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+        2   377.72        2        -   ALU_32_0_32_0_32_unused_CO[30:0]_Y_HAN_CARLSON
+       10  3117.52       10        -   ALU_32_0_32_0_32_unused_CO_X_HAN_CARLSON
+        2   391.02        2        -   ALU_32_0_34_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON
+       14 2.77E+03       14        -   ALU_32_0_34_0_34_unused_CO[32:0]_Y_HAN_CARLSON
+        5   714.21        5        -   ALU_32_0_4_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+        3  443.688        3        -   ALU_32_0_7_0_32_unused_CO[30:0]_X_Y_HAN_CARLSON
+        3  935.256        3        -   ALU_32_1_32_1_32_unused_CO_X_HAN_CARLSON
+        2   667.66        2        -   ALU_33_0_33_0_33_unused_CO_X_Y[0]_HAN_CARLSON
+        2  386.764        2        -   ALU_33_1_33_1_33_unused_CO[30:0]_X_Y[31:0]_HAN_CARLSON
+        2  403.256        2        -   ALU_34_0_32_0_34_unused_CO[32:0]_X_Y_HAN_CARLSON
+        2  405.384        2        -   ALU_34_0_32_0_34_unused_CO[32:0]_Y_HAN_CARLSON
+        1  427.728        1        -   ALU_64_0_64_0_64_unused_CO[61:0]_Y[62:0]_HAN_CARLSON
+        1  727.244        1        -   ALU_64_0_64_0_64_unused_CO_X_HAN_CARLSON
+
+   Chip area for top module '\cva6': 238682.560000
+     of which used for sequential elements: 43757.000000 (18.33%)
+

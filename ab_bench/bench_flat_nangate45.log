@@ -1,0 +1,21 @@
+== run 1 stock 09:47:41 load 3.33 2.44 1.44
+09:48:01 +     18s tools saved: {'yosys': '/usr/local/bin/yosys'}
+09:48:01 +     18s run started: make DESIGN_CONFIG=designs/nangate45/cva6/config_flat_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/nangate45_cva6_flat_stock_continue-synth_20261106_094801.log
+10:41:32 +   3229s run finished rc=0 after 3211s
+10:41:45 +   3242s saved; quitting
+== run 2 parallel 10:42:17 load 0.78 1.41 1.51
+10:42:34 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+10:42:35 +     16s run started: make DESIGN_CONFIG=designs/nangate45/cva6/config_flat_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/nangate45_cva6_flat_parallel_continue-synth_20261106_104235.log
+11:28:43 +   2785s run finished rc=0 after 2768s
+11:28:57 +   2799s saved; quitting
+== run 3 parallel 11:29:28 load 1.41 1.94 1.79
+11:29:45 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+11:29:45 +     16s run started: make DESIGN_CONFIG=designs/nangate45/cva6/config_flat_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/nangate45_cva6_flat_parallel_continue-synth_20261106_112945.log
+12:18:06 +   2917s run finished rc=0 after 2901s
+12:18:20 +   2931s saved; quitting
+== run 4 stock 12:18:52 load 1.93 2.11 1.84
+12:19:08 +     16s tools saved: {'yosys': '/usr/local/bin/yosys'}
+12:19:09 +     16s run started: make DESIGN_CONFIG=designs/nangate45/cva6/config_flat_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/nangate45_cva6_flat_stock_continue-synth_20261106_121909.log
+13:10:46 +   3114s run finished rc=0 after 3097s
+13:11:01 +   3129s saved; quitting
+== all done 13:11:02

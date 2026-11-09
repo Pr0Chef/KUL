@@ -2,7 +2,9 @@
 
 Everything needed to run the CVA6 core through the ORFS flow on the asap7 platform, from a fresh clone.
 The flow is vendored in `orfs/`, a trimmed copy of [OpenROAD-flow-scripts](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts):
-`Makefile`, `scripts/`, `util/`, `platforms/asap7` and `platforms/common`, plus the CVA6 design and sources.
+`Makefile`, `scripts/`, `util/`, `platforms/asap7`, `platforms/nangate45` and `platforms/common`, plus the CVA6
+designs and sources. The full flow targets asap7; on nangate45, CVA6 is set up for flat synthesis
+(see [docs/nangate45](docs/nangate45/cva6_nangate45_flat.md)).
 Yosys comes as a git submodule in `yosys/`, on a branch whose `abc_new` pass runs ABC on several modules at once
 (see [Parallel abc_new](#parallel-abc_new)). The OpenROAD binary is not included; Step 1 covers installing it.
 
@@ -96,12 +98,12 @@ yosys -p "help read_slang" | head -5   # must print the read_slang help, not "No
 ### Step 2: clone this repo and build Yosys
 
 ```bash
-git clone --recurse-submodules git@github.com:Pr0Chef/RapidFlow.git
-cd RapidFlow
+git clone --recurse-submodules git@github.com:Pr0Chef/KUL.git
+cd KUL
 ```
 
 The repo itself is about 430 MB; the Yosys submodule and its own submodules (ABC, slang and a few libraries) come
-on top. Use `https://github.com/Pr0Chef/RapidFlow.git` if you do not have SSH access to GitHub. In a clone made
+on top. Use `https://github.com/Pr0Chef/KUL.git` if you do not have SSH access to GitHub. In a clone made
 without `--recurse-submodules`, fetch them with:
 
 ```bash
@@ -299,6 +301,10 @@ runs, so do not bind it to a public address with `--host`.
 - `run_cva6_asap7.sh`: options `-H` hierarchical, `-s STAGE` last stage (`synth`, `floorplan`, `place`, `cts`,
   `route`, `final`), `-c` clean first, `-j N` threads. Set `ORFS_FLOW` to use a different ORFS checkout, and
   `YOSYS_EXE` / `OPENROAD_EXE` to pick the tool binaries.
+- `orfs/flow/designs/asap7/cva6/config_flat_stock.mk`, `config_flat_parallel.mk`: flat synthesis
+  (`SYNTH_HIERARCHICAL = 0`) for the stock against parallel `abc_new` comparison; otherwise the same as `config_hier.mk`.
+- `orfs/flow/designs/nangate45/cva6/`: ORFS's nangate45 CVA6 design (1.0 ns clock, `fakeram45_*` macros) plus
+  `config_flat_stock.mk` and `config_flat_parallel.mk` for the same comparison.
 - `yosys/`: the Yosys submodule with parallel `abc_new` (next section).
 
 ## Parallel abc_new
@@ -367,6 +373,12 @@ interrupted by memory pressure and has not finished, so no `6_final.gds` exists 
   `abc_new` synthesis run of CVA6; `docs/images/gui/` holds the screenshots and chart used in the READMEs.
 - `orfs/flow/designs/asap7/cva6/config_hier_stock.mk`, `config_hier_parallel.mk`: the configs of that A/B run
   (same as `config_hier.mk`, separate `FLOW_VARIANT`).
+- `docs/asap7/cva6_asap7_flat.md`, `docs/nangate45/cva6_nangate45_flat.md`: stock against parallel `abc_new`
+  on flat CVA6 for each platform, with Flow Runner screenshots (nangate45 also as a Word file). Netlists are
+  identical on both; `abc_new` was about 7 % faster on asap7 and 15 % faster on nangate45.
+- `ab_bench/`: the A/B bench behind these reports. `bench.sh` drives the Flow Runner through stock and parallel
+  runs, `compare.py` builds the tables and flags runs hit by VM stalls. `bench/` (asap7 hier), `bench_flat/`
+  (asap7 flat) and `bench_flat_nangate45/` hold each run's logs, `synth_stat.txt`, netlist hashes and screenshots.
 - `report_assets/`: placement layout image and the script that renders it.
 - `gui/packaging/`: builds the ORFS Flow Runner `.deb` (`build_deb.sh`) with its menu entry and icon.
 - `orfs_overlay/designs/sky130hd/cva6/`: an unfinished sky130hd attempt (slang frontend, flop-based RAM
