@@ -1,0 +1,30 @@
+OpenROAD 26Q4-271-g0907a8656e 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 8 thread(s).
+read_liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x256.lib
+read_liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_128x64.lib
+read_liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x28.lib
+read_liberty /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/fakeram45_64x25.lib
+[INFO ODB-0227] LEF file: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef, created 135 library cells
+[INFO ODB-0227] LEF file: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/fakeram45_64x256.lef, created 1 library cells
+[INFO ODB-0227] LEF file: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/fakeram45_128x64.lef, created 1 library cells
+[INFO ODB-0227] LEF file: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/fakeram45_64x28.lef, created 1 library cells
+[INFO ODB-0227] LEF file: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/fakeram45_64x25.lef, created 1 library cells
+link_design -hier cva6
+[WARNING ORD-0011] Hierarchical flow (-hier) is currently in development and may cause multiple issues. Do not use in production environments.
+read_sdc ./results/nangate45/cva6/flat_parallel/1_2_yosys.sdc
+source /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+eliminate_dead_logic
+Removed 0 unused instances and 0 unused nets.
+Design area 238683 um^2 100% utilization.
+write_db ./results/nangate45/cva6/flat_parallel/1_synth.odb
+write_sdc -no_timestamp ./results/nangate45/cva6/flat_parallel/1_synth.sdc
+Elapsed time: 0:04.40[h:]min:sec. CPU time: user 4.10 sys 0.30 (99%). Peak memory: 416480KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_synth                .odb          4        4     1.00      406 a1e7fd8522
+1_synth                .sdc                                       930ff44bb6

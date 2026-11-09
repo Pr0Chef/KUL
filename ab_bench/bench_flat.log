@@ -1,0 +1,32 @@
+== run 1 stock 15:37:03 load 3.58 3.25 1.68
+15:37:22 +     17s tools saved: {'yosys': '/usr/local/bin/yosys'}
+15:37:22 +     17s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_stock_continue-synth_20261104_153722.log
+16:26:18 +   2953s run finished rc=0 after 2936s
+16:26:31 +   2966s saved; quitting
+== run 2 parallel 16:27:03 load 3.46 3.73 3.15
+16:27:19 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+16:27:20 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_parallel_continue-synth_20261104_162720.log
+17:13:49 +   2805s run finished rc=0 after 2789s
+17:14:02 +   2819s saved; quitting
+== run 3 parallel 17:14:32 load 3.68 2.80 2.42
+17:14:49 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+17:14:50 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_parallel_continue-synth_20261104_171450.log
+10:06:42 +  60729s run finished rc=0 after 60712s
+10:06:55 +  60742s saved; quitting
+== run 4 stock 10:07:26 load 1.79 2.57 2.70
+10:07:42 +     16s tools saved: {'yosys': '/usr/local/bin/yosys'}
+10:07:42 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_stock_continue-synth_20261105_100742.log
+11:14:47 +   4041s run finished rc=0 after 4025s
+11:15:01 +   4055s saved; quitting
+== all done 11:15:02
+== run 5 parallel 11:16:05 load 3.81 2.60 2.28
+11:16:24 +     17s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+11:16:24 +     18s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_parallel_continue-synth_20261105_111624.log
+12:07:42 +   3096s run finished rc=0 after 3078s
+12:07:55 +   3109s saved; quitting
+== run 6 stock 12:08:27 load 2.37 2.36 1.92
+12:08:44 +     16s tools saved: {'yosys': '/usr/local/bin/yosys'}
+12:08:44 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_stock_continue-synth_20261105_120844.log
+13:11:34 +   3787s run finished rc=0 after 3770s
+13:11:47 +   3800s saved; quitting
+== all done 13:11:48

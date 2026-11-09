@@ -1,0 +1,6788 @@
+{
+ "name": "run2_parallel",
+ "config": "config_flat_parallel.mk",
+ "yosys": "/home/rafay/Desktop/projects/exodus/yosys/build/yosys",
+ "rc": 0,
+ "wall_s": 2789.1,
+ "log": "/home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_parallel_continue-synth_20261104_162720.log",
+ "samples": [
+  {
+   "t": 10.1,
+   "cores": 1.5,
+   "rss_mb": 243,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 15.1,
+   "cores": 1.53,
+   "rss_mb": 299,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 20.3,
+   "cores": 1.46,
+   "rss_mb": 302,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 25.1,
+   "cores": 1.93,
+   "rss_mb": 302,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 30.3,
+   "cores": 1.19,
+   "rss_mb": 323,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 35.1,
+   "cores": 1.76,
+   "rss_mb": 155,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 40.1,
+   "cores": 0.06,
+   "rss_mb": 199,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 45.2,
+   "cores": 0.78,
+   "rss_mb": 199,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 50.1,
+   "cores": 0.86,
+   "rss_mb": 199,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 55.2,
+   "cores": 0.73,
+   "rss_mb": 199,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 60.1,
+   "cores": 0.73,
+   "rss_mb": 199,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 65.4,
+   "cores": 0.6,
+   "rss_mb": 216,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 71.1,
+   "cores": 0.77,
+   "rss_mb": 223,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 76.1,
+   "cores": 0.73,
+   "rss_mb": 245,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 81.1,
+   "cores": 0.76,
+   "rss_mb": 248,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 86.2,
+   "cores": 0.75,
+   "rss_mb": 257,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 91.1,
+   "cores": 0.79,
+   "rss_mb": 268,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 125.1,
+   "cores": 0.01,
+   "rss_mb": 358,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 130.1,
+   "cores": 0.03,
+   "rss_mb": 168,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 135.1,
+   "cores": 0.06,
+   "rss_mb": 276,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 144.5,
+   "cores": 0.16,
+   "rss_mb": 406,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 191.1,
+   "cores": 0.03,
+   "rss_mb": 461,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 196.1,
+   "cores": 0.19,
+   "rss_mb": 464,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 201.1,
+   "cores": 0.11,
+   "rss_mb": 487,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 206.1,
+   "cores": 0.1,
+   "rss_mb": 489,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 211.1,
+   "cores": 0.02,
+   "rss_mb": 492,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 216.1,
+   "cores": 0.04,
+   "rss_mb": 495,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 221.1,
+   "cores": 0.04,
+   "rss_mb": 498,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 226.1,
+   "cores": 0.05,
+   "rss_mb": 508,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 231.1,
+   "cores": 0.07,
+   "rss_mb": 617,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 236.1,
+   "cores": 0.13,
+   "rss_mb": 587,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 246.7,
+   "cores": 0.24,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 252.1,
+   "cores": 1.26,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 257.1,
+   "cores": 1.52,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 262.1,
+   "cores": 1.4,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 267.1,
+   "cores": 2.28,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 272.1,
+   "cores": 0.95,
+   "rss_mb": 639,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 277.1,
+   "cores": 1.81,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 282.1,
+   "cores": 1.71,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 287.1,
+   "cores": 1.54,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 292.1,
+   "cores": 1.69,
+   "rss_mb": 639,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 297.1,
+   "cores": 1.79,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 302.2,
+   "cores": 1.25,
+   "rss_mb": 637,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 307.1,
+   "cores": 2.05,
+   "rss_mb": 614,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 312.1,
+   "cores": 1.4,
+   "rss_mb": 615,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 317.1,
+   "cores": 1.49,
+   "rss_mb": 638,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 322.1,
+   "cores": 1.16,
+   "rss_mb": 642,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 327.1,
+   "cores": 1.31,
+   "rss_mb": 656,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 332.1,
+   "cores": 1.44,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 337.1,
+   "cores": 1.96,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 342.1,
+   "cores": 1.76,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 347.1,
+   "cores": 1.34,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 352.1,
+   "cores": 2.32,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 357.1,
+   "cores": 1.64,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 362.1,
+   "cores": 2.04,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 367.1,
+   "cores": 1.44,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 372.1,
+   "cores": 1.51,
+   "rss_mb": 622,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 377.1,
+   "cores": 1.42,
+   "rss_mb": 645,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 382.1,
+   "cores": 1.98,
+   "rss_mb": 704,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 387.1,
+   "cores": 0.75,
+   "rss_mb": 704,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 392.1,
+   "cores": 0.79,
+   "rss_mb": 704,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 397.1,
+   "cores": 0.8,
+   "rss_mb": 722,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 402.1,
+   "cores": 0.83,
+   "rss_mb": 745,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 407.1,
+   "cores": 0.77,
+   "rss_mb": 745,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 412.1,
+   "cores": 0.79,
+   "rss_mb": 745,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 417.1,
+   "cores": 0.74,
+   "rss_mb": 748,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 422.1,
+   "cores": 0.79,
+   "rss_mb": 748,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 427.1,
+   "cores": 0.79,
+   "rss_mb": 753,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 432.1,
+   "cores": 0.84,
+   "rss_mb": 753,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 437.1,
+   "cores": 0.57,
+   "rss_mb": 753,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 442.1,
+   "cores": 1.07,
+   "rss_mb": 694,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 447.1,
+   "cores": 1.15,
+   "rss_mb": 694,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 452.1,
+   "cores": 1.04,
+   "rss_mb": 694,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 458.6,
+   "cores": 0.27,
+   "rss_mb": 694,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 473.9,
+   "cores": 0.25,
+   "rss_mb": 724,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 479.1,
+   "cores": 0.68,
+   "rss_mb": 695,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 484.1,
+   "cores": 0.69,
+   "rss_mb": 695,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 489.1,
+   "cores": 0.98,
+   "rss_mb": 695,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 494.1,
+   "cores": 0.36,
+   "rss_mb": 919,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 499.1,
+   "cores": 1.54,
+   "rss_mb": 942,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 504.1,
+   "cores": 0.37,
+   "rss_mb": 946,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 509.1,
+   "cores": 0.51,
+   "rss_mb": 946,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 514.1,
+   "cores": 0.3,
+   "rss_mb": 953,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 519.1,
+   "cores": 0.89,
+   "rss_mb": 973,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 524.2,
+   "cores": 0.67,
+   "rss_mb": 1128,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 529.1,
+   "cores": 0.74,
+   "rss_mb": 1122,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 534.1,
+   "cores": 0.7,
+   "rss_mb": 1124,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 539.2,
+   "cores": 0.78,
+   "rss_mb": 1124,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 544.1,
+   "cores": 0.72,
+   "rss_mb": 1124,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 549.1,
+   "cores": 0.77,
+   "rss_mb": 1124,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 554.1,
+   "cores": 1.16,
+   "rss_mb": 1124,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 559.1,
+   "cores": 2.71,
+   "rss_mb": 1134,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 564.1,
+   "cores": 1.55,
+   "rss_mb": 1178,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 569.1,
+   "cores": 1.75,
+   "rss_mb": 1180,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 574.2,
+   "cores": 0.81,
+   "rss_mb": 1180,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 579.1,
+   "cores": 0.97,
+   "rss_mb": 1181,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 584.1,
+   "cores": 2.15,
+   "rss_mb": 1192,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 589.2,
+   "cores": 0.92,
+   "rss_mb": 1192,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 594.1,
+   "cores": 1.18,
+   "rss_mb": 1192,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 599.1,
+   "cores": 2.15,
+   "rss_mb": 1201,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 604.2,
+   "cores": 1.03,
+   "rss_mb": 1201,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 609.1,
+   "cores": 1.97,
+   "rss_mb": 1213,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 614.1,
+   "cores": 1.15,
+   "rss_mb": 1213,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 619.1,
+   "cores": 2.24,
+   "rss_mb": 1214,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 624.1,
+   "cores": 1.14,
+   "rss_mb": 1214,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 629.2,
+   "cores": 0.98,
+   "rss_mb": 1214,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 634.1,
+   "cores": 1.47,
+   "rss_mb": 1214,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 639.1,
+   "cores": 2.05,
+   "rss_mb": 1217,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 644.1,
+   "cores": 2.16,
+   "rss_mb": 1221,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 649.1,
+   "cores": 0.86,
+   "rss_mb": 1221,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 654.1,
+   "cores": 1.36,
+   "rss_mb": 1221,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 659.1,
+   "cores": 1.71,
+   "rss_mb": 1221,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 664.1,
+   "cores": 2.49,
+   "rss_mb": 1221,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 669.4,
+   "cores": 1.04,
+   "rss_mb": 1221,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 675.1,
+   "cores": 1.46,
+   "rss_mb": 1222,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 680.1,
+   "cores": 2.55,
+   "rss_mb": 1233,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 685.2,
+   "cores": 1.27,
+   "rss_mb": 1233,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 690.1,
+   "cores": 1.81,
+   "rss_mb": 1233,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 695.1,
+   "cores": 1.55,
+   "rss_mb": 1233,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 700.2,
+   "cores": 1.1,
+   "rss_mb": 1233,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 705.1,
+   "cores": 0.88,
+   "rss_mb": 1233,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 710.2,
+   "cores": 1.12,
+   "rss_mb": 1239,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 717.7,
+   "cores": 0.52,
+   "rss_mb": 1244,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 723.1,
+   "cores": 0.57,
+   "rss_mb": 1246,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 728.1,
+   "cores": 1.14,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 733.1,
+   "cores": 1.28,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 738.1,
+   "cores": 2.18,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 743.1,
+   "cores": 1.37,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 748.1,
+   "cores": 1.53,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 753.2,
+   "cores": 0.95,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 758.1,
+   "cores": 1.04,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 763.2,
+   "cores": 1.06,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 768.1,
+   "cores": 1.01,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 773.2,
+   "cores": 0.74,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 778.4,
+   "cores": 0.66,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 784.1,
+   "cores": 0.6,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 789.5,
+   "cores": 0.62,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 795.1,
+   "cores": 0.72,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 800.1,
+   "cores": 0.72,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 805.1,
+   "cores": 0.76,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 810.2,
+   "cores": 0.78,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 815.2,
+   "cores": 0.77,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 820.1,
+   "cores": 0.76,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 825.2,
+   "cores": 0.78,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 830.6,
+   "cores": 0.65,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 836.1,
+   "cores": 0.7,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 841.2,
+   "cores": 0.77,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 846.1,
+   "cores": 0.71,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 851.2,
+   "cores": 0.67,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 856.2,
+   "cores": 0.74,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 861.2,
+   "cores": 0.83,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 866.1,
+   "cores": 0.83,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 871.1,
+   "cores": 0.79,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 876.3,
+   "cores": 0.58,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 882.1,
+   "cores": 0.64,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 887.1,
+   "cores": 0.98,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 892.1,
+   "cores": 1.36,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 897.1,
+   "cores": 1.65,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 902.1,
+   "cores": 2.59,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 907.1,
+   "cores": 1.02,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 912.1,
+   "cores": 0.98,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 917.1,
+   "cores": 0.97,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 922.1,
+   "cores": 0.96,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 927.1,
+   "cores": 0.94,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 932.1,
+   "cores": 0.85,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 937.1,
+   "cores": 0.92,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 942.1,
+   "cores": 0.96,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 947.1,
+   "cores": 0.9,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 952.1,
+   "cores": 0.81,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 957.1,
+   "cores": 0.88,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 962.1,
+   "cores": 0.9,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 967.1,
+   "cores": 0.81,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 972.1,
+   "cores": 0.72,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 977.1,
+   "cores": 0.66,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 982.1,
+   "cores": 0.69,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 987.1,
+   "cores": 0.83,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 992.1,
+   "cores": 2.19,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 997.1,
+   "cores": 1.29,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1002.1,
+   "cores": 1.42,
+   "rss_mb": 1247,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1007.1,
+   "cores": 1.9,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1012.1,
+   "cores": 2.19,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1017.2,
+   "cores": 1.51,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1022.1,
+   "cores": 1.4,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1027.1,
+   "cores": 1.69,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1032.1,
+   "cores": 0.61,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1037.1,
+   "cores": 0.74,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1042.1,
+   "cores": 1.78,
+   "rss_mb": 1250,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1047.5,
+   "cores": 1.48,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1053.1,
+   "cores": 2.12,
+   "rss_mb": 1336,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1058.1,
+   "cores": 2.02,
+   "rss_mb": 1274,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1063.1,
+   "cores": 2.32,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1068.1,
+   "cores": 1.82,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1073.1,
+   "cores": 1.75,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1078.2,
+   "cores": 2.26,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1083.1,
+   "cores": 1.56,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1088.2,
+   "cores": 1.74,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1093.1,
+   "cores": 1.88,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1098.1,
+   "cores": 1.83,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1103.2,
+   "cores": 1.86,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1108.1,
+   "cores": 1.93,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1113.1,
+   "cores": 0.85,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1118.2,
+   "cores": 1.45,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1123.1,
+   "cores": 1.06,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1128.5,
+   "cores": 0.97,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1134.1,
+   "cores": 1.69,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1139.1,
+   "cores": 1.84,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1144.1,
+   "cores": 2.08,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1149.1,
+   "cores": 1.39,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1154.1,
+   "cores": 1.78,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1159.1,
+   "cores": 1.17,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1164.1,
+   "cores": 1.99,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1169.4,
+   "cores": 1.26,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1174.2,
+   "cores": 1.83,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1179.1,
+   "cores": 1.37,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1185.0,
+   "cores": 1.07,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1190.1,
+   "cores": 2.39,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1195.1,
+   "cores": 1.76,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1200.1,
+   "cores": 1.53,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1205.1,
+   "cores": 2.89,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1210.1,
+   "cores": 1.27,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1215.1,
+   "cores": 1.92,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1220.1,
+   "cores": 1.76,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1225.1,
+   "cores": 1.8,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1230.3,
+   "cores": 1.46,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1235.1,
+   "cores": 1.52,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1240.1,
+   "cores": 1.4,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1245.2,
+   "cores": 1.78,
+   "rss_mb": 1297,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1250.1,
+   "cores": 1.63,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1255.1,
+   "cores": 1.63,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1260.1,
+   "cores": 2.53,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1265.1,
+   "cores": 1.82,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1270.1,
+   "cores": 1.74,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1275.1,
+   "cores": 2.51,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1280.1,
+   "cores": 1.61,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1285.1,
+   "cores": 1.95,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1290.2,
+   "cores": 1.59,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1295.2,
+   "cores": 0.6,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1300.1,
+   "cores": 0.94,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1305.2,
+   "cores": 0.51,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1310.1,
+   "cores": 1.14,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1315.1,
+   "cores": 1.52,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1320.2,
+   "cores": 1.55,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1325.3,
+   "cores": 1.41,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1331.1,
+   "cores": 1.57,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1336.1,
+   "cores": 1.76,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1341.2,
+   "cores": 1.75,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1346.1,
+   "cores": 1.42,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1351.1,
+   "cores": 1.43,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 1356.1,
+   "cores": 1.2,
+   "rss_mb": 1364,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1361.1,
+   "cores": 1.22,
+   "rss_mb": 1409,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1366.2,
+   "cores": 0.8,
+   "rss_mb": 1432,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1371.1,
+   "cores": 0.76,
+   "rss_mb": 1432,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1376.2,
+   "cores": 0.74,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1381.1,
+   "cores": 0.75,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1386.1,
+   "cores": 0.68,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1391.1,
+   "cores": 0.75,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1396.1,
+   "cores": 0.69,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1401.1,
+   "cores": 1.05,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1406.1,
+   "cores": 1.07,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1411.1,
+   "cores": 1.09,
+   "rss_mb": 1483,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1416.1,
+   "cores": 1.07,
+   "rss_mb": 1484,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1421.1,
+   "cores": 1.06,
+   "rss_mb": 1491,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1426.1,
+   "cores": 1.05,
+   "rss_mb": 1491,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1431.1,
+   "cores": 0.94,
+   "rss_mb": 1492,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1436.2,
+   "cores": 0.93,
+   "rss_mb": 1493,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1441.1,
+   "cores": 0.87,
+   "rss_mb": 1498,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1446.1,
+   "cores": 0.71,
+   "rss_mb": 1381,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1451.2,
+   "cores": 0.76,
+   "rss_mb": 1446,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1456.2,
+   "cores": 0.89,
+   "rss_mb": 1446,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1461.1,
+   "cores": 0.77,
+   "rss_mb": 1424,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1466.3,
+   "cores": 0.77,
+   "rss_mb": 1424,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1471.1,
+   "cores": 0.72,
+   "rss_mb": 1424,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1476.1,
+   "cores": 0.74,
+   "rss_mb": 1430,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1481.3,
+   "cores": 0.48,
+   "rss_mb": 1430,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1486.1,
+   "cores": 0.66,
+   "rss_mb": 1430,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1491.3,
+   "cores": 0.65,
+   "rss_mb": 1430,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1497.2,
+   "cores": 0.62,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1502.1,
+   "cores": 0.68,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1507.1,
+   "cores": 0.65,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1512.2,
+   "cores": 0.64,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1517.1,
+   "cores": 0.64,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1522.1,
+   "cores": 0.73,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1527.1,
+   "cores": 0.74,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1532.1,
+   "cores": 0.7,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1537.1,
+   "cores": 0.7,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1542.2,
+   "cores": 0.69,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1547.1,
+   "cores": 0.71,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1552.2,
+   "cores": 0.62,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1557.4,
+   "cores": 0.58,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1563.1,
+   "cores": 0.72,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1568.3,
+   "cores": 0.71,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1573.1,
+   "cores": 0.93,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1578.1,
+   "cores": 1.04,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1583.1,
+   "cores": 1.08,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1588.1,
+   "cores": 1.1,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1593.1,
+   "cores": 1.1,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1598.1,
+   "cores": 0.97,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1603.1,
+   "cores": 0.96,
+   "rss_mb": 1437,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1608.2,
+   "cores": 0.96,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1613.1,
+   "cores": 0.9,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1618.1,
+   "cores": 0.94,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1623.1,
+   "cores": 0.85,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1628.1,
+   "cores": 0.71,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1633.2,
+   "cores": 0.62,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1638.2,
+   "cores": 0.73,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1643.2,
+   "cores": 0.64,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1648.1,
+   "cores": 0.76,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1653.1,
+   "cores": 0.87,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1658.1,
+   "cores": 0.85,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1663.1,
+   "cores": 0.92,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1668.2,
+   "cores": 0.82,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1673.1,
+   "cores": 0.68,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1678.1,
+   "cores": 0.65,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1683.1,
+   "cores": 0.63,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1688.1,
+   "cores": 0.8,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1693.1,
+   "cores": 0.71,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1698.1,
+   "cores": 0.69,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1703.2,
+   "cores": 0.71,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1708.1,
+   "cores": 0.73,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1713.1,
+   "cores": 0.69,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1718.1,
+   "cores": 0.69,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1723.1,
+   "cores": 0.7,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1728.1,
+   "cores": 0.68,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1733.2,
+   "cores": 0.73,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1738.1,
+   "cores": 0.73,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1743.1,
+   "cores": 0.76,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1748.1,
+   "cores": 0.76,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1753.2,
+   "cores": 0.81,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1758.2,
+   "cores": 0.9,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1763.1,
+   "cores": 0.85,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1768.4,
+   "cores": 0.7,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1774.1,
+   "cores": 0.68,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1779.1,
+   "cores": 0.72,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1784.3,
+   "cores": 0.79,
+   "rss_mb": 1478,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1789.3,
+   "cores": 0.79,
+   "rss_mb": 1421,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1794.2,
+   "cores": 0.72,
+   "rss_mb": 1421,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1799.1,
+   "cores": 0.77,
+   "rss_mb": 1421,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1804.2,
+   "cores": 0.79,
+   "rss_mb": 1436,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1809.3,
+   "cores": 0.72,
+   "rss_mb": 1436,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1814.1,
+   "cores": 0.84,
+   "rss_mb": 1436,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1819.2,
+   "cores": 0.68,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1824.4,
+   "cores": 0.69,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1830.3,
+   "cores": 0.58,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1835.1,
+   "cores": 0.61,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1840.1,
+   "cores": 0.73,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1845.1,
+   "cores": 0.69,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1850.2,
+   "cores": 0.75,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1855.2,
+   "cores": 0.74,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1860.3,
+   "cores": 0.67,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1865.5,
+   "cores": 0.73,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1871.1,
+   "cores": 0.77,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1876.1,
+   "cores": 1.04,
+   "rss_mb": 1480,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1881.2,
+   "cores": 0.98,
+   "rss_mb": 1414,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1886.2,
+   "cores": 0.96,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1891.1,
+   "cores": 1.0,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1896.1,
+   "cores": 0.94,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1901.1,
+   "cores": 0.95,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1906.2,
+   "cores": 0.92,
+   "rss_mb": 1442,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1911.1,
+   "cores": 0.95,
+   "rss_mb": 1442,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1916.1,
+   "cores": 0.99,
+   "rss_mb": 1442,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1921.1,
+   "cores": 1.09,
+   "rss_mb": 1442,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1926.1,
+   "cores": 1.09,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1931.1,
+   "cores": 0.99,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1936.1,
+   "cores": 0.99,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1941.1,
+   "cores": 1.02,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1946.1,
+   "cores": 0.98,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1951.1,
+   "cores": 0.95,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1956.1,
+   "cores": 0.91,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1961.1,
+   "cores": 1.04,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1966.1,
+   "cores": 0.95,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1971.1,
+   "cores": 1.05,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1976.1,
+   "cores": 1.05,
+   "rss_mb": 1477,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1981.1,
+   "cores": 0.98,
+   "rss_mb": 1481,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1986.1,
+   "cores": 0.95,
+   "rss_mb": 1481,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1991.1,
+   "cores": 1.0,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 1996.1,
+   "cores": 0.96,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2001.1,
+   "cores": 0.96,
+   "rss_mb": 1434,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2006.2,
+   "cores": 1.0,
+   "rss_mb": 1474,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2011.1,
+   "cores": 0.98,
+   "rss_mb": 1474,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2016.1,
+   "cores": 1.02,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2021.1,
+   "cores": 1.08,
+   "rss_mb": 1476,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2026.1,
+   "cores": 1.12,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2031.1,
+   "cores": 1.14,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2036.1,
+   "cores": 1.07,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2041.1,
+   "cores": 1.0,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2046.1,
+   "cores": 0.95,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2051.1,
+   "cores": 0.98,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2056.1,
+   "cores": 1.08,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2061.1,
+   "cores": 1.06,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2066.1,
+   "cores": 1.0,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2071.1,
+   "cores": 0.98,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2076.1,
+   "cores": 0.94,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2081.1,
+   "cores": 1.01,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2086.1,
+   "cores": 1.0,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2091.1,
+   "cores": 1.02,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2096.1,
+   "cores": 0.89,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2101.1,
+   "cores": 0.91,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2106.1,
+   "cores": 0.98,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2111.1,
+   "cores": 1.1,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2116.1,
+   "cores": 1.03,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2121.1,
+   "cores": 1.08,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2126.1,
+   "cores": 1.09,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2131.1,
+   "cores": 1.16,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2136.1,
+   "cores": 1.08,
+   "rss_mb": 1479,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2141.1,
+   "cores": 1.1,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2146.1,
+   "cores": 1.02,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2151.1,
+   "cores": 1.02,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2156.1,
+   "cores": 0.93,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2161.1,
+   "cores": 0.99,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2166.1,
+   "cores": 0.97,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2171.1,
+   "cores": 0.95,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2176.1,
+   "cores": 1.11,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2181.1,
+   "cores": 1.07,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2186.1,
+   "cores": 1.02,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2191.1,
+   "cores": 1.02,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2196.1,
+   "cores": 1.0,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2201.1,
+   "cores": 1.04,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2206.1,
+   "cores": 1.03,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2211.1,
+   "cores": 1.02,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2216.1,
+   "cores": 1.04,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2221.1,
+   "cores": 0.98,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2226.1,
+   "cores": 0.71,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2231.2,
+   "cores": 0.76,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2236.1,
+   "cores": 0.67,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2241.1,
+   "cores": 0.7,
+   "rss_mb": 1482,
+   "abc": 1,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "sh",
+    "yosys",
+    "yosys-abc"
+   ]
+  },
+  {
+   "t": 2246.3,
+   "cores": 1.03,
+   "rss_mb": 1251,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2251.1,
+   "cores": 1.28,
+   "rss_mb": 1285,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2256.1,
+   "cores": 0.98,
+   "rss_mb": 1330,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2261.2,
+   "cores": 1.39,
+   "rss_mb": 1336,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2266.1,
+   "cores": 1.42,
+   "rss_mb": 1337,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2271.1,
+   "cores": 1.61,
+   "rss_mb": 1337,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2276.3,
+   "cores": 0.99,
+   "rss_mb": 1336,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2281.1,
+   "cores": 1.56,
+   "rss_mb": 1337,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2286.1,
+   "cores": 1.49,
+   "rss_mb": 1339,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2291.3,
+   "cores": 1.71,
+   "rss_mb": 1340,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2296.1,
+   "cores": 1.22,
+   "rss_mb": 1341,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2301.1,
+   "cores": 1.18,
+   "rss_mb": 1341,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2306.1,
+   "cores": 2.12,
+   "rss_mb": 1350,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2311.1,
+   "cores": 1.52,
+   "rss_mb": 1350,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2316.1,
+   "cores": 1.52,
+   "rss_mb": 1350,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2321.1,
+   "cores": 1.62,
+   "rss_mb": 1355,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2326.3,
+   "cores": 1.98,
+   "rss_mb": 1356,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2331.1,
+   "cores": 0.66,
+   "rss_mb": 1356,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2336.3,
+   "cores": 0.54,
+   "rss_mb": 1356,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2341.1,
+   "cores": 1.75,
+   "rss_mb": 1356,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2346.1,
+   "cores": 1.21,
+   "rss_mb": 1363,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2351.1,
+   "cores": 2.23,
+   "rss_mb": 1363,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2356.1,
+   "cores": 1.4,
+   "rss_mb": 1366,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2361.2,
+   "cores": 1.79,
+   "rss_mb": 1366,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2366.1,
+   "cores": 1.5,
+   "rss_mb": 1366,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2371.1,
+   "cores": 1.52,
+   "rss_mb": 1366,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2376.1,
+   "cores": 1.7,
+   "rss_mb": 1366,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2381.1,
+   "cores": 1.14,
+   "rss_mb": 1366,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2386.1,
+   "cores": 2.2,
+   "rss_mb": 1370,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2391.1,
+   "cores": 1.13,
+   "rss_mb": 1370,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2396.1,
+   "cores": 2.5,
+   "rss_mb": 1370,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2401.1,
+   "cores": 1.62,
+   "rss_mb": 1370,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2406.3,
+   "cores": 1.6,
+   "rss_mb": 1371,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2411.1,
+   "cores": 1.51,
+   "rss_mb": 1371,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2416.1,
+   "cores": 1.75,
+   "rss_mb": 1376,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2421.1,
+   "cores": 1.44,
+   "rss_mb": 1376,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2426.1,
+   "cores": 1.84,
+   "rss_mb": 1376,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2431.1,
+   "cores": 1.38,
+   "rss_mb": 1376,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2436.1,
+   "cores": 1.75,
+   "rss_mb": 1377,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2442.3,
+   "cores": 0.52,
+   "rss_mb": 1380,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2447.8,
+   "cores": 1.07,
+   "rss_mb": 1380,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2453.1,
+   "cores": 1.73,
+   "rss_mb": 1382,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2458.1,
+   "cores": 1.53,
+   "rss_mb": 1382,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2463.1,
+   "cores": 1.87,
+   "rss_mb": 1383,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2468.1,
+   "cores": 1.46,
+   "rss_mb": 1383,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2473.1,
+   "cores": 2.0,
+   "rss_mb": 1388,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2478.1,
+   "cores": 1.19,
+   "rss_mb": 1388,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2483.1,
+   "cores": 1.83,
+   "rss_mb": 1388,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2488.1,
+   "cores": 1.03,
+   "rss_mb": 1388,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2493.1,
+   "cores": 2.08,
+   "rss_mb": 1388,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2498.1,
+   "cores": 1.5,
+   "rss_mb": 1388,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2503.2,
+   "cores": 1.53,
+   "rss_mb": 1389,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2508.3,
+   "cores": 0.55,
+   "rss_mb": 1393,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2513.1,
+   "cores": 2.0,
+   "rss_mb": 1396,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2518.3,
+   "cores": 1.53,
+   "rss_mb": 1396,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2523.1,
+   "cores": 0.99,
+   "rss_mb": 1396,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2528.5,
+   "cores": 0.18,
+   "rss_mb": 1396,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2534.1,
+   "cores": 1.12,
+   "rss_mb": 1396,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2539.1,
+   "cores": 2.06,
+   "rss_mb": 1401,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2544.1,
+   "cores": 1.32,
+   "rss_mb": 1401,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2549.1,
+   "cores": 1.48,
+   "rss_mb": 1404,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2554.1,
+   "cores": 2.04,
+   "rss_mb": 1404,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2559.1,
+   "cores": 1.3,
+   "rss_mb": 1404,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2564.2,
+   "cores": 1.87,
+   "rss_mb": 1404,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2569.1,
+   "cores": 1.44,
+   "rss_mb": 1404,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2574.1,
+   "cores": 1.45,
+   "rss_mb": 1406,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2579.1,
+   "cores": 0.43,
+   "rss_mb": 1406,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2584.1,
+   "cores": 1.73,
+   "rss_mb": 1406,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2589.1,
+   "cores": 1.15,
+   "rss_mb": 1407,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2594.1,
+   "cores": 2.08,
+   "rss_mb": 1408,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2599.1,
+   "cores": 1.62,
+   "rss_mb": 1408,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2604.1,
+   "cores": 1.63,
+   "rss_mb": 1414,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2609.1,
+   "cores": 1.12,
+   "rss_mb": 1414,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2614.1,
+   "cores": 1.89,
+   "rss_mb": 1416,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2619.1,
+   "cores": 1.4,
+   "rss_mb": 1416,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2624.1,
+   "cores": 1.83,
+   "rss_mb": 1420,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2629.2,
+   "cores": 1.83,
+   "rss_mb": 1420,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2634.1,
+   "cores": 1.22,
+   "rss_mb": 1426,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2639.2,
+   "cores": 1.32,
+   "rss_mb": 1426,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2644.1,
+   "cores": 1.22,
+   "rss_mb": 1430,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2649.1,
+   "cores": 1.91,
+   "rss_mb": 1430,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2654.1,
+   "cores": 1.27,
+   "rss_mb": 1430,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2659.1,
+   "cores": 1.7,
+   "rss_mb": 1430,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2664.1,
+   "cores": 1.41,
+   "rss_mb": 1430,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2669.1,
+   "cores": 1.89,
+   "rss_mb": 1435,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2674.2,
+   "cores": 1.34,
+   "rss_mb": 1435,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2679.1,
+   "cores": 1.57,
+   "rss_mb": 1439,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2684.1,
+   "cores": 1.91,
+   "rss_mb": 1439,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2689.1,
+   "cores": 1.49,
+   "rss_mb": 1439,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2694.1,
+   "cores": 1.69,
+   "rss_mb": 1442,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2699.1,
+   "cores": 1.68,
+   "rss_mb": 1442,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2704.1,
+   "cores": 2.52,
+   "rss_mb": 1445,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2709.1,
+   "cores": 4.07,
+   "rss_mb": 1445,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2714.1,
+   "cores": 3.89,
+   "rss_mb": 1445,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2719.1,
+   "cores": 1.75,
+   "rss_mb": 1445,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2724.1,
+   "cores": 1.81,
+   "rss_mb": 1394,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2729.1,
+   "cores": 1.96,
+   "rss_mb": 1404,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2734.1,
+   "cores": 1.62,
+   "rss_mb": 1439,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2739.1,
+   "cores": 1.68,
+   "rss_mb": 1439,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2744.1,
+   "cores": 1.55,
+   "rss_mb": 1446,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2749.1,
+   "cores": 1.66,
+   "rss_mb": 1451,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2754.1,
+   "cores": 1.39,
+   "rss_mb": 1437,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2759.1,
+   "cores": 2.36,
+   "rss_mb": 1453,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2764.1,
+   "cores": 1.83,
+   "rss_mb": 1453,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2769.2,
+   "cores": 1.43,
+   "rss_mb": 1453,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "python3",
+    "yosys"
+   ]
+  },
+  {
+   "t": 2774.1,
+   "cores": 2.2,
+   "rss_mb": 196,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "openroad",
+    "python3"
+   ]
+  },
+  {
+   "t": 2779.1,
+   "cores": 1.84,
+   "rss_mb": 549,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "openroad",
+    "python3"
+   ]
+  },
+  {
+   "t": 2784.1,
+   "cores": 1.46,
+   "rss_mb": 733,
+   "abc": 0,
+   "procs": [
+    "bash",
+    "make",
+    "openroad",
+    "python3"
+   ]
+  }
+ ],
+ "events": [
+  "16:27:07 +      4s vars: ./results/asap7/cva6/flat_parallel",
+  "16:27:11 +      8s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_017_tools.png",
+  "16:27:19 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}",
+  "16:27:20 +     16s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_018_debug_env.png",
+  "16:27:20 +     16s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_019_ready.png",
+  "16:27:20 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_flat_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_flat_parallel_continue-synth_20261104_162720.log",
+  "16:28:05 +     62s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_020_running.png",
+  "16:32:20 +    317s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_021_running.png",
+  "16:37:20 +    617s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_022_running.png",
+  "16:42:20 +    917s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_023_running.png",
+  "16:47:20 +   1217s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_024_logs_follow.png",
+  "16:47:20 +   1217s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_025_running.png",
+  "16:57:21 +   1818s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_026_running.png",
+  "17:07:21 +   2418s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_027_running.png",
+  "17:13:49 +   2805s run finished rc=0 after 2789s",
+  "17:13:49 +   2806s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_028_done.png",
+  "17:13:53 +   2810s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_029_reports.png",
+  "17:13:56 +   2813s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_030_logs.png",
+  "17:14:02 +   2819s shot /home/rafay/Desktop/projects/exodus/ab_bench/bench_flat/run2_parallel_031_debug.png"
+ ]
+}

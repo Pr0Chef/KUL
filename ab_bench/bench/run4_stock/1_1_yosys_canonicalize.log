@@ -1,0 +1,64 @@
+Yosys 0.69+274 (git sha1 7513f8df8, GNU /usr/bin/c++ 13.3.0)
+Using ABC speed script.
+1. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz
+2. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz
+3. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz
+4. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz
+5. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib
+6. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz
+7. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz
+8. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz
+9. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz
+10. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
+11. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz
+12. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz
+13. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz
+14. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz
+15. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
+16. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x256.lib
+17. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_128x64.lib
+18. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x28.lib
+19. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x25.lib
+20. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz
+21. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz
+22. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz
+23. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz
+24. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib
+25. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz
+26. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz
+27. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz
+28. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz
+29. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
+30. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz
+31. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz
+32. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz
+33. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz
+34. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
+35. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x256.lib
+36. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_128x64.lib
+37. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x28.lib
+38. Executing Liberty frontend: /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM/fakeram7_64x25.lib
+39. Executing SLANG frontend.
+designs/src/cva6/core/cache_subsystem/hpdcache/rtl/src/hwpf_stride/hwpf_stride.sv:158: Warning: asynchronous load value missing for variable '\csr_throttle_q'
+39.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+39.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+39.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+39.4. Executing PROC_INIT pass (extract init attributes).
+39.5. Executing PROC_ROM pass (convert switches to ROMs).
+39.6. Executing PROC_MUX pass (convert decision trees to multiplexers).
+39.7. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+39.8. Executing OPT_EXPR pass (perform const folding).
+40. Executing HIERARCHY pass (managing design hierarchy).
+40.1. Analyzing design hierarchy..
+40.2. Analyzing design hierarchy..
+source /home/rafay/Desktop/projects/exodus/OpenROAD-flow-scripts/flow/designs/asap7/cva6/canonicalize.tcl
+41. Executing OPT_CLEAN pass (remove unused cells and wires).
+42. Executing RTLIL backend.
+Warnings: 1 unique messages, 4 total
+End of script. Logfile hash: 0bdadc615b, time: 49.36s, user: 48.47s, system: 1.48s, MEM: 317.27 MB peak
+Yosys 0.69+274 (git sha1 7513f8df8, GNU /usr/bin/c++ 13.3.0)
+Time spent: 25% 2x read_slang (12 sec), 24% 1x opt_clean (11 sec), 21% 40x read_liberty (10 sec), ...
+Elapsed time: 0:49.73[h:]min:sec. CPU time: user 48.80 sys 1.51 (101%). Peak memory: 324888KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_1_yosys_canonicalize .rtlil       49       50     1.01      317 4a0d4c371e

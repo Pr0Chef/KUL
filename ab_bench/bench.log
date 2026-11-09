@@ -1,0 +1,21 @@
+== run 1 stock 13:17:34 load 3.49 2.86 1.32
+13:17:50 +     16s tools saved: {'yosys': '/usr/local/bin/yosys'}
+13:17:50 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_hier_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_hier_stock_continue-synth_20261026_131750.log
+14:00:33 +   2579s run finished rc=0 after 2562s
+14:00:46 +   2592s saved; quitting
+== run 2 parallel 14:01:17 load 1.69 2.89 2.83
+14:01:33 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+14:01:33 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_hier_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_hier_parallel_continue-synth_20261026_140133.log
+14:39:08 +   2271s run finished rc=0 after 2255s
+14:39:21 +   2284s saved; quitting
+== run 3 parallel 14:39:51 load 1.38 2.54 2.65
+14:40:08 +     16s tools saved: {'yosys': '/home/rafay/Desktop/projects/exodus/yosys/build/yosys'}
+14:40:08 +     16s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_hier_parallel.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_hier_parallel_continue-synth_20261026_144008.log
+15:28:01 +   2889s run finished rc=0 after 2873s
+15:28:14 +   2902s saved; quitting
+== run 4 stock 15:28:47 load 2.12 3.15 3.02
+15:29:05 +     17s tools saved: {'yosys': '/usr/local/bin/yosys'}
+15:29:05 +     17s run started: make DESIGN_CONFIG=designs/asap7/cva6/config_hier_stock.mk NUM_CORES=8 synth  log /home/rafay/.local/share/orfs-flow-runner/run_logs/asap7_cva6_hier_stock_continue-synth_20261026_152905.log
+16:21:44 +   3176s run finished rc=0 after 3159s
+16:21:57 +   3189s saved; quitting
+== all done 16:21:57
