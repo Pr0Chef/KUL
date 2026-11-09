@@ -17,6 +17,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import GLib, Gtk, Pango  # noqa: E402
 
+import io_pins  # noqa: E402
 import sdc_clocks as sc  # noqa: E402
 
 ASSIGN_RE = re.compile(r"^(\s*)(export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?=|::=|:=|\+=|=)\s*(.*)$")
@@ -231,8 +232,8 @@ def dump_vars(flow, cfg, names, env):
 
 
 def netlist_names(netlist, top, macros):
-    """Top-level ports and macro instances in a synthesized netlist."""
-    ports, insts, in_top = [], [], False
+    """Top-level ports, macro instances, and each port's bits ((msb, lsb) or "scalar") in a synthesized netlist."""
+    ports, insts, bits, in_top = [], [], {}, False
     cell_re = re.compile(r"^\s*(" + "|".join(map(re.escape, macros)) + r")\s+(\S+)\s*\(") if macros else None
     try:
         with open(netlist, errors="replace") as f:
@@ -240,16 +241,18 @@ def netlist_names(netlist, top, macros):
                 if line.startswith("module "):
                     in_top = line.split()[1].split("(")[0] == top
                 elif in_top:
-                    m = re.match(r"\s*(input|output|inout)\s+(?:wire\s+)?(?:\[[^\]]+\]\s*)?([^\s;]+)\s*;", line)
+                    m = re.match(r"\s*(input|output|inout)\s+(?:wire\s+)?(?:\[([^\]]+)\]\s*)?([^\s;]+)\s*;", line)
                     if m:
-                        ports.append((m.group(1), m.group(2).lstrip("\\")))
+                        name = m.group(3).lstrip("\\")
+                        ports.append((m.group(1), name))
+                        bits[name] = (sc.eval_range(m.group(2)) or "?") if m.group(2) else "scalar"
                     if cell_re:
                         m = cell_re.match(line)
                         if m:
                             insts.append(m.group(2).lstrip("\\"))
     except OSError:
         pass
-    return ports, insts
+    return ports, insts, bits
 
 
 def section(text):
@@ -283,7 +286,10 @@ class InputsTab:
         self.variables = {}
         self.ports = None        # top-level ports: from the synthesized netlist once there is one, else the RTL
         self.ports_from = ""
-        self.rtl = (None, [], {})  # top module file, its ports, and the inputs that act as clocks
+        self.rtl = (None, [], {}, {})  # top module file, its ports, the inputs that act as clocks, port bits
+        self.port_bits = {}      # port: (msb, lsb), "scalar" or "?"
+        self.io_path = self.io_mtime = None
+        self.io_used, self.io_text, self.io_rows, self.io_dirty = False, "", [], False
         self.clocks = {"clocks": [], "generated": [], "groups": [], "delays": [], "error": None}
         self.period_vars = set()
         self.widget = self.build()
@@ -297,9 +303,12 @@ class InputsTab:
         new_cfg = Gtk.Button(label="New config…", tooltip_text="Make a new config of this design, based on this one,"
                                                                " with its own results folder")
         new_cfg.connect("clicked", self.on_new_config)
-        bar.pack_start(self.cfg_label, True, True, 0)
-        bar.pack_start(Gtk.StackSwitcher(stack=self.stack), False, False, 0)
-        bar.pack_start(new_cfg, False, False, 0)
+        # The config on its own line, so the page buttons never squeeze it.
+        head = Gtk.Box(spacing=8, margin_start=8, margin_end=8, margin_top=6)
+        head.pack_start(self.cfg_label, True, True, 0)
+        head.pack_start(new_cfg, False, False, 0)
+        box.pack_start(head, False, False, 0)
+        bar.pack_start(Gtk.StackSwitcher(stack=self.stack, homogeneous=True), True, True, 0)
         box.pack_start(bar, False, False, 0)
 
         self.info = Gtk.InfoBar(show_close_button=True)
@@ -313,6 +322,7 @@ class InputsTab:
 
         self.stack.add_titled(self.build_clocks(), "clocks", "Clocks")
         self.stack.add_titled(self.build_sdc(), "sdc", "Constraints")
+        self.stack.add_titled(self.build_io(), "io", "IO pins")
         self.stack.add_titled(self.build_settings(), "settings", "Flow settings")
         self.stack.add_titled(self.build_files(), "files", "Files")
         box.pack_start(self.stack, True, True, 0)
@@ -435,7 +445,7 @@ class InputsTab:
         self.fill_rtl_label(info)
 
     def fill_rtl_label(self, info):
-        path, ports, clocks = self.rtl
+        path, ports, clocks, _ = self.rtl
         top = self.effective.get("DESIGN_NAME", "the top module")
         if not path:
             msg = colored_text(f"Module {top} was not found in VERILOG_FILES, so clock ports can't be read from the "
@@ -618,6 +628,414 @@ class InputsTab:
         mrels = {k: v for k, v in mrels.items() if key[2:] not in k}
         self.replace_sdc(sc.set_block(text, mclocks, mrels))
 
+    def build_io(self):
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
+        self.io_info = Gtk.Label(xalign=0, wrap=True, selectable=True)
+        box.pack_start(self.io_info, False, False, 0)
+        row = Gtk.Box(spacing=8)
+        self.io_dir = Gtk.ComboBoxText()
+        for k, label in (("all", "All ports"), ("input", "Inputs"), ("output", "Outputs"), ("set", "Placed"),
+                         ("free", "Not placed")):
+            self.io_dir.append(k, label)
+        self.io_dir.set_active_id("all")
+        self.io_find = Gtk.SearchEntry(placeholder_text="Filter ports…", hexpand=True)
+        row.pack_start(self.io_dir, False, False, 0)
+        row.pack_start(self.io_find, True, True, 0)
+        box.pack_start(row, False, False, 0)
+        # spec, direction, width, edge, interval, together, in order, set in, editable, search, weight, port
+        self.io_store = Gtk.ListStore(str, str, str, str, str, bool, bool, str, bool, str, int, str)
+        self.io_filter = self.io_store.filter_new()
+        self.io_filter.set_visible_func(self.io_visible)
+        self.io_dir.connect("changed", lambda *_: self.io_filter.refilter())
+        self.io_find.connect("search-changed", lambda *_: self.io_filter.refilter())
+        tv = Gtk.TreeView(model=self.io_filter)
+        tv.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        tv.append_column(Gtk.TreeViewColumn("Port", Gtk.CellRendererText(), text=0, weight=10))
+        tv.append_column(Gtk.TreeViewColumn("Dir", Gtk.CellRendererText(foreground=CSS_MUTED), text=1))
+        tv.append_column(Gtk.TreeViewColumn("Pins", Gtk.CellRendererText(xalign=1), text=2))
+        edges = Gtk.ListStore(str)
+        for e in ["—"] + io_pins.EDGES:
+            edges.append([e])
+        cell = Gtk.CellRendererCombo(model=edges, text_column=0, has_entry=False, foreground=CHANGED)
+        cell.connect("edited", self.on_io_cell, "edge")
+        tv.append_column(Gtk.TreeViewColumn("Edge", cell, text=3, editable=8, foreground_set=8))
+        cell = Gtk.CellRendererText(foreground=CHANGED)
+        cell.connect("edited", self.on_io_cell, "interval")
+        tv.append_column(Gtk.TreeViewColumn("Range (µm)", cell, text=4, editable=8, foreground_set=8))
+        for i, (title, field) in enumerate((("Together", "group"), ("In order", "order")), 5):
+            tick = Gtk.CellRendererToggle()
+            tick.connect("toggled", self.on_io_toggle, field)
+            tv.append_column(Gtk.TreeViewColumn(title, tick, active=i, activatable=8))
+        col = Gtk.TreeViewColumn("Set in", Gtk.CellRendererText(foreground=CSS_MUTED,
+                                                                ellipsize=Pango.EllipsizeMode.END), text=7)
+        col.set_expand(True)
+        tv.append_column(col)
+        self.io_tv = tv
+        sw = Gtk.ScrolledWindow(vexpand=True)
+        sw.add(tv)
+        box.pack_start(sw, True, True, 0)
+
+        act = Gtk.Box(spacing=8)
+        act.pack_start(Gtk.Label(label="Selected rows:"), False, False, 0)
+        self.io_edge = Gtk.ComboBoxText()
+        for e in io_pins.EDGES:
+            self.io_edge.append(e, e)
+        self.io_edge.set_active_id("left")
+        self.io_interval = Gtk.Entry(text="*", width_chars=9, tooltip_text="* for the whole edge, or a range in "
+                                                                            "microns such as 0-200")
+        self.io_together = Gtk.CheckButton(label="together")
+        self.io_order = Gtk.CheckButton(label="in order")
+        apply = Gtk.Button(label="Place")
+        apply.connect("clicked", self.on_io_apply)
+        clear = Gtk.Button(label="Unplace")
+        clear.connect("clicked", self.on_io_clear)
+        self.io_split = Gtk.Button(label="Split bus…", tooltip_text="Place parts of a bus separately")
+        self.io_split.connect("clicked", self.on_io_split)
+        self.io_join = Gtk.Button(label="Join", tooltip_text="Put a split bus back together")
+        self.io_join.connect("clicked", self.on_io_join)
+        for w in (self.io_edge, self.io_interval, self.io_together, self.io_order, apply, clear, self.io_split,
+                  self.io_join):
+            act.pack_start(w, False, False, 0)
+        box.pack_start(act, False, False, 0)
+        self.io_summary = Gtk.Label(xalign=0, wrap=True)
+        box.pack_start(self.io_summary, False, False, 0)
+        chk = Gtk.Box(spacing=8)
+        self.io_check = Gtk.Button(label="Check with OpenROAD",
+                                   tooltip_text="Look up every pin name in the synthesized design, as the floorplan "
+                                                "stage will")
+        self.io_check.connect("clicked", self.on_io_check)
+        self.io_check_label = Gtk.Label(xalign=0, wrap=True, selectable=True, hexpand=True)
+        chk.pack_start(self.io_check, False, False, 0)
+        chk.pack_start(self.io_check_label, True, True, 0)
+        box.pack_start(chk, False, False, 0)
+        btns = Gtk.Box(spacing=8)
+        self.io_state = Gtk.Label(xalign=0, hexpand=True)
+        self.io_revert = Gtk.Button(label="Revert")
+        self.io_revert.connect("clicked", lambda *_: self.load_io(force=True))
+        self.io_save = Gtk.Button(label="Save")
+        self.io_save.get_style_context().add_class("suggested-action")
+        self.io_save.connect("clicked", self.on_io_save)
+        for w in (self.io_state, self.io_revert, self.io_save):
+            btns.pack_start(w, w is self.io_state, w is self.io_state, 0)
+        box.pack_start(btns, False, False, 0)
+        return box
+
+    # ---------- IO pins ----------
+    def io_file(self):
+        """The IO constraints file this config uses, or where a new one will go."""
+        v = self.effective.get("IO_CONSTRAINTS", "").strip()
+        return (self.resolve(v), True) if v else (self.design_dir() / "io_constraints.tcl", False)
+
+    def load_io(self, force=False):
+        path, used = self.io_file()
+        if not force and self.io_dirty and path == self.io_path:
+            return
+        self.io_path, self.io_used = path, used
+        self.io_text = path.read_text(errors="replace") if used and path.is_file() else ""
+        self.io_mtime = path.stat().st_mtime if used and path.is_file() else None
+        self.io_rows = io_pins.managed_rows(self.io_text)
+        self.io_dirty = False
+        self.io_check_label.set_text("")
+        self.fill_io()
+        self.dirty()
+
+    def fill_io(self):
+        cons = [c for c in io_pins.parse(self.io_text) if not c["managed"]]
+        where = self.io_path.name if self.io_path else "the IO file"
+        by_port = {}
+        for c in cons:
+            for spec in c["pins"]:
+                by_port.setdefault(io_pins.split_spec(spec)[0], []).append((spec, c))
+        mine = {}
+        for r in self.io_rows:
+            mine.setdefault(io_pins.split_spec(r["spec"])[0], []).append(r)
+        rows = []
+        for d, n in self.ports or []:
+            bits = self.port_bits.get(n, "?")
+            for spec, c in by_port.get(n, []):
+                w = io_pins.spec_width(spec, bits)
+                edge = f"{c['location']} (place_pin)" if c["place"] else c["edge"]
+                rows.append([spec, d, str(w) if w else "?", edge, "" if c["place"] else c["interval"], c["group"],
+                             c["order"], f"{where} line {c['line']}", False, n])
+            if n in by_port:
+                continue
+            for r in mine.get(n) or [{"spec": n, "edge": ""}]:
+                w = io_pins.spec_width(r["spec"], bits)
+                rows.append([r["spec"], d, str(w) if w else "?", r.get("edge") or "—",
+                             (r.get("interval") or "*") if r.get("edge") else "", bool(r.get("group")),
+                             bool(r.get("order")), "set here" if r.get("edge") else "", True, n])
+        self.io_store.clear()
+        for r in rows:
+            self.io_store.append(r[:9] + [f"{r[0]} {r[1]}".lower(), 700 if r[3] not in ("—", "") else 400, r[9]])
+        self.io_filter.refilter()
+        # What the rows add up to, per edge.
+        per, unknown = {}, set()
+        for r in rows:
+            e = r[3].split(" ")[0] if r[3] != "—" else "not placed"
+            per[e] = per.get(e, 0) + (int(r[2]) if r[2] != "?" else 0)
+            if r[2] == "?":
+                unknown.add(e)
+        total = sum(per.values())
+        parts = [f"{e}: {'≥' if e in unknown else ''}{n:,} pins" for e, n in per.items() if e != "not placed"]
+        parts.append(f"not placed (the flow chooses): {'≥' if 'not placed' in unknown else ''}"
+                     f"{per.get('not placed', 0):,}")
+        self.io_summary.set_markup(colored_text(" · ".join(parts), CSS_MUTED))
+        notes = []
+        top = self.effective.get("DESIGN_NAME", "the design")
+        src = self.ports_from or "nowhere"
+        notes.append(f"Pins of <b>{GLib.markup_escape_text(top)}</b>: {len(self.ports or [])} ports, "
+                     f"{'≥' if unknown else ''}{total:,} pins, from {GLib.markup_escape_text(src)}."
+                     + (" Widths set by parameters or types are known after synthesis." if unknown else ""))
+        if self.io_used:
+            notes.append(f"Written to {GLib.markup_escape_text(self.short(self.io_path))} (IO_CONSTRAINTS). "
+                         "Lines outside the page's block are shown and left alone.")
+        else:
+            notes.append(f"This config has no IO_CONSTRAINTS yet: saving creates "
+                         f"{GLib.markup_escape_text(self.short(self.io_path))} and sets it.")
+        for c in cons:
+            if c["direction"]:
+                notes.append(colored_text(f"{where} line {c['line']} places all {c['direction'].lower()} pins on "
+                                          f"{c['edge']}:{c['interval']}.", "#c88a00"))
+            elif c["names_expr"]:
+                notes.append(colored_text(f"{where} line {c['line']} picks pins with {c['names_expr']}; they show "
+                                          "as not placed here.", "#c88a00"))
+        self.io_info.set_markup("\n".join(notes))
+        odb = self.synth_file(self.effective, "1_synth.odb")
+        self.io_check.set_sensitive(bool(odb))
+        self.io_check.set_tooltip_text(None if odb else "Needs the synthesized design: run synthesis first")
+
+    def io_visible(self, model, it, _data):
+        k = self.io_dir.get_active_id() or "all"
+        q = self.io_find.get_text().strip().lower()
+        if q and q not in model[it][9]:
+            return False
+        placed = model[it][3] not in ("—", "")
+        return k == "all" or (k == "set" and placed) or (k == "free" and not placed) or model[it][1] == k
+
+    def io_row(self, spec):
+        return next((r for r in self.io_rows if r["spec"] == spec), None)
+
+    def io_changed(self):
+        self.io_dirty = True
+        self.io_check_label.set_text("")
+        self.fill_io()
+        self.dirty()
+
+    def on_io_cell(self, _cell, fpath, value, field):
+        row = self.io_filter[fpath]
+        spec, value = row[0], value.strip()
+        r = self.io_row(spec)
+        if field == "edge":
+            if value in ("—", ""):
+                if r:
+                    r["edge"] = ""
+            elif r:
+                r["edge"], r["interval"] = value, r.get("interval") or "*"
+            else:
+                self.io_rows.append({"spec": spec, "edge": value, "interval": "*", "group": False, "order": False})
+        else:
+            if not io_pins.INTERVAL_RE.fullmatch(value):
+                return self.app.message("The range is * for the whole edge, or start-end in microns, such as 0-200.")
+            if not r or not r["edge"]:
+                return self.app.message("Choose an edge first.")
+            r["interval"] = value
+        self.io_rows = [x for x in self.io_rows if x["edge"] or io_pins.split_spec(x["spec"])[1] is not None]
+        self.io_changed()
+
+    def on_io_toggle(self, _cell, fpath, field):
+        spec = self.io_filter[fpath][0]
+        r = self.io_row(spec)
+        if not r or not r["edge"]:
+            return self.app.message("Choose an edge first.")
+        r[field] = not r.get(field)
+        if field == "order" and r["order"]:
+            r["group"] = True
+        if field == "group" and not r["group"]:
+            r["order"] = False
+        self.io_changed()
+
+    def io_selected(self):
+        model, paths = self.io_tv.get_selection().get_selected_rows()
+        return [model[p] for p in paths]
+
+    def on_io_apply(self, *_):
+        sel = self.io_selected()
+        interval = self.io_interval.get_text().strip() or "*"
+        if not io_pins.INTERVAL_RE.fullmatch(interval):
+            return self.app.message("The range is * for the whole edge, or start-end in microns, such as 0-200.")
+        fixed = [r[0] for r in sel if not r[8]]
+        for row in sel:
+            if not row[8]:
+                continue
+            r = self.io_row(row[0])
+            if not r:
+                r = {"spec": row[0]}
+                self.io_rows.append(r)
+            r.update(edge=self.io_edge.get_active_id(), interval=interval,
+                     group=self.io_together.get_active() or self.io_order.get_active(),
+                     order=self.io_order.get_active())
+        if fixed:
+            self.app.message(f"Left as they are, because the file sets them: {', '.join(fixed)}.")
+        self.io_changed()
+
+    def on_io_clear(self, *_):
+        specs = {r[0] for r in self.io_selected() if r[8]}
+        for r in self.io_rows:
+            if r["spec"] in specs:
+                r["edge"] = ""
+        self.io_rows = [x for x in self.io_rows if x["edge"] or io_pins.split_spec(x["spec"])[1] is not None]
+        self.io_changed()
+
+    def on_io_split(self, *_):
+        sel = [r for r in self.io_selected() if r[8]]
+        if len(sel) != 1:
+            return self.app.message("Select one bus to split.")
+        spec, port = sel[0][0], sel[0][11]
+        name, hi, lo = io_pins.split_spec(spec)
+        if hi is None:
+            bits = self.port_bits.get(port)
+            if not isinstance(bits, tuple):
+                return self.app.message(f"{port} is a single pin, or its width is not known yet (run synthesis).")
+            hi, lo = bits
+        if hi == lo:
+            return self.app.message("That is a single bit.")
+        dlg = Gtk.Dialog(title="Split bus", transient_for=self.app, modal=True)
+        dlg.add_buttons("Cancel", Gtk.ResponseType.CANCEL, "Split", Gtk.ResponseType.OK)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin=12)
+        step = 1 if hi > lo else -1
+        mid = (hi + lo + 1) // 2
+        at = Gtk.SpinButton.new_with_range(min(hi, lo) + 1, max(hi, lo), 1)
+        at.set_value(mid)
+        box.pack_start(Gtk.Label(label=f"{name}[{hi}:{lo}]: first part from bit {hi} down to the bit below the "
+                                       "split, second part from the split bit on.", xalign=0, wrap=True,
+                                 max_width_chars=50), False, False, 0)
+        row = Gtk.Box(spacing=8)
+        row.pack_start(Gtk.Label(label="Split at bit"), False, False, 0)
+        row.pack_start(at, False, False, 0)
+        box.pack_start(row, False, False, 0)
+        dlg.get_content_area().add(box)
+        dlg.show_all()
+        if dlg.run() == Gtk.ResponseType.OK:
+            k = int(at.get_value())
+            first, second = (f"{name}[{hi}:{k}]", f"{name}[{k - step}:{lo}]") if step == 1 else \
+                (f"{name}[{hi}:{k - 1}]", f"{name}[{k}:{lo}]")
+            first, second = (re.sub(r"\[(\d+):\1\]", r"[\1]", s) for s in (first, second))
+            old = self.io_row(spec) or {"edge": "", "interval": "*", "group": False, "order": False}
+            self.io_rows = [x for x in self.io_rows if x["spec"] != spec]
+            self.io_rows += [dict(old, spec=first), dict(old, spec=second)]
+            self.io_changed()
+        dlg.destroy()
+
+    def on_io_join(self, *_):
+        sel = [r for r in self.io_selected() if r[8]]
+        ports = {r[11] for r in sel}
+        if len(ports) != 1:
+            return self.app.message("Select a part of one bus.")
+        port = ports.pop()
+        parts = [x for x in self.io_rows if io_pins.split_spec(x["spec"])[0] == port]
+        if len(parts) < 2 and not any(io_pins.split_spec(x["spec"])[1] is not None for x in parts):
+            return self.app.message(f"{port} is not split.")
+        keep = next((x for x in parts if x["edge"]), parts[0] if parts else {"edge": ""})
+        self.io_rows = [x for x in self.io_rows if x not in parts] + [dict(keep, spec=port)]
+        self.io_rows = [x for x in self.io_rows if x["edge"] or io_pins.split_spec(x["spec"])[1] is not None]
+        self.io_changed()
+
+    def io_problems(self):
+        """Specs that don't fit their port, and pins placed twice."""
+        out, seen = [], {}
+        bits = self.port_bits
+        names = set(self.port_names())
+        cons = [c for c in io_pins.parse(self.io_text) if not c["managed"]]
+        specs = [(r["spec"], "here") for r in self.io_rows if r["edge"]]
+        specs += [(p, f"line {c['line']}") for c in cons for p in c["pins"]]
+        for spec, where in specs:
+            name, hi, lo = io_pins.split_spec(spec)
+            if names and name not in names:
+                out.append(f"{spec} ({where}): no such port")
+                continue
+            why = io_pins.check_spec(spec, bits.get(name, "?"))
+            if why:
+                out.append(f"{spec} ({where}): {why}")
+                continue
+            b = bits.get(name)
+            rng = range(min(hi, lo), max(hi, lo) + 1) if hi is not None else \
+                range(min(b), max(b) + 1) if isinstance(b, tuple) else [None]
+            for i in rng:
+                if (name, i) in seen:
+                    out.append(f"{spec} ({where}) overlaps {seen[(name, i)]}")
+                    break
+                seen[(name, i)] = f"{spec} ({where})"
+        return out
+
+    def on_io_check(self, *_):
+        odb = self.synth_file(self.effective, "1_synth.odb")
+        if not odb:
+            return
+        text = io_pins.set_block(self.io_text or io_pins.HEADER, self.io_rows)
+        lists = [c["names_expr"] or " ".join(c["pins"]) for c in io_pins.parse(text) if not c["place"]
+                 and (c["pins"] or c["names_expr"])]
+        work_dir = self.backups.parent
+        work_dir.mkdir(parents=True, exist_ok=True)
+        tcl = work_dir / "io_check.tcl"
+        body = "".join(
+            f"if {{[catch {{set n [llength [ppl::parse_pin_names check {{{lst}}}]]}} err]}} "
+            f"{{ puts \"ORFS_RUNNER_BAD {i} $err\" }} else {{ puts \"ORFS_RUNNER_OK {i} $n\" }}\n"
+            if not lst.startswith("[") else
+            f"if {{[catch {{set n [llength [ppl::parse_pin_names check {lst}]]}} err]}} "
+            f"{{ puts \"ORFS_RUNNER_BAD {i} $err\" }} else {{ puts \"ORFS_RUNNER_OK {i} $n\" }}\n"
+            for i, lst in enumerate(lists))
+        tcl.write_text(f"read_db {{{odb}}}\n" + body)
+        env = self.app.make_env()
+        exe = env.get("OPENROAD_EXE") or "openroad"
+        self.io_check_label.set_markup(colored_text("Checking with OpenROAD…", CSS_MUTED))
+        self.io_check.set_sensitive(False)
+        local = self.io_problems()
+
+        def work():
+            try:
+                out = subprocess.run([exe, "-no_init", "-exit", str(tcl)], cwd=self.app.flow, env=env,
+                                     capture_output=True, text=True, timeout=300)
+                log = out.stdout + out.stderr
+            except (OSError, subprocess.TimeoutExpired) as e:
+                log = f"ORFS_RUNNER_BAD -1 {e}"
+            GLib.idle_add(self.on_io_checked, log, lists, local)
+        threading.Thread(target=work, daemon=True).start()
+
+    def on_io_checked(self, log, lists, local):
+        self.io_check.set_sensitive(True)
+        ok, bad = 0, []
+        for line in log.splitlines():
+            if line.startswith("ORFS_RUNNER_OK "):
+                ok += int(line.split()[2])
+            elif line.startswith("ORFS_RUNNER_BAD "):
+                i, err = line.split(" ", 2)[1:]
+                bad.append(f"{lists[int(i)] if int(i) >= 0 else ''}: {err}")
+            elif "PPL-" in line and "ERROR" in line:
+                bad.append(line.strip())
+        out = [colored_text(f"OpenROAD found all {ok:,} pins the constraints name." if not bad else
+                            f"OpenROAD found {ok:,} pins, but:", "#2e9e5b" if not bad and not local else CSS_MUTED)]
+        out += [colored_text(b, "#e0533f") for b in dict.fromkeys(bad)]
+        out += [colored_text(p, "#c88a00") for p in local]
+        self.io_check_label.set_markup("\n".join(out))
+        return False
+
+    def on_io_save(self, *_):
+        problems = self.io_problems()
+        if problems and not self.app.confirm("Save with these problems?", "\n".join(problems[:12])):
+            return
+        text = io_pins.set_block(self.io_text or io_pins.HEADER, self.io_rows)
+        files = [(self.io_path, text, self.io_mtime)]
+        if not self.io_used:
+            if self.io_path.exists():
+                text = io_pins.set_block(self.io_path.read_text(errors="replace"), self.io_rows)
+                files = [(self.io_path, text, None)]
+            cfg = self.cfg_path()
+            rel = f"$(DESIGN_HOME)/$(PLATFORM)/{self.design_dir().name}/{self.io_path.name}"
+            files.append((cfg, set_mk_vars(cfg.read_text(errors="replace"), {"IO_CONSTRAINTS": rel}), None))
+        if self.write(files):
+            self.io_dirty = False
+            self.after_save([p for p, _, _ in files])
+
     def build_sdc(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
         row = Gtk.Box(spacing=8)
@@ -785,7 +1203,7 @@ class InputsTab:
         return self.file_tv.get_buffer().get_modified()
 
     def is_dirty(self):
-        return bool(self.pending) or self.sdc_dirty() or self.file_dirty()
+        return bool(self.pending) or self.sdc_dirty() or self.file_dirty() or self.io_dirty
 
     def dirty(self):
         """Update the save buttons and tell the app whether there are unsaved inputs."""
@@ -799,6 +1217,10 @@ class InputsTab:
         self.clk_save.set_sensitive(self.sdc_dirty() and idle)
         self.clk_save.set_tooltip_text(why)
         self.clk_revert.set_sensitive(self.sdc_dirty())
+        self.io_save.set_sensitive(self.io_dirty and idle)
+        self.io_save.set_tooltip_text(why)
+        self.io_revert.set_sensitive(self.io_dirty)
+        self.io_state.set_markup(self.state_markup(self.io_dirty))
         self.clk_state.set_markup(self.state_markup(self.sdc_dirty()) + colored_text(
             "  (clocks are saved in the SDC file)", CSS_MUTED))
         self.file_revert.set_sensitive(self.file_dirty())
@@ -837,12 +1259,14 @@ class InputsTab:
         """The app selected another config (or re-read the current one)."""
         if cfg != self.cfg:
             self.pending.clear()
+            self.io_dirty = False
             self.info.hide()
             self.last_save = []
             if self.file_path and not self.file_dirty():
                 self.file_path = None
         self.cfg = cfg
-        self.cfg_label.set_markup(f"<b>{GLib.markup_escape_text(cfg)}</b>" if cfg else "Pick a design")
+        self.cfg_label.set_markup(f"Inputs of <b>{GLib.markup_escape_text(cfg)}</b>" if cfg else "Pick a design")
+        self.cfg_label.set_tooltip_text(cfg)
         self.refresh()
 
     def refresh(self, then=None):
@@ -899,9 +1323,11 @@ class InputsTab:
             return False
         self.effective, self.chain, self.shared, self.rtl = eff, chain, shared, rtl
         self.ports = ports or rtl[1] or None
+        self.port_bits = self._ports_bits if ports else rtl[3]
         self.ports_from = "the synthesized netlist" if ports else (rtl[0].name if rtl[1] else "")
         self.fill_settings()
         self.load_sdc()
+        self.load_io()
         self.fill_files()
         self.dirty()
         if then:
@@ -924,7 +1350,8 @@ class InputsTab:
             return None
         key = (netlist, netlist.stat().st_mtime)
         if getattr(self, "_ports_key", None) != key:
-            self._ports_key, self._ports = key, netlist_names(netlist, eff.get("DESIGN_NAME", ""), [])[0]
+            ports, _, bits = netlist_names(netlist, eff.get("DESIGN_NAME", ""), [])
+            self._ports_key, self._ports, self._ports_bits = key, ports, bits
         return self._ports
 
     def read_rtl(self, eff):
@@ -935,7 +1362,7 @@ class InputsTab:
             try:
                 self._rtl_key, self._rtl = key, sc.read_rtl(files, top)
             except OSError:
-                self._rtl_key, self._rtl = key, (None, [], {})
+                self._rtl_key, self._rtl = key, (None, [], {}, {})
         return self._rtl
 
     def design_dir(self):
@@ -1195,15 +1622,16 @@ class InputsTab:
         clk_row.pack_start(Gtk.Label(label="Clock"), False, False, 0)
         clk_row.pack_start(clk, False, False, 0)
         box.pack_start(clk_row, False, False, 0)
-        store = Gtk.ListStore(bool, str, str)  # chosen, name, direction
+        store = Gtk.ListStore(bool, str, str, str, str)  # chosen, name, direction, pins, bits
         clock_ports = {p for c in self.clocks["clocks"] for p in c["ports"]}
         for d, n in self.ports or []:
             if d in ("input", "output") and n not in clock_ports:
-                store.append([False, n, d])
+                w = sc.width(self.port_bits.get(n, "?"))
+                store.append([False, n, d, str(w) if w else "?", ""])
         flt = store.filter_new()
         flt.set_visible_func(lambda m, it, _d: m[it][2] == kind.get_active_id()
                              and find.get_text().lower() in m[it][1].lower())
-        tv = Gtk.TreeView(model=flt, headers_visible=False)
+        tv = Gtk.TreeView(model=flt)
         tick = Gtk.CellRendererToggle()
 
         def toggled(_c, path):
@@ -1212,6 +1640,17 @@ class InputsTab:
         tick.connect("toggled", toggled)
         tv.append_column(Gtk.TreeViewColumn("", tick, active=0))
         tv.append_column(Gtk.TreeViewColumn("Port", Gtk.CellRendererText(), text=1))
+        tv.append_column(Gtk.TreeViewColumn("Pins", Gtk.CellRendererText(xalign=1, foreground=CSS_MUTED), text=3))
+        bits_cell = Gtk.CellRendererText(editable=True, foreground=CHANGED, placeholder_text="all")
+
+        def bits_edited(_c, path, text):
+            it = flt.convert_iter_to_child_iter(flt.get_iter(path))
+            store[it][4] = text.strip().strip("[]")
+            if store[it][4]:
+                store[it][0] = True
+        bits_cell.connect("edited", bits_edited)
+        tv.append_column(Gtk.TreeViewColumn("Bits (e.g. 31:16)", bits_cell, text=4))
+        tv.set_headers_visible(True)
         sw = Gtk.ScrolledWindow(vexpand=True)
         sw.add(tv)
         box.pack_start(sw, True, True, 0)
@@ -1230,7 +1669,13 @@ class InputsTab:
         dlg.get_content_area().add(box)
         dlg.show_all()
         while dlg.run() == Gtk.ResponseType.OK:
-            names = [r[1] for r in store if r[0] and r[2] == kind.get_active_id()]
+            names = [r[1] + (f"[{r[4]}]" if r[4] else "") for r in store if r[0] and r[2] == kind.get_active_id()]
+            bad = [f"{n}: {why}" for n in names
+                   for why in [io_pins.check_spec(n, self.port_bits.get(io_pins.split_spec(n)[0], "?"))]
+                   if why or (io_pins.split_spec(n)[1] is None and "[" in n)]
+            if bad:
+                self.app.message("Bits are a number or high:low within the bus.\n" + "\n".join(bad))
+                continue
             v = value.get_text().strip()
             if not names:
                 self.app.message("Tick at least one port.")
@@ -1541,7 +1986,7 @@ class InputsTab:
             return "" if var not in ("IO_CONSTRAINTS", "MACRO_PLACEMENT_TCL") else \
                 "#\n# Run synthesis first to have this file list the design's names.\n"
         macros = [Path(p).stem for p in self.effective.get("ADDITIONAL_LEFS", "").split()]
-        ports, insts = netlist_names(netlist, self.effective.get("DESIGN_NAME", ""), macros)
+        ports, insts, _ = netlist_names(netlist, self.effective.get("DESIGN_NAME", ""), macros)
         if var == "IO_CONSTRAINTS":
             lines = [f"#\n# Ports of {self.effective.get('DESIGN_NAME')} in {netlist.name}:"]
             for d in ("input", "output", "inout"):

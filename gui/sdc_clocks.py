@@ -197,8 +197,45 @@ def module_text(text, top):
     return text[m.start(): m.end() + end.end() if end else len(text)]
 
 
+SCALAR_TYPES = {"logic", "wire", "reg", "bit", "signed", "unsigned", "var", "tri", "wand", "wor", "integer"}
+
+
+def eval_range(text):
+    """(msb, lsb) of a packed range like '31:0' or '7-1:0'; None if it uses parameters."""
+    m = re.fullmatch(r"\s*([-+*/ ()\d]+?)\s*:\s*([-+*/ ()\d]+?)\s*", text)
+    if not m:
+        return None
+    try:
+        return int(eval(m.group(1), {"__builtins__": {}})), int(eval(m.group(2), {"__builtins__": {}}))
+    except (SyntaxError, ZeroDivisionError, TypeError, ValueError):
+        return None
+
+
+def bits_of(decl):
+    """Width of a port declaration's type: (msb, lsb), "scalar", or "?" when parameters or types decide it."""
+    decl = decl.split("=")[0]
+    packed = re.search(r"\[([^\]]*)\]", decl)
+    if packed:
+        return eval_range(packed.group(1)) or "?"
+    words = re.findall(r"[A-Za-z_][\w$]*(?:::[A-Za-z_][\w$]*)?", re.sub(r"\[[^\]]*\]", " ", decl))
+    return "scalar" if all(w in SCALAR_TYPES for w in words[:-1]) else "?"
+
+
+def width(bits):
+    if bits == "scalar":
+        return 1
+    if isinstance(bits, tuple):
+        return abs(bits[0] - bits[1]) + 1
+    return None
+
+
 def rtl_ports(mod):
     """[(direction, name)] of a module's text, ANSI or non-ANSI style."""
+    return [(d, n) for d, n, _ in port_decls(mod)]
+
+
+def port_decls(mod):
+    """[(direction, name, bits)] of a module's text, ANSI or non-ANSI style (bits as in bits_of)."""
     m = re.match(r"\s*module\s+\w+\s*(?:import\b[^;]*;\s*)*", mod)
     i = m.end() if m else 0
     if mod[i:i + 1] == "#":
@@ -216,19 +253,21 @@ def rtl_ports(mod):
             if d:
                 direction, it = d.group(1), d.group(2)
             if direction:
-                ports += [(direction, n) for n in _decl_names(it)]
+                ports += [(direction, n, bits_of(it)) for n in _decl_names(it)]
         return ports
     # Non-ANSI: names in the header, directions in the body.
     names = [re.sub(r"\W", "", it) for it in items]
     body = mod[_balanced(mod, j):]
-    dirs = {}
+    dirs, bits = {}, {}
     for d, rest in re.findall(r"\b(input|output|inout)\b([^;]*);", body):
+        packed = re.match(r"\s*(?:wire\s+|reg\s+|logic\s+)?(?:signed\s+)?\[([^\]]*)\]", rest)
+        b = (eval_range(packed.group(1)) or "?") if packed else "scalar"
         rest = re.sub(r"\[[^\]]*\]", " ", rest)
         for part in rest.split(","):
             words = re.findall(r"[A-Za-z_][\w$]*", part)
             if words:
-                dirs[words[-1]] = d
-    return [(dirs.get(n, "input"), n) for n in names if n]
+                dirs[words[-1]], bits[words[-1]] = d, b
+    return [(dirs.get(n, "input"), n, bits.get(n, "scalar")) for n in names if n]
 
 
 def rtl_clocks(mod, ports):
@@ -254,13 +293,14 @@ def rtl_clocks(mod, ports):
 
 
 def read_rtl(files, top):
-    """(file, ports, clocks) for the top module, or (None, [], {})."""
+    """(file, ports, clocks, bits) for the top module, or (None, [], {}, {})."""
     path = find_top(files, top)
     if not path:
-        return None, [], {}
+        return None, [], {}, {}
     mod = module_text(path.read_text(errors="replace"), top)
-    ports = rtl_ports(mod)
-    return path, ports, rtl_clocks(mod, ports)
+    decls = port_decls(mod)
+    ports = [(d, n) for d, n, _ in decls]
+    return path, ports, rtl_clocks(mod, ports), {n: b for _, n, b in decls}
 
 
 def read_sdc(text, ports, env=None):
