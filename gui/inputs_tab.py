@@ -17,6 +17,8 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import GLib, Gtk, Pango  # noqa: E402
 
+import sdc_clocks as sc  # noqa: E402
+
 ASSIGN_RE = re.compile(r"^(\s*)(export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?=|::=|:=|\+=|=)\s*(.*)$")
 INCLUDE_RE = re.compile(r"^\s*-?include\s+(.+?)\s*$")
 SDC_SET_RE = re.compile(r"^(\s*set\s+)([A-Za-z_]\w*)(\s+)(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)(\s*(?:;\s*)?(?:#.*)?)$")
@@ -158,7 +160,8 @@ def sdc_fields(text):
             continue
         m = SDC_PERIOD_RE.match(line)
         if m and not line.lstrip().startswith("#"):
-            out.append((i, "period", "create_clock -period", m.group(2)))
+            n = re.search(r"-name\s+([^\s\]]+)", line)
+            out.append((i, "period", f"period of {n.group(1)}" if n else "create_clock -period", m.group(2)))
     return out
 
 
@@ -278,7 +281,11 @@ class InputsTab:
         self._sdc_quiet = False
         self._sdc_timer = None
         self.variables = {}
-        self.ports = None        # top-level ports from the synthesized netlist, once synthesis has run
+        self.ports = None        # top-level ports: from the synthesized netlist once there is one, else the RTL
+        self.ports_from = ""
+        self.rtl = (None, [], {})  # top module file, its ports, and the inputs that act as clocks
+        self.clocks = {"clocks": [], "generated": [], "groups": [], "delays": [], "error": None}
+        self.period_vars = set()
         self.widget = self.build()
 
     # ---------- layout ----------
@@ -304,11 +311,312 @@ class InputsTab:
         self.info_label.show()
         box.pack_start(self.info, False, False, 0)
 
+        self.stack.add_titled(self.build_clocks(), "clocks", "Clocks")
         self.stack.add_titled(self.build_sdc(), "sdc", "Constraints")
         self.stack.add_titled(self.build_settings(), "settings", "Flow settings")
         self.stack.add_titled(self.build_files(), "files", "Files")
         box.pack_start(self.stack, True, True, 0)
         return box
+
+    def build_clocks(self):
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
+        self.rtl_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
+        box.pack_start(self.rtl_label, False, False, 0)
+        box.pack_start(section("Clocks"), False, False, 4)
+        # name, port, period, frequency, defined in, key, name/port/period editable, tooltip, weight
+        self.clk_store = Gtk.ListStore(str, str, str, str, str, str, bool, bool, bool, str, int)
+        tv = Gtk.TreeView(model=self.clk_store, tooltip_column=9)
+        cell = Gtk.CellRendererText()
+        cell.connect("edited", self.on_clock_edit, "name")
+        tv.append_column(Gtk.TreeViewColumn("Clock", cell, text=0, editable=6, weight=10))
+        self.port_model = Gtk.ListStore(str)
+        cell = Gtk.CellRendererCombo(model=self.port_model, text_column=0, has_entry=False)
+        cell.connect("edited", self.on_clock_edit, "port")
+        tv.append_column(Gtk.TreeViewColumn("Port", cell, text=1, editable=7))
+        cell = Gtk.CellRendererText(family="monospace", foreground=CHANGED)
+        cell.connect("edited", self.on_clock_edit, "period")
+        self.period_col = Gtk.TreeViewColumn("Period", cell, text=2, editable=8, foreground_set=8)
+        tv.append_column(self.period_col)
+        tv.append_column(Gtk.TreeViewColumn("Frequency", Gtk.CellRendererText(foreground=CSS_MUTED), text=3))
+        col = Gtk.TreeViewColumn("Defined in", Gtk.CellRendererText(foreground=CSS_MUTED,
+                                                                    ellipsize=Pango.EllipsizeMode.END), text=4)
+        col.set_expand(True)
+        tv.append_column(col)
+        self.clk_tv = tv
+        sw = Gtk.ScrolledWindow(min_content_height=170)
+        sw.add(tv)
+        box.pack_start(sw, False, False, 0)
+        row = Gtk.Box(spacing=8)
+        hint = Gtk.Label(xalign=0, wrap=True, hexpand=True,
+                         label="Click a period to change it (blue = editable). For a clock port found in the RTL "
+                               "with no clock yet, type its period to create the clock.")
+        add = Gtk.Button(label="Add clock…")
+        add.connect("clicked", self.on_add_clock)
+        self.clk_remove = Gtk.Button(label="Remove")
+        self.clk_remove.connect("clicked", self.on_remove_clock)
+        for w in (hint, add, self.clk_remove):
+            row.pack_start(w, w is hint, w is hint, 0)
+        box.pack_start(row, False, False, 0)
+
+        box.pack_start(section("How the clocks relate"), False, False, 8)
+        box.pack_start(Gtk.Label(
+            xalign=0, wrap=True, label="Timed together: one source, so paths between them are timed. Asynchronous: no "
+                                       "fixed phase, paths between them are not timed (they need synchronisers). "
+                                       "Exclusive: never both active (logically: a mux picks one; physically: they "
+                                       "never exist at the same time)."), False, False, 0)
+        self.rel_grid = Gtk.Grid(column_spacing=12, row_spacing=6)
+        rsw = Gtk.ScrolledWindow(vexpand=True)
+        rsw.add(self.rel_grid)
+        box.pack_start(rsw, True, True, 0)
+        btns = Gtk.Box(spacing=8)
+        self.clk_state = Gtk.Label(xalign=0, hexpand=True)
+        self.clk_revert = Gtk.Button(label="Revert")
+        self.clk_revert.connect("clicked", lambda *_: self.load_sdc(force=True))
+        self.clk_save = Gtk.Button(label="Save")
+        self.clk_save.get_style_context().add_class("suggested-action")
+        self.clk_save.connect("clicked", self.on_sdc_save)
+        for w in (self.clk_state, self.clk_revert, self.clk_save):
+            btns.pack_start(w, w is self.clk_state, w is self.clk_state, 0)
+        box.pack_start(btns, False, False, 0)
+        return box
+
+    # ---------- clocks ----------
+    def fill_clocks(self, text):
+        """Read the clocks the SDC defines and the RTL's clock ports, and show them."""
+        env = {k: v for k, v in self.effective.items() if f"env({k})" in text}
+        info = sc.read_sdc(text, self.ports or [], env)
+        self.clocks = info
+        unit = self.unit()
+        lines = text.split("\n")
+        span = sc.block_span(lines)
+        in_block = (lambda ln: span is not None and span[0] < ln - 1 < span[1])
+        sdc_name = self.sdc_path.name if self.sdc_path else "the SDC"
+        self.period_vars = set()
+        rows = []
+        for c in info["clocks"]:
+            port = ", ".join(c["ports"]) or "(virtual)"
+            if in_block(c["line"]):
+                rows.append([c["name"], port, c["period"], "added here", f"m:{c['name']}", True, True, True,
+                             "Added on this page; edit or remove it here."])
+                continue
+            how, var = sc.period_source(text, c["line"])
+            if how == "var":
+                self.period_vars.add(var)
+            same = [o["name"] for o in info["clocks"] if o is not c and sc.period_source(text, o["line"]) == (how, var)]
+            tip = (f"Defined at {sdc_name} line {c['line']}." + (f" Its period is ${var}" if how == "var" else "")
+                   + (f", shared with {', '.join(same)}." if how == "var" and same else "."))
+            if not how:
+                tip += " The period is an expression: change it on the Constraints page."
+            where = f"{sdc_name} line {c['line']}" + (f", ${var}" if how == "var" else "")
+            rows.append([c["name"], port, c["period"], where, f"f:{c['name']}:{c['line']}", False, False, bool(how),
+                         tip])
+        for g in info["generated"]:
+            rel = (f"÷{g['divide_by']}" if g["divide_by"] else f"×{g['multiply_by']}" if g["multiply_by"] else "")
+            rows.append([g["name"], ", ".join(g["ports"]) or "-", f"{rel} of {g['master'] or g['source']}".strip(),
+                         "", f"g:{g['name']}", False, False, False,
+                         f"Generated clock at {sdc_name} line {g['line']}; change it on the Constraints page."])
+        clocked = {p for c in info["clocks"] for p in c["ports"]}
+        for port, why in self.rtl[2].items():
+            if port not in clocked:
+                rows.append([port, port, "", f"RTL: {why}; no clock yet", f"r:{port}", True, False, True,
+                             "A clock input of the top module with no create_clock. Type a period to add it."])
+        self.clk_store.clear()
+        for r in rows:
+            per = r[2]
+            freq = freq_text(per, unit).lstrip("= ") if per and NUMBER_RE.fullmatch(per) else ""
+            self.clk_store.append([r[0], r[1], f"{per} {unit}" if per and NUMBER_RE.fullmatch(per) else per, freq,
+                                   r[3], r[4], r[5], r[6], r[7], GLib.markup_escape_text(r[8]),
+                                   400 if r[4].startswith("r:") else 700])
+        self.period_col.set_title(f"Period ({unit})")
+        self.port_model.clear()
+        for n in self.port_names("input") + ["(virtual)"]:
+            self.port_model.append([n])
+        self.fill_relations(text, info, span)
+        self.fill_rtl_label(info)
+
+    def fill_rtl_label(self, info):
+        path, ports, clocks = self.rtl
+        top = self.effective.get("DESIGN_NAME", "the top module")
+        if not path:
+            msg = colored_text(f"Module {top} was not found in VERILOG_FILES, so clock ports can't be read from the "
+                               "RTL. Clocks already in the SDC are shown below.", "#c88a00")
+        else:
+            found = ", ".join(f"<b>{GLib.markup_escape_text(p)}</b> ({GLib.markup_escape_text(w)})"
+                              for p, w in clocks.items()) or "none"
+            msg = (f"Top module <b>{GLib.markup_escape_text(top)}</b> in "
+                   f"{GLib.markup_escape_text(self.short(path))}: {len(ports)} ports "
+                   f"({sum(d == 'input' for d, _ in ports)} in, {sum(d == 'output' for d, _ in ports)} out). "
+                   f"Clock inputs in the RTL: {found}.")
+        if info["error"]:
+            msg += "\n" + colored_text("Reading the SDC stopped early (" + info["error"] + "). Clocks defined before "
+                                       "that point are shown; a check that needs the netlist runs only in the flow.",
+                                       "#c88a00")
+        self.rtl_label.set_markup(msg)
+
+    def fill_relations(self, text, info, span):
+        for child in self.rel_grid.get_children():
+            self.rel_grid.remove(child)
+        _, mrels = sc.managed(text)
+        groups = [g for g in info["groups"] if not (span and span[0] < g["line"] - 1 < span[1])]
+        real = [c["name"] for c in info["clocks"] if c["ports"]] + [g["name"] for g in info["generated"]]
+        pairs = [(a, b) for i, a in enumerate(real) for b in real[i + 1:]]
+        if not pairs:
+            self.rel_grid.attach(Gtk.Label(label="Only one clock on a port: there is nothing to relate.", xalign=0),
+                                 0, 0, 1, 1)
+        sdc_name = self.sdc_path.name if self.sdc_path else "the SDC"
+        for row, (a, b) in enumerate(pairs):
+            combo = Gtk.ComboBoxText()
+            combo.append("related", "Timed together")
+            for k, label in sc.RELATIONS.items():
+                combo.append(k, label)
+            kind, line = sc.relation(groups, a, b)
+            note = Gtk.Label(xalign=0)
+            if kind:
+                combo.set_active_id(kind)
+                combo.set_sensitive(False)
+                self.set_note(note, f"set in {sdc_name} line {line}; change it on the Constraints page", None)
+            else:
+                combo.set_active_id(mrels.get((a, b)) or mrels.get((b, a)) or "related")
+                self.set_note(note, "set here" if (a, b) in mrels or (b, a) in mrels else "", None)
+                combo.connect("changed", self.on_relation, a, b)
+            self.rel_grid.attach(Gtk.Label(label=f"{a}  ↔  {b}", xalign=0), 0, row, 1, 1)
+            self.rel_grid.attach(combo, 1, row, 1, 1)
+            self.rel_grid.attach(note, 2, row, 1, 1)
+        self.rel_grid.show_all()
+
+    def replace_sdc(self, text):
+        """Put new SDC text in the editor (unsaved) and re-read everything shown from it."""
+        buf = self.sdc_tv.get_buffer()
+        self._sdc_quiet = True
+        buf.set_text(text)
+        self._sdc_quiet = False
+        buf.set_modified(True)
+        self.check_label.set_text("")
+        self.fill_sdc_fields(text)
+        self.dirty()
+
+    def on_relation(self, combo, a, b):
+        text = self.sdc_text()
+        mclocks, mrels = sc.managed(text)
+        mrels.pop((b, a), None)
+        if combo.get_active_id() == "related":
+            mrels.pop((a, b), None)
+        else:
+            mrels[(a, b)] = combo.get_active_id()
+        GLib.idle_add(lambda: self.replace_sdc(sc.set_block(text, mclocks, mrels)) and False)
+
+    def on_clock_edit(self, _cell, path, value, field):
+        row = self.clk_store[path]
+        key, value = row[5], value.strip()
+        text = self.sdc_text()
+        mclocks, mrels = sc.managed(text)
+        unit = self.unit()
+        if field == "period" and value.endswith(unit):
+            value = value[:-len(unit)].strip()
+        if field == "period" and value and not (NUMBER_RE.fullmatch(value) and float(value) > 0):
+            return self.app.message(f"The period is a positive number in {unit}.")
+        if field == "name" and not NAME_RE.fullmatch(value):
+            return self.app.message("A clock name is letters, digits and underscores.")
+        if field == "port":
+            value = "" if value == "(virtual)" else value
+        kind = key.split(":")[0]
+        if kind == "f":
+            if not value:
+                return self.app.message("This clock is defined in the file; remove it on the Constraints page.")
+            line = int(key.rsplit(":", 1)[1])
+            how, var = sc.period_source(text, line)
+            text = self.set_period_in_file(text, line, how, var, value)
+            if text is None:
+                return
+        elif kind == "m":
+            c = next(c for c in mclocks if c["name"] == key[2:])
+            if field == "period" and not value:
+                mclocks.remove(c)
+                mrels = {k: v for k, v in mrels.items() if c["name"] not in k}
+            else:
+                old = c["name"]
+                c[field] = value
+                if field == "name":
+                    mrels = {tuple(value if x == old else x for x in k): v for k, v in mrels.items()}
+        elif kind == "r":
+            if field == "name":
+                row[0] = value
+                return
+            if value:
+                if row[0] in self.clock_names():
+                    return self.app.message(f"There is already a clock named {row[0]}.")
+                mclocks.append({"name": row[0], "period": value, "port": key[2:]})
+        else:
+            return
+        self.replace_sdc(sc.set_block(text, mclocks, mrels))
+
+    def set_period_in_file(self, text, line, how, var, value):
+        """Change a file clock's period where it is set: its `set var` line or the create_clock line."""
+        lines = text.split("\n")
+        if how == "var":
+            rx = re.compile(rf"\s*set\s+{re.escape(var)}\s")
+            idx = next((i for i in range(line - 2, -1, -1) if rx.match(lines[i])), None)
+            if idx is None or not SDC_SET_RE.match(lines[idx]):
+                self.app.message(f"${var} is not set to a plain number in this file; change it on the "
+                                 "Constraints page.")
+                return None
+            lines[idx] = sdc_set_line(lines[idx], "set", value)
+        elif how == "literal":
+            lines[line - 1] = re.sub(r"(-period\s+)-?\d+(?:\.\d+)?", lambda m: m.group(1) + value, lines[line - 1], 1)
+        else:
+            self.app.message("This period is an expression; change it on the Constraints page.")
+            return None
+        return "\n".join(lines)
+
+    def on_add_clock(self, *_):
+        dlg = Gtk.Dialog(title="Add clock", transient_for=self.app, modal=True)
+        dlg.add_buttons("Cancel", Gtk.ResponseType.CANCEL, "Add", Gtk.ResponseType.OK)
+        grid = Gtk.Grid(column_spacing=10, row_spacing=8, margin=12)
+        name = Gtk.Entry(activates_default=True)
+        port = Gtk.ComboBoxText()
+        clocked = {p for c in self.clocks["clocks"] for p in c["ports"]}
+        free = [n for n in self.port_names("input") if n not in clocked]
+        for n in sorted(free, key=lambda n: (n not in self.rtl[2], n)):
+            port.append(n, n + ("  (clock in the RTL)" if n in self.rtl[2] else ""))
+        port.append("", "(virtual: no port, for input and output delays)")
+        period = Gtk.Entry(activates_default=True, width_chars=10)
+        for r, (label, w) in enumerate((("Port", port), ("Name", name), (f"Period ({self.unit()})", period))):
+            grid.attach(Gtk.Label(label=label, xalign=0), 0, r, 1, 1)
+            grid.attach(w, 1, r, 1, 1)
+        port.connect("changed", lambda *_: name.set_text(port.get_active_id()
+                                                         or f"vclk_{self.default_clock() or 'io'}"))
+        port.set_active(0)
+        dlg.set_default_response(Gtk.ResponseType.OK)
+        dlg.get_content_area().add(grid)
+        dlg.show_all()
+        while dlg.run() == Gtk.ResponseType.OK:
+            n, p, v = name.get_text().strip(), port.get_active_id() or "", period.get_text().strip()
+            if not NAME_RE.fullmatch(n) or n in self.clock_names():
+                self.app.message("Use a new clock name: letters, digits and underscores.")
+                continue
+            if not (NUMBER_RE.fullmatch(v) and float(v) > 0):
+                self.app.message(f"The period is a positive number in {self.unit()}.")
+                continue
+            text = self.sdc_text()
+            mclocks, mrels = sc.managed(text)
+            mclocks.append({"name": n, "period": v, "port": p})
+            self.replace_sdc(sc.set_block(text, mclocks, mrels))
+            break
+        dlg.destroy()
+
+    def on_remove_clock(self, *_):
+        model, it = self.clk_tv.get_selection().get_selected()
+        if it is None:
+            return
+        key = model[it][5]
+        if not key.startswith("m:"):
+            return self.app.message("Only clocks added on this page can be removed here. Clocks defined in the file "
+                                    "are changed on the Constraints page.")
+        text = self.sdc_text()
+        mclocks, mrels = sc.managed(text)
+        mclocks = [c for c in mclocks if c["name"] != key[2:]]
+        mrels = {k: v for k, v in mrels.items() if key[2:] not in k}
+        self.replace_sdc(sc.set_block(text, mclocks, mrels))
 
     def build_sdc(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
@@ -488,6 +796,11 @@ class InputsTab:
             btn.set_sensitive(on and idle)
             btn.set_tooltip_text(why)
         self.sdc_revert.set_sensitive(self.sdc_dirty())
+        self.clk_save.set_sensitive(self.sdc_dirty() and idle)
+        self.clk_save.set_tooltip_text(why)
+        self.clk_revert.set_sensitive(self.sdc_dirty())
+        self.clk_state.set_markup(self.state_markup(self.sdc_dirty()) + colored_text(
+            "  (clocks are saved in the SDC file)", CSS_MUTED))
         self.file_revert.set_sensitive(self.file_dirty())
         self.set_revert.set_sensitive(bool(self.pending))
         n = len(self.pending)
@@ -557,6 +870,7 @@ class InputsTab:
                      "DESIGN_NICKNAME": eff.get("DESIGN_NICKNAME", ""), "FLOW_HOME": str(flow)}
             chain = config_chain(cfg_path, subst)
             ports = self.read_ports(eff)
+            rtl = self.read_rtl(eff)
             # Which configs of this design use the same SDC file.
             shared = []
             sdc = eff.get("SDC_FILE")
@@ -570,10 +884,10 @@ class InputsTab:
                             shared.append(other.name)
                     except (OSError, subprocess.TimeoutExpired, RuntimeError, ValueError):
                         pass
-            GLib.idle_add(self.on_loaded, gen, eff, chain, shared, ports, err, then)
+            GLib.idle_add(self.on_loaded, gen, eff, chain, shared, ports, rtl, err, then)
         threading.Thread(target=work, daemon=True).start()
 
-    def on_loaded(self, gen, eff, chain, shared, ports, err, then):
+    def on_loaded(self, gen, eff, chain, shared, ports, rtl, err, then):
         if gen != self.gen:
             return False
         if err:
@@ -583,7 +897,9 @@ class InputsTab:
             if then:
                 then(None)
             return False
-        self.effective, self.chain, self.shared, self.ports = eff, chain, shared, ports
+        self.effective, self.chain, self.shared, self.rtl = eff, chain, shared, rtl
+        self.ports = ports or rtl[1] or None
+        self.ports_from = "the synthesized netlist" if ports else (rtl[0].name if rtl[1] else "")
         self.fill_settings()
         self.load_sdc()
         self.fill_files()
@@ -610,6 +926,17 @@ class InputsTab:
         if getattr(self, "_ports_key", None) != key:
             self._ports_key, self._ports = key, netlist_names(netlist, eff.get("DESIGN_NAME", ""), [])[0]
         return self._ports
+
+    def read_rtl(self, eff):
+        """The top module's file, ports and clock inputs, from the design's Verilog sources."""
+        files, top = eff.get("VERILOG_FILES", "").split(), eff.get("DESIGN_NAME", "")
+        key = (top, tuple(files), tuple(Path(f).stat().st_mtime if Path(f).exists() else 0 for f in files))
+        if getattr(self, "_rtl_key", None) != key:
+            try:
+                self._rtl_key, self._rtl = key, sc.read_rtl(files, top)
+            except OSError:
+                self._rtl_key, self._rtl = key, (None, [], {})
+        return self._rtl
 
     def design_dir(self):
         return self.cfg_path().parent
@@ -661,13 +988,13 @@ class InputsTab:
     def field_note(self, kind, name, value, unused):
         """Unit, frequency or port check shown next to a quick setting: (text, colour or None)."""
         unit = self.unit()
-        if kind == "period" or name in ("clk_period", "clock_period", "period"):
+        if kind == "period" or name in self.period_vars or name in ("clk_period", "clock_period", "period"):
             return f"{unit}  {freq_text(value, unit)}", None
         if name in unused:
             return "set but not used", "#c88a00"
         if kind == "text" and "port" in name:
             if self.ports is None:
-                return "port names are known once synthesis has run", None
+                return "the top module's ports could not be read", None
             if value not in self.port_names():
                 return f"not a port of {self.effective.get('DESIGN_NAME', 'the design')}", "#e0533f"
             d = next(d for d, n in self.ports if n == value)
@@ -701,6 +1028,7 @@ class InputsTab:
             self.sdc_grid.attach(widget, 1, row, 1, 1)
             self.sdc_grid.attach(note, 2, row, 1, 1)
         self.sdc_grid.show_all()
+        self.fill_clocks(text)
         self.update_io(text)
 
     def set_note(self, label, text, color):
@@ -720,12 +1048,12 @@ class InputsTab:
             else:
                 lines.append(colored_text(f"No set_{kind}_delay: {kind} paths are not timed.", "#c88a00"))
         self.io_label.set_markup("\n".join(lines))
-        clock = sdc_clock(text)
+        clock = bool(self.clock_names())
         missing = "set_input_delay" not in code or "set_output_delay" not in code
-        self.io_add.set_sensitive(bool(clock) and missing)
-        self.io_add.set_tooltip_text(None if clock else "Define the clock (create_clock -name) first")
-        self.io_ports.set_sensitive(bool(clock) and bool(self.ports))
-        self.io_ports.set_tooltip_text(None if self.ports else "Port names are known once synthesis has run")
+        self.io_add.set_sensitive(clock and missing)
+        self.io_add.set_tooltip_text(None if clock else "Define a clock first (Clocks page)")
+        self.io_ports.set_sensitive(clock and bool(self.ports))
+        self.io_ports.set_tooltip_text(None if self.ports else "The top module's ports could not be read")
         odb = self.synth_file(self.effective, "1_synth.odb")
         self.sdc_check.set_sensitive(bool(odb))
         self.sdc_check.set_tooltip_text(self.sdc_check.get_tooltip_text() if odb else
@@ -779,11 +1107,59 @@ class InputsTab:
         self.fill_sdc_fields(self.sdc_text())
         self.check_label.set_text("")
 
+    def clock_names(self):
+        return [c["name"] for c in self.clocks["clocks"]] + [g["name"] for g in self.clocks["generated"]]
+
+    def clock_ref(self, name, text):
+        """$clk_name when the SDC keeps this clock's name in clk_name, else the name itself."""
+        m = re.search(r"^\s*set\s+clk_name\s+(\S+)\s*$", sdc_code(text), re.M)
+        return "$clk_name" if m and m.group(1) == name else name
+
+    def clock_period(self, name):
+        c = next((c for c in self.clocks["clocks"] if c["name"] == name), None)
+        try:
+            return float(c["period"]) if c else None
+        except ValueError:
+            return None
+
+    def default_clock(self):
+        """The first clock on a port, else the first clock."""
+        real = [c["name"] for c in self.clocks["clocks"] if c["ports"]]
+        return (real or self.clock_names() or [None])[0]
+
+    def pick_clock(self, title, detail):
+        """Ask which clock to use when there is more than one; None if cancelled."""
+        names = self.clock_names()
+        if len(names) <= 1:
+            return names[0] if names else None
+        dlg = Gtk.Dialog(title=title, transient_for=self.app, modal=True)
+        dlg.add_buttons("Cancel", Gtk.ResponseType.CANCEL, "Use this clock", Gtk.ResponseType.OK)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin=12)
+        box.pack_start(Gtk.Label(label=detail, xalign=0, wrap=True, max_width_chars=60), False, False, 0)
+        combo = Gtk.ComboBoxText()
+        for n in names:
+            c = next((c for c in self.clocks["clocks"] if c["name"] == n), None)
+            combo.append(n, f"{n}  ({', '.join(c['ports']) if c and c['ports'] else 'virtual' if c else 'generated'})")
+        combo.set_active_id(self.default_clock())
+        box.pack_start(combo, False, False, 0)
+        dlg.get_content_area().add(box)
+        dlg.show_all()
+        name = combo.get_active_id() if dlg.run() == Gtk.ResponseType.OK else None
+        dlg.destroy()
+        return name
+
     def on_io_add(self, *_):
         text = self.sdc_text()
-        code, clock, period = sdc_code(text), sdc_clock(text), sdc_period(text)
+        clock = self.pick_clock("Clock for the input and output delays",
+                                "The delays are relative to one clock. Ports of another clock domain can get their "
+                                "own line afterwards with Delay for specific ports….")
+        if not clock:
+            return
+        code, period = sdc_code(text), self.clock_period(clock)
+        clock = self.clock_ref(clock, text)
         defined = set(re.findall(r"^\s*set\s+([A-Za-z_]\w*)\s", code, re.M))
-        lines = ["", "# Input and output delays (added in ORFS Flow Runner)"]
+        lines = ([] if text.endswith("\n\n") or not text.strip() else [""]) + \
+            ["# Input and output delays (added in ORFS Flow Runner)"]
         for kind, ports in (("input", "[all_inputs -no_clocks]"), ("output", "[all_outputs]")):
             if f"set_{kind}_delay" in code:
                 continue
@@ -811,9 +1187,18 @@ class InputsTab:
         box.pack_start(row, False, False, 0)
         find = Gtk.SearchEntry(placeholder_text="Filter ports…")
         box.pack_start(find, False, False, 0)
+        clk_row = Gtk.Box(spacing=8)
+        clk = Gtk.ComboBoxText()
+        for n in self.clock_names():
+            clk.append(n, n)
+        clk.set_active_id(self.default_clock())
+        clk_row.pack_start(Gtk.Label(label="Clock"), False, False, 0)
+        clk_row.pack_start(clk, False, False, 0)
+        box.pack_start(clk_row, False, False, 0)
         store = Gtk.ListStore(bool, str, str)  # chosen, name, direction
+        clock_ports = {p for c in self.clocks["clocks"] for p in c["ports"]}
         for d, n in self.ports or []:
-            if d in ("input", "output") and n != self.clock_port():
+            if d in ("input", "output") and n not in clock_ports:
                 store.append([False, n, d])
         flt = store.filter_new()
         flt.set_visible_func(lambda m, it, _d: m[it][2] == kind.get_active_id()
@@ -853,16 +1238,11 @@ class InputsTab:
             if not (NUMBER_RE.fullmatch(v) or re.fullmatch(r"\$\w+|\[expr .*\]", v)):
                 self.app.message("The delay is a number, a $variable or an [expr …].")
                 continue
-            self.append_sdc([f"set_{kind.get_active_id()}_delay {v} -clock {sdc_clock(self.sdc_text())} "
+            ref = self.clock_ref(clk.get_active_id(), self.sdc_text())
+            self.append_sdc([f"set_{kind.get_active_id()}_delay {v} -clock {ref} "
                              f"[get_ports {{{' '.join(names)}}}]"])
             break
         dlg.destroy()
-
-    def clock_port(self):
-        for _, kind, name, value in sdc_fields(self.sdc_text()):
-            if kind == "text" and "port" in name:
-                return value
-        return None
 
     def on_sdc_check(self, *_):
         odb = self.synth_file(self.effective, "1_synth.odb")

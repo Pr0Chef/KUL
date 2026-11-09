@@ -17,8 +17,9 @@ STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 ROOTFS="$STAGE/$NAME"
 
-# orfs_app.py imports the metrics code from flow_gui.py and the Inputs tab from inputs_tab.py.
-for f in orfs_app.py flow_gui.py inputs_tab.py; do
+# orfs_app.py imports the metrics code from flow_gui.py and the Inputs tab from inputs_tab.py, which reads
+# clocks with sdc_clocks.py.
+for f in orfs_app.py flow_gui.py inputs_tab.py sdc_clocks.py; do
 	install -Dm644 "$GUI/$f" "$ROOTFS/opt/$NAME/$f"
 done
 install -Dm644 "$PKG_DIR/$NAME.desktop" "$ROOTFS/usr/share/applications/$NAME.desktop"
@@ -37,7 +38,7 @@ Version: $VERSION
 Section: electronics
 Priority: optional
 Architecture: all
-Depends: python3 (>= 3.8), python3-gi, gir1.2-gtk-3.0, make
+Depends: python3 (>= 3.8), python3-gi, gir1.2-gtk-3.0, make, tcl
 Recommends: klayout
 Installed-Size: $(du -sk "$ROOTFS" | cut -f1)
 Maintainer: $MAINTAINER
