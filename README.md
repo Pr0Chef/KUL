@@ -255,8 +255,9 @@ peak memory. Every run is logged to `~/.local/share/orfs-flow-runner/run_logs/`.
 
 The tabs on the right:
 
-- **Inputs**: edit what the run reads without a terminal: the SDC (with quick fields for the clock period and
-  delays), every ORFS flow variable with its description and the value the flow uses (floorplan size,
+- **Inputs**: edit what the run reads without a terminal: the SDC (quick fields for the clock name, port and
+  period and the delays, a list of the design's ports after synthesis, input and output delays added for you, and
+  a check of the names with OpenROAD), every ORFS flow variable with its description and the value the flow uses (floorplan size,
   utilization, placement density, routing layers and so on), and the design's files, with templates for IO pin
   constraints and macro placement. **New config…** makes a variant with its own results folder. Saves keep a
   backup and set **From stage** to the first stage the change affects
