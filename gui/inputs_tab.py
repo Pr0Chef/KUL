@@ -358,6 +358,7 @@ class InputsTab:
         lower.pack_start(section("File contents"), False, False, 4)
         self.sdc_tv, sw = edit_view()
         self.sdc_tv.get_buffer().connect("changed", self.on_sdc_text)
+        self.sdc_tv.get_buffer().connect("modified-changed", lambda *_: self.dirty())
         lower.pack_start(sw, True, True, 0)
         paned = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL, position=330, wide_handle=True)
         paned.pack1(usw, True, False)
