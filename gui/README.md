@@ -9,7 +9,8 @@ run here gives the same result as the same `make` command in a terminal.
 ![ORFS Flow Runner synthesising CVA6](../docs/images/gui/running_parallel.png)
 
 The illustrated user guide, [docs/ORFS_Flow_Runner_user_guide.pdf](../docs/ORFS_Flow_Runner_user_guide.pdf), walks
-through every part of the app with screenshots from real CVA6 runs, including a stock against parallel `abc_new`
+through every part of the app with screenshots from real runs: setting the inputs (section 6: clocks, constraints,
+IO pins, flow settings, files) and a stock against parallel `abc_new`
 comparison ([A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) below).
 
 Contents: [Install](#install) · [Requirements](#requirements) · [Step by step](#step-by-step) · [The menus](#the-menus) ·
@@ -150,16 +151,86 @@ The app remembers your choices for the next start.
 
 ## The Inputs tab
 
-Everything a run reads, edited in the app and saved into the selected config's own files. The tab has three
-pages; the selected config is named at the top.
+Everything a run reads, edited in the app and saved into the selected config's own files. The tab has five
+pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config is named at the top.
 
-![Inputs: the SDC of nangate45 CVA6 with the clock period changed to 0.8 ns](../docs/images/gui/inputs_constraints.png)
+![Inputs: clocks of chi_async_bridge taken from its RTL, with periods and their relationship set in the app](../docs/images/gui/inputs_clocks.png)
 
-- **Constraints:** the SDC file the config uses (`SDC_FILE`). *Quick settings* has a field for every number the
-  file sets (`set clk_period 1.0`, `set input_delay …`, `create_clock … -period 5`): the clock period shows its
-  frequency, in ps on asap7 and ns elsewhere. Below it is the whole file, which you can edit freely. If other
-  configs use the same SDC, the tab says so; **Use a separate copy for this config** copies it to
-  `constraint_<config>.sdc` and points this config at the copy, so the others are left as they are.
+- **Clocks:** the design's clocks, from its RTL and its SDC.
+  - The app finds the top module (`DESIGN_NAME`) among `VERILOG_FILES` and reads its ports, in ANSI or
+    non-ANSI Verilog/SystemVerilog. An input counts as a clock if it is used in `posedge`/`negedge`, drives a
+    clock pin of an instance (`.clock(clock)`), or is named like one; the line at the top says which and why
+    (for CVA6: `clk_i`, from `posedge clk_i`).
+  - The SDC is run in `tclsh` with the SDC commands replaced by stubs that record what they define, so
+    variables, `expr` and `foreach` work as in OpenROAD. Every clock it defines is listed with its port (or
+    *virtual*), period, frequency and the line it is on; generated clocks are listed too.
+  - A clock port from the RTL with no clock yet is a row with an empty period: type a period to create the
+    clock (and rename it if you like). **Add clock…** adds a clock on any input, or a virtual clock for input and
+    output delays.
+  - Changing the period of a clock defined in the file edits it where it is set: the `set clk_period …` line
+    it uses, or the number in its `create_clock` line. Clocks that share a period variable change together
+    (ethmac's virtual clocks follow their real ones).
+  - *How the clocks relate* has a row for each pair of clocks on ports: *Timed together*, *Asynchronous*,
+    *Logically exclusive* or *Physically exclusive*. Relations the file already sets with `set_clock_groups` are
+    shown and left alone.
+  - What you set here is written to one block in the SDC, between `# >>> ORFS Flow Runner: clocks` and
+    `# <<< ORFS Flow Runner: clocks` (`create_clock` and `set_clock_groups` lines), placed after the file's own
+    clock definitions. The block is rewritten on each change; the rest of the file is not touched. Clocks are
+    saved with the SDC, from this page or **Constraints**.
+
+![Inputs: the six clocks of ethmac and their logically exclusive groups, read from its SDC](../docs/images/gui/inputs_clocks_ethmac.png)
+
+![Inputs: the SDC of nangate45 CVA6 checked against the synthesized design](../docs/images/gui/inputs_constraints.png)
+
+- **Constraints:** the SDC file the config uses (`SDC_FILE`). If other configs use the same SDC, the tab says so;
+  **Use a separate copy for this config** copies it to `constraint_<config>.sdc` and points this config at the
+  copy, so the others are left as they are. Below the settings is the whole file, which you can edit freely.
+  - *Quick settings* has a field for every value the file sets with `set` (`clk_name`, `clk_port`, `clk_period`,
+    `input_delay`, …) and for a number in `create_clock -period`. The clock period shows its frequency, in ps on
+    asap7 and ns elsewhere.
+  - Port names come from the synthesized netlist (`1_synth.v` or `1_2_yosys.v`) once synthesis has run, and
+    from the top module's RTL before that. A `…port…` setting such as `clk_port` is a list of the design's input
+    ports, and a name that isn't a port is shown in red. A clock period is labelled with its clock's name.
+  - A variable the file sets but no command uses is marked *set but not used*. CVA6's SDCs, for example, set
+    `input_delay` and `output_delay` but never apply them.
+  - *Input and output delays* says whether the file has `set_input_delay` and `set_output_delay`.
+    **Add input and output delays** asks which clock to use when there is more than one, then appends the
+    lines ORFS's own SDCs use:
+    `set_input_delay $input_delay -clock $clk_name [all_inputs -no_clocks]` and
+    `set_output_delay $output_delay -clock $clk_name [all_outputs]`, plus `set input_delay`/`set output_delay`
+    at 20 % of the clock period if the file doesn't set them. **Delay for specific ports…** lists the inputs or
+    outputs to tick, with the clock they belong to and, for a bus, optionally which bits (`31:16` or `3`;
+    empty means all), and adds a `set_…_delay … [get_ports {…}]` line after the
+    general one, so it overrides it for those ports (for example, ports of a second clock domain). Both only change the editor; save to keep them.
+  - **Check with OpenROAD** reads the SDC as it is in the editor, unsaved changes included, into OpenROAD with
+    the synthesized design (`1_synth.odb`), the same way the flow does. It lists every clock with its period and
+    the number of ports it is on, any OpenROAD warning or error (for example `port 'clk_x' not found`), and
+    unused variables.
+- **IO pins:** where the design's pins go on the die edge, written as `set_io_pin_constraint` lines to the
+  config's `IO_CONSTRAINTS` file, which the floorplan stage reads.
+
+  ![Inputs: IO pins of CVA6, with clock and reset on the left and boot_addr_i split between bottom and top](../docs/images/gui/inputs_io.png)
+
+  - One row per port. A bus is one row with its pin count: widths come from the synthesized netlist, or from the
+    RTL before synthesis when they are plain numbers (`[31:0]`); widths set by parameters or types show as `?`
+    until synthesis. A bus name stands for all its bits, as it does in OpenROAD.
+  - Select rows (Ctrl or Shift for several), choose an edge (left, right, top, bottom) and a range in microns
+    (`*` for the whole edge, or `0-200`), and press **Place**. *together* keeps a bus's pins next to each other
+    (`-group`); *in order* also keeps them in bit order (`-order`). The edge and range can also be changed in
+    the table. **Unplace** leaves a row to the flow.
+  - **Split bus…** turns a bus into two rows at a bit you choose, such as `boot_addr_i[31:16]` and
+    `boot_addr_i[15:0]`, so the parts can go on different edges; **Join** puts them back together.
+  - Below the table: the pins on each edge and the pins left to the flow. Saving checks that every bit range
+    fits its bus and that no pin is placed twice. **Check with OpenROAD** looks up every pin name in the
+    synthesized design, as the floorplan stage will; an unknown name there stops the floorplan
+    (`PPL-0061`).
+  - The rows are written to one marked block of the file (`# >>> ORFS Flow Runner: IO pins` …). Constraints
+    already in the file outside the block are shown in the table, read-only, and kept; a line that places
+    pins by direction or with a Tcl expression is noted above the table. If the config has no
+    `IO_CONSTRAINTS` yet, saving creates `io_constraints.tcl` in the design folder and sets it.
+  - Checked in the flow on nangate45 `gcd`: with `clk`/`reset` on the left, `req_msg[31:16]` on the bottom
+    (together, in order), `req_msg[15:0]` on top and `resp_msg` on the right, every pin was placed on its
+    edge and the bottom bits came out in bit order.
 - **Flow settings:** every ORFS variable (from `scripts/variables.json`) with its value in this config, the value
   the flow actually uses (`make` resolves it, including included configs and platform defaults), where that value
   is set, and the first stage that reads it. Hover a row for ORFS's description and default. The list opens on
@@ -172,7 +243,8 @@ pages; the selected config is named at the top.
   such as the platform's PDN and tapcell scripts (marked *shared with other designs*). Edit and save any of them.
   **New file…** adds a file from a template:
   - *IO pin constraints* (`io_constraints.tcl`, sets `IO_CONSTRAINTS`): `set_io_pin_constraint` and `place_pin`
-    examples, and the design's input and output ports, read from the synthesized netlist.
+    examples, and the design's input and output ports, read from the synthesized netlist. The **IO pins** page
+    writes the same kind of file from a table.
   - *Macro placement* (`macro_placement.tcl`, sets `MACRO_PLACEMENT_TCL`): one `place_macro` line per macro in the
     netlist (the 8 SRAMs of CVA6), with names written the way OpenROAD stores them.
   - an empty Tcl or SDC file.
@@ -233,7 +305,18 @@ the original stays as it was. Run to `floorplan` and compare the two in **Report
 **Tighten the clock:** **Inputs → Constraints**, change `clk_period`, save. From stage is set to *Re-run from
 synth*, since ORFS reads the SDC during synthesis. Use a separate copy first if other configs share the SDC.
 
-**Fix the pins or macros:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
+**Set up the clocks of a new design:** **Inputs → Clocks** lists the clock ports found in the top module's RTL.
+Type a period for each, set how each pair relates (for example *Asynchronous* for clocks from separate sources),
+add a virtual clock for the I/O if you want one, and save.
+
+**Constrain inputs and outputs:** **Inputs → Constraints**: if it says *no set_input_delay uses it*, press
+**Add input and output delays**, set `input_delay` and `output_delay`, add **Delay for specific
+ports…** for ports that need their own value, then **Check with OpenROAD** and save.
+
+**Place the IO pins:** **Inputs → IO pins**: select ports, choose an edge and press **Place**; split a bus to put
+its parts on different edges; **Check with OpenROAD**, save, and re-run from floorplan.
+
+**Fix the pins or macros by hand:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
 commented lines, save, and re-run from floorplan.
 
 **Runs that must survive logging out:** closing the app asks whether to stop its run. Use **Debug → Copy
@@ -281,7 +364,7 @@ The four netlists are identical apart from the Yosys version comment (115,493 in
 is real in the cleanest pair but small on average, and the run-to-run noise on this machine is as large as the
 effect: runs 3 and 4 used 20 to 27% more CPU time for the same work, so the machine had slowed down, and in that pair
 the parallel `abc_new` was slower. Treat it as `abc_new` between 0.85× and 1.29× and the whole synthesis about 1.1×,
-until it is repeated on a quiet machine with more runs. The guide's section 7 has the method and the discussion.
+until it is repeated on a quiet machine with more runs. The guide's section 8 has the method and the discussion.
 
 ![Wall time of each run](../docs/images/gui/chart_wall.png)
 
@@ -299,6 +382,11 @@ takes 352 to 464 s) caps the saving.
 | `read_slang` not found (CVA6) | **Debug** shows *read_slang missing*: build Yosys with the slang frontend (repo README, Step 1) |
 | Make variables show *make error* | the config doesn't parse; the message is in **Debug output**. If a save in **Inputs** caused it, use **Undo save** |
 | Run and the config menus are greyed out | **Inputs** has unsaved changes: save or revert them |
+| **Clocks** says *tclsh was not found* | `sudo apt install tcl`; the `.deb` installs it |
+| **Clocks** says reading the SDC *stopped early* | the SDC uses something only the flow has, such as `get_cells` on the netlist; clocks defined before that line are still shown |
+| The floorplan stops with `PPL-0061 Pins … were not found` | a pin name in `IO_CONSTRAINTS` doesn't exist: open **Inputs → IO pins** and press **Check with OpenROAD** |
+| **IO pins** shows `?` pins | the width comes from a parameter or type; it is known after synthesis |
+| A clock port is missing from **Clocks** | it isn't used with `posedge`, connected to a clock pin, or named like a clock; add it with **Add clock…** |
 | A value set in **Flow settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
 
@@ -311,6 +399,8 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | --- | --- |
 | `gui/orfs_app.py` | the app |
 | `gui/inputs_tab.py` | the Inputs tab |
+| `gui/io_pins.py` | reads and writes the `set_io_pin_constraint` block of the `IO_CONSTRAINTS` file |
+| `gui/sdc_clocks.py` | reads clock ports from the RTL and clocks from an SDC (with `tclsh`), and writes the clocks block |
 | `gui/flow_gui.py` | the CVA6 web console; the app reuses its metric definitions, so keep both together |
 | `gui/install_launcher.sh` | adds or removes a menu and Desktop launcher for running from the checkout |
 | `gui/packaging/build_deb.sh` | builds the `.deb`; `orfs-flow-runner.desktop` and `.svg` are its menu entry and icon |

@@ -255,8 +255,11 @@ peak memory. Every run is logged to `~/.local/share/orfs-flow-runner/run_logs/`.
 
 The tabs on the right:
 
-- **Inputs**: edit what the run reads without a terminal: the SDC (with quick fields for the clock period and
-  delays), every ORFS flow variable with its description and the value the flow uses (floorplan size,
+- **Inputs**: edit what the run reads without a terminal: the clocks (clock ports read from the top module's
+  RTL, periods and how the clocks relate, set in a table), where the IO pins go (each port or part of a bus on an
+  edge, kept together and in order), the SDC (quick fields for the clock name, port and
+  period and the delays, a list of the design's ports after synthesis, input and output delays added for you, and
+  a check of the names with OpenROAD), every ORFS flow variable with its description and the value the flow uses (floorplan size,
   utilization, placement density, routing layers and so on), and the design's files, with templates for IO pin
   constraints and macro placement. **New config…** makes a variant with its own results folder. Saves keep a
   backup and set **From stage** to the first stage the change affects
@@ -360,7 +363,7 @@ The four netlists are identical apart from the Yosys version comment. The parall
 pair, but the machine slowed down during runs 3 and 4 (20 to 27% more CPU time for the same work), and in that pair
 the parallel `abc_new` was slower. On average `abc_new` is 1.02× and the whole synthesis 1.12× faster, with noise as
 large as the effect, so more runs on a quiet machine are needed before quoting a single number. The method, charts and
-discussion are in section 7 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
+discussion are in section 8 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
 through to GDS with this build has not been done yet.
 
 ## Status
