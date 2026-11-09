@@ -21,6 +21,10 @@ ASSIGN_RE = re.compile(r"^(\s*)(export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?=|::=|:
 INCLUDE_RE = re.compile(r"^\s*-?include\s+(.+?)\s*$")
 SDC_SET_RE = re.compile(r"^(\s*set\s+)([A-Za-z_]\w*)(\s+)(-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)(\s*(?:;\s*)?(?:#.*)?)$")
 SDC_PERIOD_RE = re.compile(r"^(\s*create_clock\b.*?-period\s+)(-?\d+(?:\.\d+)?)(.*)$")
+SDC_TEXT_RE = re.compile(r"^(\s*set\s+)([A-Za-z_]\w*)(\s+)([A-Za-z_][\w.\[\]/]*)(\s*(?:;\s*)?(?:#.*)?)$")
+NAME_RE = re.compile(r"[A-Za-z_][\w.\[\]/]*")
+NUMBER_RE = re.compile(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
+STA_MSG_RE = re.compile(r"\[(WARNING|ERROR) (STA|ORD|ODB)-\d+\].*")
 MANAGED = "# Set in ORFS Flow Runner"
 # ORFS stage names in variables.json, mapped to the app's stages.
 STAGE_OF = {"synth": "synth", "floorplan": "floorplan", "place": "place", "cts": "cts", "grt": "route",
@@ -141,12 +145,16 @@ def set_mk_vars(text, changes):
 
 
 def sdc_fields(text):
-    """Numbers the quick settings can change: [(line number, kind, name, value)]."""
+    """Values the quick settings can change: [(line number, kind, name, value)], kind set, text or period."""
     out = []
     for i, line in enumerate(text.split("\n")):
         m = SDC_SET_RE.match(line)
         if m:
             out.append((i, "set", m.group(2), m.group(4)))
+            continue
+        m = SDC_TEXT_RE.match(line)
+        if m:
+            out.append((i, "text", m.group(2), m.group(4)))
             continue
         m = SDC_PERIOD_RE.match(line)
         if m and not line.lstrip().startswith("#"):
@@ -155,9 +163,41 @@ def sdc_fields(text):
 
 
 def sdc_set_line(line, kind, value):
-    if kind == "set":
-        return SDC_SET_RE.sub(lambda m: m.group(1) + m.group(2) + m.group(3) + value + m.group(5), line)
+    if kind in ("set", "text"):
+        rx = SDC_SET_RE if kind == "set" else SDC_TEXT_RE
+        return rx.sub(lambda m: m.group(1) + m.group(2) + m.group(3) + value + m.group(5), line)
     return SDC_PERIOD_RE.sub(lambda m: m.group(1) + value + m.group(3), line)
+
+
+def sdc_code(text):
+    return "\n".join(ln for ln in text.split("\n") if not ln.lstrip().startswith("#"))
+
+
+def sdc_unused(text):
+    """Variables the SDC sets that no command in it uses."""
+    code = sdc_code(text)
+    names = re.findall(r"^\s*set\s+([A-Za-z_]\w*)\s", code, re.M)
+    return [n for n in dict.fromkeys(names) if not re.search(r"\$\{?" + re.escape(n) + r"\b", code)]
+
+
+def sdc_clock(text):
+    """How the delay commands should name the clock: $clk_name, the create_clock -name, or None."""
+    code = sdc_code(text)
+    if re.search(r"^\s*set\s+clk_name\s", code, re.M):
+        return "$clk_name"
+    m = re.search(r"create_clock\b.*?-name\s+(\S+)", code)
+    return m.group(1) if m else None
+
+
+def sdc_period(text):
+    for _, kind, name, value in sdc_fields(text):
+        if kind == "period" or (kind == "set" and name in ("clk_period", "clock_period")):
+            return float(value)
+    return None
+
+
+def fmt_num(x):
+    return f"{x:.4g}"
 
 
 def freq_text(period, unit):
@@ -238,6 +278,7 @@ class InputsTab:
         self._sdc_quiet = False
         self._sdc_timer = None
         self.variables = {}
+        self.ports = None        # top-level ports from the synthesized netlist, once synthesis has run
         self.widget = self.build()
 
     # ---------- layout ----------
@@ -281,13 +322,47 @@ class InputsTab:
         box.pack_start(row, False, False, 0)
         self.sdc_shared = Gtk.Label(xalign=0, wrap=True)
         box.pack_start(self.sdc_shared, False, False, 0)
-        box.pack_start(section("Quick settings"), False, False, 0)
+        # Settings and checks above, the file below, with a divider to give either more room.
+        # Quick settings on the left, input and output delays and the OpenROAD check on the right.
+        upper = Gtk.Box(spacing=24, margin_end=6)
+        left = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        left.pack_start(section("Quick settings"), False, False, 0)
         self.sdc_grid = Gtk.Grid(column_spacing=10, row_spacing=6)
-        box.pack_start(self.sdc_grid, False, False, 0)
-        box.pack_start(section("File contents"), False, False, 4)
+        left.pack_start(self.sdc_grid, False, False, 0)
+        right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        upper.pack_start(left, False, False, 0)
+        upper.pack_start(right, True, True, 0)
+        right.pack_start(section("Input and output delays"), False, False, 0)
+        self.io_label = Gtk.Label(xalign=0, wrap=True, selectable=True, max_width_chars=50)
+        right.pack_start(self.io_label, False, False, 0)
+        acts = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, column_spacing=8, row_spacing=6,
+                           max_children_per_line=3)
+        self.io_add = Gtk.Button(label="Add input and output delays",
+                                 tooltip_text="Add set_input_delay on every input except the clock and "
+                                              "set_output_delay on every output, using input_delay and output_delay")
+        self.io_add.connect("clicked", self.on_io_add)
+        self.io_ports = Gtk.Button(label="Delay for specific ports…")
+        self.io_ports.connect("clicked", self.on_io_ports)
+        self.sdc_check = Gtk.Button(label="Check with OpenROAD",
+                                    tooltip_text="Read this SDC (with unsaved changes) into OpenROAD with the "
+                                                 "synthesized design and list names that don't match")
+        self.sdc_check.connect("clicked", self.on_sdc_check)
+        for w in (self.io_add, self.io_ports, self.sdc_check):
+            acts.add(w)
+        right.pack_start(acts, False, False, 0)
+        self.check_label = Gtk.Label(xalign=0, wrap=True, selectable=True, max_width_chars=50)
+        right.pack_start(self.check_label, False, False, 0)
+        usw = Gtk.ScrolledWindow(hscrollbar_policy=Gtk.PolicyType.NEVER)
+        usw.add(upper)
+        lower = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        lower.pack_start(section("File contents"), False, False, 4)
         self.sdc_tv, sw = edit_view()
         self.sdc_tv.get_buffer().connect("changed", self.on_sdc_text)
-        box.pack_start(sw, True, True, 0)
+        lower.pack_start(sw, True, True, 0)
+        paned = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL, position=330, wide_handle=True)
+        paned.pack1(usw, True, False)
+        paned.pack2(lower, True, False)
+        box.pack_start(paned, True, True, 0)
         btns = Gtk.Box(spacing=8)
         self.sdc_state = Gtk.Label(xalign=0, hexpand=True)
         self.sdc_revert = Gtk.Button(label="Revert")
@@ -480,6 +555,7 @@ class InputsTab:
                      "PLATFORM": eff.get("PLATFORM", ""), "DESIGN_NAME": eff.get("DESIGN_NAME", ""),
                      "DESIGN_NICKNAME": eff.get("DESIGN_NICKNAME", ""), "FLOW_HOME": str(flow)}
             chain = config_chain(cfg_path, subst)
+            ports = self.read_ports(eff)
             # Which configs of this design use the same SDC file.
             shared = []
             sdc = eff.get("SDC_FILE")
@@ -493,10 +569,10 @@ class InputsTab:
                             shared.append(other.name)
                     except (OSError, subprocess.TimeoutExpired, RuntimeError, ValueError):
                         pass
-            GLib.idle_add(self.on_loaded, gen, eff, chain, shared, err, then)
+            GLib.idle_add(self.on_loaded, gen, eff, chain, shared, ports, err, then)
         threading.Thread(target=work, daemon=True).start()
 
-    def on_loaded(self, gen, eff, chain, shared, err, then):
+    def on_loaded(self, gen, eff, chain, shared, ports, err, then):
         if gen != self.gen:
             return False
         if err:
@@ -506,7 +582,7 @@ class InputsTab:
             if then:
                 then(None)
             return False
-        self.effective, self.chain, self.shared = eff, chain, shared
+        self.effective, self.chain, self.shared, self.ports = eff, chain, shared, ports
         self.fill_settings()
         self.load_sdc()
         self.fill_files()
@@ -517,6 +593,22 @@ class InputsTab:
 
     def cfg_path(self):
         return (self.app.flow / self.cfg).resolve()
+
+    def synth_file(self, eff, *names):
+        res = eff.get("RESULTS_DIR")
+        if not res:
+            return None
+        return next((p for p in (self.resolve(res) / n for n in names) if p.exists()), None)
+
+    def read_ports(self, eff):
+        """Top-level ports from the synthesized netlist, [(direction, name)]; None before synthesis."""
+        netlist = self.synth_file(eff, "1_synth.v", "1_2_yosys.v")
+        if not netlist:
+            return None
+        key = (netlist, netlist.stat().st_mtime)
+        if getattr(self, "_ports_key", None) != key:
+            self._ports_key, self._ports = key, netlist_names(netlist, eff.get("DESIGN_NAME", ""), [])[0]
+        return self._ports
 
     def design_dir(self):
         return self.cfg_path().parent
@@ -562,38 +654,91 @@ class InputsTab:
         self.sdc_copy.set_sensitive(bool(path) and (bool(shared) or not inside))
         self.dirty()
 
+    def port_names(self, direction=None):
+        return [n for d, n in (self.ports or []) if direction in (None, d)]
+
+    def field_note(self, kind, name, value, unused):
+        """Unit, frequency or port check shown next to a quick setting: (text, colour or None)."""
+        unit = self.unit()
+        if kind == "period" or name in ("clk_period", "clock_period", "period"):
+            return f"{unit}  {freq_text(value, unit)}", None
+        if name in unused:
+            return "set but not used", "#c88a00"
+        if kind == "text" and "port" in name:
+            if self.ports is None:
+                return "port names are known once synthesis has run", None
+            if value not in self.port_names():
+                return f"not a port of {self.effective.get('DESIGN_NAME', 'the design')}", "#e0533f"
+            d = next(d for d, n in self.ports if n == value)
+            return f"{d} port", None
+        if kind == "set" and ("delay" in name or "uncertainty" in name or "latency" in name):
+            return unit, None
+        return "", None
+
     def fill_sdc_fields(self, text):
         for child in self.sdc_grid.get_children():
             self.sdc_grid.remove(child)
         fields = sdc_fields(text)
         if not fields:
-            self.sdc_grid.attach(Gtk.Label(label="No numeric settings found; edit the file below.", xalign=0),
-                                 0, 0, 1, 1)
-        unit = self.unit()
+            self.sdc_grid.attach(Gtk.Label(label="No settings found; edit the file below.", xalign=0), 0, 0, 1, 1)
+        unused = sdc_unused(text)
         for row, (line_no, kind, name, value) in enumerate(fields):
-            entry = Gtk.Entry(text=value, width_chars=12)
-            period = kind == "period" or name in ("clk_period", "clock_period", "period")
+            if kind == "text" and "port" in name and self.ports:
+                # Clock ports are inputs; the list also lets you type a name.
+                combo = Gtk.ComboBoxText.new_with_entry()
+                for n in self.port_names("input"):
+                    combo.append_text(n)
+                entry = combo.get_child()
+                entry.set_text(value)
+                widget = combo
+            else:
+                entry = widget = Gtk.Entry(text=value, width_chars=12 if kind != "text" else 20)
             note = Gtk.Label(xalign=0)
-            note.get_style_context().add_class("dim-label")
-            if period:
-                note.set_text(f"{unit}  {freq_text(value, unit)}")
-            elif "delay" in name or "uncertainty" in name or "latency" in name:
-                note.set_text(unit)
-            entry.connect("changed", self.on_sdc_field, line_no, kind, note, period, unit)
+            self.set_note(note, *self.field_note(kind, name, value, unused))
+            entry.connect("changed", self.on_sdc_field, line_no, kind, name, note)
             self.sdc_grid.attach(Gtk.Label(label=name, xalign=0), 0, row, 1, 1)
-            self.sdc_grid.attach(entry, 1, row, 1, 1)
+            self.sdc_grid.attach(widget, 1, row, 1, 1)
             self.sdc_grid.attach(note, 2, row, 1, 1)
         self.sdc_grid.show_all()
+        self.update_io(text)
 
-    def on_sdc_field(self, entry, line_no, kind, note, period, unit):
+    def set_note(self, label, text, color):
+        label.set_markup(colored_text(text, color or CSS_MUTED))
+
+    def update_io(self, text):
+        code = sdc_code(text)
+        defined = set(re.findall(r"^\s*set\s+([A-Za-z_]\w*)\s", code, re.M))
+        lines = []
+        for kind in ("input", "output"):
+            var = f"{kind}_delay"
+            if f"set_{kind}_delay" in code:
+                lines.append(colored_text(f"{kind.capitalize()}s: delays set with set_{kind}_delay.", CSS_MUTED))
+            elif var in defined:
+                lines.append(colored_text(f"{var} is set, but no set_{kind}_delay uses it: {kind} paths are not "
+                                          "timed.", "#c88a00"))
+            else:
+                lines.append(colored_text(f"No set_{kind}_delay: {kind} paths are not timed.", "#c88a00"))
+        self.io_label.set_markup("\n".join(lines))
+        clock = sdc_clock(text)
+        missing = "set_input_delay" not in code or "set_output_delay" not in code
+        self.io_add.set_sensitive(bool(clock) and missing)
+        self.io_add.set_tooltip_text(None if clock else "Define the clock (create_clock -name) first")
+        self.io_ports.set_sensitive(bool(clock) and bool(self.ports))
+        self.io_ports.set_tooltip_text(None if self.ports else "Port names are known once synthesis has run")
+        odb = self.synth_file(self.effective, "1_synth.odb")
+        self.sdc_check.set_sensitive(bool(odb))
+        self.sdc_check.set_tooltip_text(self.sdc_check.get_tooltip_text() if odb else
+                                        "Needs the synthesized design: run synthesis first")
+
+    def on_sdc_field(self, entry, line_no, kind, name, note):
         value = entry.get_text().strip()
-        if not re.fullmatch(r"-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?", value):
+        if not (NAME_RE if kind == "text" else NUMBER_RE).fullmatch(value):
             entry.get_style_context().add_class("error")
             return
         entry.get_style_context().remove_class("error")
-        if period:
-            note.set_text(f"{unit}  {freq_text(value, unit)}")
         buf = self.sdc_tv.get_buffer()
+        self.set_note(note, *self.field_note(kind, name, value, sdc_unused(
+            buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False))))
         start = buf.get_iter_at_line(line_no)
         end = start.copy()
         if not end.ends_line():
@@ -620,6 +765,164 @@ class InputsTab:
             self.fill_sdc_fields(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False))
             return False
         self._sdc_timer = GLib.timeout_add(500, reparse)
+
+    def sdc_text(self):
+        buf = self.sdc_tv.get_buffer()
+        return buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
+
+    def append_sdc(self, lines):
+        """Add lines at the end of the SDC editor (not saved yet) and re-read the quick settings."""
+        buf = self.sdc_tv.get_buffer()
+        text = self.sdc_text()
+        buf.insert(buf.get_end_iter(), ("" if text.endswith("\n") or not text else "\n") + "\n".join(lines) + "\n")
+        self.fill_sdc_fields(self.sdc_text())
+        self.check_label.set_text("")
+
+    def on_io_add(self, *_):
+        text = self.sdc_text()
+        code, clock, period = sdc_code(text), sdc_clock(text), sdc_period(text)
+        defined = set(re.findall(r"^\s*set\s+([A-Za-z_]\w*)\s", code, re.M))
+        lines = ["", "# Input and output delays (added in ORFS Flow Runner)"]
+        for kind, ports in (("input", "[all_inputs -no_clocks]"), ("output", "[all_outputs]")):
+            if f"set_{kind}_delay" in code:
+                continue
+            if f"{kind}_delay" not in defined:
+                # Without a value in the file, start from 20% of the clock period, as ORFS's own SDCs do.
+                lines.append(f"set {kind}_delay {fmt_num(0.2 * period) if period else 0}")
+            lines.append(f"set_{kind}_delay ${kind}_delay -clock {clock} {ports}")
+        self.append_sdc(lines)
+
+    def on_io_ports(self, *_):
+        dlg = Gtk.Dialog(title="Delay for specific ports", transient_for=self.app, modal=True,
+                         default_width=520, default_height=520)
+        dlg.add_buttons("Cancel", Gtk.ResponseType.CANCEL, "Add", Gtk.ResponseType.OK)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin=12)
+        row = Gtk.Box(spacing=8)
+        kind = Gtk.ComboBoxText()
+        kind.append("input", "Inputs (set_input_delay)")
+        kind.append("output", "Outputs (set_output_delay)")
+        value = Gtk.Entry(width_chars=10, activates_default=True)
+        unit = Gtk.Label(label=self.unit())
+        row.pack_start(kind, False, False, 0)
+        row.pack_start(Gtk.Label(label="Delay"), False, False, 0)
+        row.pack_start(value, False, False, 0)
+        row.pack_start(unit, False, False, 0)
+        box.pack_start(row, False, False, 0)
+        find = Gtk.SearchEntry(placeholder_text="Filter ports…")
+        box.pack_start(find, False, False, 0)
+        store = Gtk.ListStore(bool, str, str)  # chosen, name, direction
+        for d, n in self.ports or []:
+            if d in ("input", "output") and n != self.clock_port():
+                store.append([False, n, d])
+        flt = store.filter_new()
+        flt.set_visible_func(lambda m, it, _d: m[it][2] == kind.get_active_id()
+                             and find.get_text().lower() in m[it][1].lower())
+        tv = Gtk.TreeView(model=flt, headers_visible=False)
+        tick = Gtk.CellRendererToggle()
+
+        def toggled(_c, path):
+            it = flt.convert_iter_to_child_iter(flt.get_iter(path))
+            store[it][0] = not store[it][0]
+        tick.connect("toggled", toggled)
+        tv.append_column(Gtk.TreeViewColumn("", tick, active=0))
+        tv.append_column(Gtk.TreeViewColumn("Port", Gtk.CellRendererText(), text=1))
+        sw = Gtk.ScrolledWindow(vexpand=True)
+        sw.add(tv)
+        box.pack_start(sw, True, True, 0)
+        note = Gtk.Label(xalign=0, wrap=True, label="The line is added after the others, so it replaces the general "
+                                                    "delay for these ports. Save to keep it.")
+        box.pack_start(note, False, False, 0)
+
+        def on_kind(*_):
+            var = f"{kind.get_active_id()}_delay"
+            value.set_text(f"${var}" if re.search(rf"^\s*set\s+{var}\s", self.sdc_text(), re.M) else "0")
+            flt.refilter()
+        kind.connect("changed", on_kind)
+        find.connect("search-changed", lambda *_: flt.refilter())
+        kind.set_active_id("input")
+        dlg.set_default_response(Gtk.ResponseType.OK)
+        dlg.get_content_area().add(box)
+        dlg.show_all()
+        while dlg.run() == Gtk.ResponseType.OK:
+            names = [r[1] for r in store if r[0] and r[2] == kind.get_active_id()]
+            v = value.get_text().strip()
+            if not names:
+                self.app.message("Tick at least one port.")
+                continue
+            if not (NUMBER_RE.fullmatch(v) or re.fullmatch(r"\$\w+|\[expr .*\]", v)):
+                self.app.message("The delay is a number, a $variable or an [expr …].")
+                continue
+            self.append_sdc([f"set_{kind.get_active_id()}_delay {v} -clock {sdc_clock(self.sdc_text())} "
+                             f"[get_ports {{{' '.join(names)}}}]"])
+            break
+        dlg.destroy()
+
+    def clock_port(self):
+        for _, kind, name, value in sdc_fields(self.sdc_text()):
+            if kind == "text" and "port" in name:
+                return value
+        return None
+
+    def on_sdc_check(self, *_):
+        odb = self.synth_file(self.effective, "1_synth.odb")
+        if not odb:
+            return
+        text = self.sdc_text()
+        work_dir = self.backups.parent
+        work_dir.mkdir(parents=True, exist_ok=True)
+        sdc, tcl = work_dir / "sdc_check.sdc", work_dir / "sdc_check.tcl"
+        sdc.write_text(text)
+        tcl.write_text(
+            f"read_db {{{odb}}}\n"
+            f"if {{[catch {{read_sdc {{{sdc}}}}} err]}} {{ puts \"ORFS_RUNNER_ERROR $err\" }}\n"
+            "foreach c [all_clocks] { puts \"ORFS_RUNNER_CLOCK [get_name $c] [get_property $c period] "
+            "[llength [get_property $c sources]]\" }\n")
+        env = self.app.make_env()
+        env.update({k: v for k, v in self.effective.items() if f"env({k})" in text})
+        exe = env.get("OPENROAD_EXE") or "openroad"
+        self.check_label.set_markup(colored_text("Checking with OpenROAD…", CSS_MUTED))
+        self.sdc_check.set_sensitive(False)
+        unused = sdc_unused(text)
+
+        def work():
+            try:
+                out = subprocess.run([exe, "-no_init", "-exit", str(tcl)], cwd=self.app.flow, env=env,
+                                     capture_output=True, text=True, timeout=300)
+                log = out.stdout + out.stderr
+            except (OSError, subprocess.TimeoutExpired) as e:
+                log = f"ORFS_RUNNER_ERROR {e}"
+            GLib.idle_add(self.on_sdc_checked, log, unused, odb)
+        threading.Thread(target=work, daemon=True).start()
+
+    def on_sdc_checked(self, log, unused, odb):
+        self.sdc_check.set_sensitive(True)
+        unit = self.unit()
+        problems, clocks = [], []
+        for line in log.splitlines():
+            if line.startswith("ORFS_RUNNER_ERROR "):
+                problems.append(("#e0533f", "Error: " + line.split(" ", 1)[1]))
+            elif line.startswith("ORFS_RUNNER_CLOCK "):
+                _, name, period, nsrc = line.split()
+                clocks.append(f"clock {name}, period {fmt_num(float(period))} {unit} "
+                              f"{freq_text(period, unit)}, on {nsrc} port{'s' if nsrc != '1' else ''}")
+            else:
+                m = STA_MSG_RE.search(line)
+                if m and "ORD-0012" not in line:
+                    problems.append(("#e0533f" if m.group(1) == "ERROR" else "#c88a00", m.group(0)))
+        problems = list(dict.fromkeys(problems))
+        out = [colored_text(f"Checked against {odb.name}: " + ("; ".join(clocks) if clocks else "no clock defined"),
+                            CSS_MUTED if clocks else "#e0533f")]
+        if not clocks:
+            problems.append(("#e0533f", "No clock: every path is untimed."))
+        for n in unused:
+            problems.append(("#c88a00", f"{n} is set but never used."))
+        out += [colored_text(t, c) for c, t in problems[:20]]
+        if len(problems) > 20:
+            out.append(colored_text(f"… and {len(problems) - 20} more", CSS_MUTED))
+        if not problems:
+            out.append(colored_text("No problems: every port and clock name matched.", "#2e9e5b"))
+        self.check_label.set_markup("\n".join(out))
+        return False
 
     def on_sdc_save(self, *_):
         buf = self.sdc_tv.get_buffer()

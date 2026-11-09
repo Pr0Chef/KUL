@@ -153,13 +153,30 @@ The app remembers your choices for the next start.
 Everything a run reads, edited in the app and saved into the selected config's own files. The tab has three
 pages; the selected config is named at the top.
 
-![Inputs: the SDC of nangate45 CVA6 with the clock period changed to 0.8 ns](../docs/images/gui/inputs_constraints.png)
+![Inputs: the SDC of nangate45 CVA6 checked against the synthesized design](../docs/images/gui/inputs_constraints.png)
 
-- **Constraints:** the SDC file the config uses (`SDC_FILE`). *Quick settings* has a field for every number the
-  file sets (`set clk_period 1.0`, `set input_delay …`, `create_clock … -period 5`): the clock period shows its
-  frequency, in ps on asap7 and ns elsewhere. Below it is the whole file, which you can edit freely. If other
-  configs use the same SDC, the tab says so; **Use a separate copy for this config** copies it to
-  `constraint_<config>.sdc` and points this config at the copy, so the others are left as they are.
+- **Constraints:** the SDC file the config uses (`SDC_FILE`). If other configs use the same SDC, the tab says so;
+  **Use a separate copy for this config** copies it to `constraint_<config>.sdc` and points this config at the
+  copy, so the others are left as they are. Below the settings is the whole file, which you can edit freely.
+  - *Quick settings* has a field for every value the file sets with `set` (`clk_name`, `clk_port`, `clk_period`,
+    `input_delay`, …) and for a number in `create_clock -period`. The clock period shows its frequency, in ps on
+    asap7 and ns elsewhere.
+  - Port names come from the synthesized netlist (`1_synth.v` or `1_2_yosys.v`), so they are known once
+    synthesis has run. Then a `…port…` setting such as `clk_port` is a list of the design's input ports, and a
+    name that isn't a port is shown in red. Before synthesis it is a plain text field.
+  - A variable the file sets but no command uses is marked *set but not used*. CVA6's SDCs, for example, set
+    `input_delay` and `output_delay` but never apply them.
+  - *Input and output delays* says whether the file has `set_input_delay` and `set_output_delay`.
+    **Add input and output delays** appends the lines ORFS's own SDCs use:
+    `set_input_delay $input_delay -clock $clk_name [all_inputs -no_clocks]` and
+    `set_output_delay $output_delay -clock $clk_name [all_outputs]`, plus `set input_delay`/`set output_delay`
+    at 20 % of the clock period if the file doesn't set them. **Delay for specific ports…** lists the inputs or
+    outputs to tick and adds a `set_…_delay … [get_ports {…}]` line after the general one, so it overrides it
+    for those ports. Both only change the editor; save to keep them.
+  - **Check with OpenROAD** reads the SDC as it is in the editor, unsaved changes included, into OpenROAD with
+    the synthesized design (`1_synth.odb`), the same way the flow does. It lists every clock with its period and
+    the number of ports it is on, any OpenROAD warning or error (for example `port 'clk_x' not found`), and
+    unused variables.
 - **Flow settings:** every ORFS variable (from `scripts/variables.json`) with its value in this config, the value
   the flow actually uses (`make` resolves it, including included configs and platform defaults), where that value
   is set, and the first stage that reads it. Hover a row for ORFS's description and default. The list opens on
@@ -232,6 +249,10 @@ the original stays as it was. Run to `floorplan` and compare the two in **Report
 
 **Tighten the clock:** **Inputs → Constraints**, change `clk_period`, save. From stage is set to *Re-run from
 synth*, since ORFS reads the SDC during synthesis. Use a separate copy first if other configs share the SDC.
+
+**Constrain inputs and outputs:** after synthesis, **Inputs → Constraints**: if it says *no set_input_delay uses
+it*, press **Add input and output delays**, set `input_delay` and `output_delay`, add **Delay for specific
+ports…** for ports that need their own value, then **Check with OpenROAD** and save.
 
 **Fix the pins or macros:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
 commented lines, save, and re-run from floorplan.
