@@ -256,7 +256,8 @@ peak memory. Every run is logged to `~/.local/share/orfs-flow-runner/run_logs/`.
 The tabs on the right:
 
 - **Inputs**: edit what the run reads without a terminal: the clocks (clock ports read from the top module's
-  RTL, periods and how the clocks relate, set in a table), the SDC (quick fields for the clock name, port and
+  RTL, periods and how the clocks relate, set in a table), where the IO pins go (each port or part of a bus on an
+  edge, kept together and in order), the SDC (quick fields for the clock name, port and
   period and the delays, a list of the design's ports after synthesis, input and output delays added for you, and
   a check of the names with OpenROAD), every ORFS flow variable with its description and the value the flow uses (floorplan size,
   utilization, placement density, routing layers and so on), and the design's files, with templates for IO pin

@@ -150,8 +150,8 @@ The app remembers your choices for the next start.
 
 ## The Inputs tab
 
-Everything a run reads, edited in the app and saved into the selected config's own files. The tab has four
-pages; the selected config is named at the top.
+Everything a run reads, edited in the app and saved into the selected config's own files. The tab has five
+pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config is named at the top.
 
 ![Inputs: clocks of chi_async_bridge taken from its RTL, with periods and their relationship set in the app](../docs/images/gui/inputs_clocks.png)
 
@@ -198,12 +198,38 @@ pages; the selected config is named at the top.
     `set_input_delay $input_delay -clock $clk_name [all_inputs -no_clocks]` and
     `set_output_delay $output_delay -clock $clk_name [all_outputs]`, plus `set input_delay`/`set output_delay`
     at 20 % of the clock period if the file doesn't set them. **Delay for specific ports…** lists the inputs or
-    outputs to tick, with the clock they belong to, and adds a `set_…_delay … [get_ports {…}]` line after the
+    outputs to tick, with the clock they belong to and, for a bus, optionally which bits (`31:16` or `3`;
+    empty means all), and adds a `set_…_delay … [get_ports {…}]` line after the
     general one, so it overrides it for those ports (for example, ports of a second clock domain). Both only change the editor; save to keep them.
   - **Check with OpenROAD** reads the SDC as it is in the editor, unsaved changes included, into OpenROAD with
     the synthesized design (`1_synth.odb`), the same way the flow does. It lists every clock with its period and
     the number of ports it is on, any OpenROAD warning or error (for example `port 'clk_x' not found`), and
     unused variables.
+- **IO pins:** where the design's pins go on the die edge, written as `set_io_pin_constraint` lines to the
+  config's `IO_CONSTRAINTS` file, which the floorplan stage reads.
+
+  ![Inputs: IO pins of CVA6, with clock and reset on the left and boot_addr_i split between bottom and top](../docs/images/gui/inputs_io.png)
+
+  - One row per port. A bus is one row with its pin count: widths come from the synthesized netlist, or from the
+    RTL before synthesis when they are plain numbers (`[31:0]`); widths set by parameters or types show as `?`
+    until synthesis. A bus name stands for all its bits, as it does in OpenROAD.
+  - Select rows (Ctrl or Shift for several), choose an edge (left, right, top, bottom) and a range in microns
+    (`*` for the whole edge, or `0-200`), and press **Place**. *together* keeps a bus's pins next to each other
+    (`-group`); *in order* also keeps them in bit order (`-order`). The edge and range can also be changed in
+    the table. **Unplace** leaves a row to the flow.
+  - **Split bus…** turns a bus into two rows at a bit you choose, such as `boot_addr_i[31:16]` and
+    `boot_addr_i[15:0]`, so the parts can go on different edges; **Join** puts them back together.
+  - Below the table: the pins on each edge and the pins left to the flow. Saving checks that every bit range
+    fits its bus and that no pin is placed twice. **Check with OpenROAD** looks up every pin name in the
+    synthesized design, as the floorplan stage will; an unknown name there stops the floorplan
+    (`PPL-0061`).
+  - The rows are written to one marked block of the file (`# >>> ORFS Flow Runner: IO pins` …). Constraints
+    already in the file outside the block are shown in the table, read-only, and kept; a line that places
+    pins by direction or with a Tcl expression is noted above the table. If the config has no
+    `IO_CONSTRAINTS` yet, saving creates `io_constraints.tcl` in the design folder and sets it.
+  - Checked in the flow on nangate45 `gcd`: with `clk`/`reset` on the left, `req_msg[31:16]` on the bottom
+    (together, in order), `req_msg[15:0]` on top and `resp_msg` on the right, every pin was placed on its
+    edge and the bottom bits came out in bit order.
 - **Flow settings:** every ORFS variable (from `scripts/variables.json`) with its value in this config, the value
   the flow actually uses (`make` resolves it, including included configs and platform defaults), where that value
   is set, and the first stage that reads it. Hover a row for ORFS's description and default. The list opens on
@@ -216,7 +242,8 @@ pages; the selected config is named at the top.
   such as the platform's PDN and tapcell scripts (marked *shared with other designs*). Edit and save any of them.
   **New file…** adds a file from a template:
   - *IO pin constraints* (`io_constraints.tcl`, sets `IO_CONSTRAINTS`): `set_io_pin_constraint` and `place_pin`
-    examples, and the design's input and output ports, read from the synthesized netlist.
+    examples, and the design's input and output ports, read from the synthesized netlist. The **IO pins** page
+    writes the same kind of file from a table.
   - *Macro placement* (`macro_placement.tcl`, sets `MACRO_PLACEMENT_TCL`): one `place_macro` line per macro in the
     netlist (the 8 SRAMs of CVA6), with names written the way OpenROAD stores them.
   - an empty Tcl or SDC file.
@@ -285,7 +312,10 @@ add a virtual clock for the I/O if you want one, and save.
 **Add input and output delays**, set `input_delay` and `output_delay`, add **Delay for specific
 ports…** for ports that need their own value, then **Check with OpenROAD** and save.
 
-**Fix the pins or macros:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
+**Place the IO pins:** **Inputs → IO pins**: select ports, choose an edge and press **Place**; split a bus to put
+its parts on different edges; **Check with OpenROAD**, save, and re-run from floorplan.
+
+**Fix the pins or macros by hand:** **Inputs → Files → New file…**, *IO pin constraints* or *Macro placement*, fill in the
 commented lines, save, and re-run from floorplan.
 
 **Runs that must survive logging out:** closing the app asks whether to stop its run. Use **Debug → Copy
@@ -353,6 +383,8 @@ takes 352 to 464 s) caps the saving.
 | Run and the config menus are greyed out | **Inputs** has unsaved changes: save or revert them |
 | **Clocks** says *tclsh was not found* | `sudo apt install tcl`; the `.deb` installs it |
 | **Clocks** says reading the SDC *stopped early* | the SDC uses something only the flow has, such as `get_cells` on the netlist; clocks defined before that line are still shown |
+| The floorplan stops with `PPL-0061 Pins … were not found` | a pin name in `IO_CONSTRAINTS` doesn't exist: open **Inputs → IO pins** and press **Check with OpenROAD** |
+| **IO pins** shows `?` pins | the width comes from a parameter or type; it is known after synthesis |
 | A clock port is missing from **Clocks** | it isn't used with `posedge`, connected to a clock pin, or named like a clock; add it with **Add clock…** |
 | A value set in **Flow settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
@@ -366,6 +398,7 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | --- | --- |
 | `gui/orfs_app.py` | the app |
 | `gui/inputs_tab.py` | the Inputs tab |
+| `gui/io_pins.py` | reads and writes the `set_io_pin_constraint` block of the `IO_CONSTRAINTS` file |
 | `gui/sdc_clocks.py` | reads clock ports from the RTL and clocks from an SDC (with `tclsh`), and writes the clocks block |
 | `gui/flow_gui.py` | the CVA6 web console; the app reuses its metric definitions, so keep both together |
 | `gui/install_launcher.sh` | adds or removes a menu and Desktop launcher for running from the checkout |
