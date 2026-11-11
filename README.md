@@ -229,7 +229,7 @@ screenshots of real CVA6 runs is [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORF
 [docs/ORFS_flow_guide.md](docs/ORFS_flow_guide.md) goes through every stage and step from RTL to GDS: what each
 reads, which page of the app sets it, what it writes, and what to check when it fails.
 
-![ORFS Flow Runner synthesising CVA6](docs/images/gui/running_parallel.png)
+![ORFS Flow Runner: the run panel, the Inputs pages and the Synthesis settings of gcd](docs/images/gui/window.png)
 
 ```bash
 gui/packaging/build_deb.sh                           # builds dist/orfs-flow-runner_<version>_all.deb

@@ -6,7 +6,7 @@ stage range from drop-down menus, press Run, and read the results in separate **
 tabs. No terminal is needed. It drives the stock ORFS Makefile and saves inputs into the design's own files, so a
 run here gives the same result as the same `make` command in a terminal.
 
-![ORFS Flow Runner synthesising CVA6](../docs/images/gui/running_parallel.png)
+![ORFS Flow Runner: the run panel, the Inputs pages and the Synthesis settings of gcd](../docs/images/gui/window.png)
 
 The illustrated user guide, [docs/ORFS_Flow_Runner_user_guide.pdf](../docs/ORFS_Flow_Runner_user_guide.pdf), walks
 through every part of the app with screenshots from real runs: setting the inputs (section 6) and a stock against
@@ -329,9 +329,18 @@ While a tab page has unsaved changes, **Run** and the Platform, Design and Confi
 revert first. Saving is disabled while a run is going, because the flow reads these files as it runs. If a file
 changed on disk since the app opened it (an editor, `git pull`), saving asks before replacing it.
 
+## Look and dark mode
+
+The app draws its own look on every desktop: GTK's Adwaita theme as the base, with one palette on top (a dark
+header bar, an indigo accent, cards for each group of settings, and colored dots and chips for states). It
+follows the desktop's dark mode; set `ORFS_RUNNER_THEME=light` or `ORFS_RUNNER_THEME=dark` to choose one. The
+palette and all styling are in `gui/theme.py`.
+
+![The Floorplan page in dark mode](../docs/images/gui/dark_mode.png)
+
 ## The tabs
 
-![QoR checks for CVA6 up to global routing](../docs/images/gui/qor.png)
+![QoR checks for gcd after the full flow: a card per sign-off check, then every metric by stage](../docs/images/gui/qor.png)
 
 - **Inputs:** the design's constraints, flow settings and files ([above](#the-inputs-tab)).
 - **Run output:** live output of the current run.
@@ -468,6 +477,7 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | `gui/pdn_page.py`, `gui/pdn.py` | the Power grid page, and the reader and editor of pdngen scripts |
 | `gui/fastroute.py` | reads and writes the per-layer capacity lines of `FASTROUTE_TCL` |
 | `gui/lef.py` | reads routing layers, macro sizes and site sizes from LEF files |
+| `gui/theme.py` | the look: the light and dark palettes and the CSS, on top of Adwaita |
 | `gui/new_design.py` | the New design dialog and the files it writes |
 | `gui/io_pins.py` | reads and writes the `set_io_pin_constraint` block of the `IO_CONSTRAINTS` file |
 | `gui/sdc_clocks.py` | reads clock ports from the RTL and clocks from an SDC (with `tclsh`), and writes the clocks block |
