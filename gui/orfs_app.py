@@ -32,8 +32,9 @@ from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from flow_gui import CHECK_COLUMNS, METRICS, evaluate, load_metrics, step_info  # noqa: E402
 from inputs_tab import InputsTab  # noqa: E402
+from new_design import NewDesignDialog  # noqa: E402
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 APP_ID = "orfs-flow-runner"
 GUI_DIR = Path(__file__).resolve().parent
 ROOT = GUI_DIR.parent
@@ -307,6 +308,10 @@ class App(Gtk.Window):
         tools_btn = Gtk.Button(label="Tools…", tooltip_text="Choose the OpenROAD, Yosys and KLayout programs")
         tools_btn.connect("clicked", self.choose_tools)
         hb.pack_start(tools_btn)
+        new_btn = Gtk.Button(label="New design…", tooltip_text="Start a design from RTL files: the app writes its "
+                                                                "config and SDC")
+        new_btn.connect("clicked", self.on_new_design)
+        hb.pack_start(new_btn)
 
         paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL, position=380)
         paned.pack1(self.build_side(), False, False)
@@ -746,6 +751,28 @@ class App(Gtk.Window):
         self.platforms = discover(self.flow)
         self.settings["config"] = name
         self.on_design()
+
+    def on_new_design(self, *_):
+        if self.inputs_unsaved:
+            self.message("Save or revert the changes on the Inputs tab first.")
+            return
+        dlg = NewDesignDialog(self)
+        made = None
+        while not made and dlg.run() == Gtk.ResponseType.OK:
+            made = dlg.create_design()
+        dlg.destroy()
+        if made:
+            platform, name = made
+            self.select_design(platform, name, "config.mk")
+            self.show_page("inputs")
+            self.set_status(f"Created designs/{platform}/{name}. Check its clock on the Inputs tab, then run it.")
+
+    def select_design(self, platform, design, config):
+        """Re-read the designs folder and select platform, design and config."""
+        self.settings.update(platform=platform, design=design, config=config)
+        self.load_flow(self.flow)
+        if self.platform_cb.get_active_id() == platform:
+            self.on_platform()
 
     def reload_designs(self):
         """Pick up config files added or removed in the app, keeping the selection."""
