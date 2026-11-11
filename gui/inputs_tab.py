@@ -21,6 +21,7 @@ import io_pins  # noqa: E402
 import sdc_clocks as sc  # noqa: E402
 import sdc_timing  # noqa: E402
 from floorplan_page import FloorplanPage  # noqa: E402
+from input_page import page_header  # noqa: E402
 from pdn_page import PdnPage  # noqa: E402
 from stage_forms import ClockTreePage, PlacementPage, RoutingPage, SynthesisPage  # noqa: E402
 from timing_page import TimingPage  # noqa: E402
@@ -65,6 +66,14 @@ TEMPLATES = [
     ("Empty SDC file", "constraint_extra.sdc", None, ""),
 ]
 CSS_MUTED = "#8a8f98"
+# One line under the title of the pages built in this file.
+SUBTITLES = {
+    "clocks": "The design's clocks, read from its RTL and its SDC: their periods and how they relate.",
+    "sdc": "The SDC file: quick settings, input and output delays, a check with OpenROAD, and the whole file.",
+    "io": "Where each port, bus or part of a bus goes on the die edge.",
+    "settings": "Every ORFS variable, the value this config sets, and the value the flow uses.",
+    "files": "Every text file of the design, and shared files this config uses.",
+}
 CHANGED = "#3a7bd5"
 
 
@@ -311,7 +320,8 @@ class InputsTab:
                                                                " with its own results folder")
         new_cfg.connect("clicked", self.on_new_config)
         # The config on its own line, so the page buttons never squeeze it.
-        head = Gtk.Box(spacing=8, margin_start=8, margin_end=8, margin_top=6)
+        head = Gtk.Box(spacing=8)
+        head.get_style_context().add_class("inputs-head")
         head.pack_start(self.cfg_label, True, True, 0)
         head.pack_start(new_cfg, False, False, 0)
         box.pack_start(head, False, False, 0)
@@ -341,8 +351,20 @@ class InputsTab:
                  (route.widget, route.name, route.title),
                  (self.build_settings(), "settings", "All settings"),
                  (self.build_files(), "files", "Files")]
+        intros = {p.name: p.intro for p in self.pages}
+        intros.update(SUBTITLES)
         for widget, name, title in order:
-            self.stack.add_titled(widget, name, title)
+            page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            page.pack_start(page_header(title, intros.get(name, "")), False, False, 0)
+            if name in SUBTITLES:
+                # Pages built here sit on one card, like the cards of the other pages.
+                holder = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin_start=20, margin_end=20,
+                                 margin_top=12, margin_bottom=16)
+                holder.get_style_context().add_class("card")
+                holder.pack_start(widget, True, True, 0)
+                widget = holder
+            page.pack_start(widget, True, True, 0)
+            self.stack.add_titled(page, name, title)
         body = Gtk.Box(spacing=0)
         sidebar = Gtk.StackSidebar(stack=self.stack, width_request=150)
         body.pack_start(sidebar, False, False, 0)

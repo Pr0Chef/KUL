@@ -11,7 +11,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk  # noqa: E402
 
 import sdc_timing as st  # noqa: E402
-from input_page import ERROR, MUTED, InputPage, hint_label, markup, scrolled, section  # noqa: E402
+from input_page import ERROR, MUTED, InputPage, card, hint_label, markup, scrolled  # noqa: E402
 
 CHECKS = [("", "setup and hold"), ("setup", "setup only"), ("hold", "hold only")]
 
@@ -25,19 +25,20 @@ def combo_model(items):
 
 class TimingPage(InputPage):
     name, title = "timing", "Timing"
+    intro = ("What makes timing realistic, and which paths are timed differently. Written into the SDC file in a "
+             "block marked 'ORFS Flow Runner: timing'.")
 
     def build(self):
         self._filling = False
-        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
-        outer.pack_start(hint_label(
-            "Settings that make timing realistic and tell the tools which paths not to time as normal. They are "
-            "written into the SDC file in a block marked 'ORFS Flow Runner: timing'."), False, False, 0)
-        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_end=12)
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, margin_start=20, margin_end=20,
+                       margin_top=12, margin_bottom=16)
 
         # Per-clock settings: name, then one column per CLOCK_FIELDS entry.
-        body.pack_start(section("Clocks"), False, False, 0)
+        c = card("Clocks")
+        body.pack_start(c, False, False, 0)
         self.unit_note = hint_label("")
-        body.pack_start(self.unit_note, False, False, 0)
+        c.pack_start(self.unit_note, False, False, 0)
         self.clk_store = Gtk.ListStore(*([str] * (1 + len(st.CLOCK_FIELDS))))
         tv = Gtk.TreeView(model=self.clk_store, height_request=110)
         tv.append_column(Gtk.TreeViewColumn("Clock", Gtk.CellRendererText(), text=0))
@@ -47,17 +48,18 @@ class TimingPage(InputPage):
             col = Gtk.TreeViewColumn(label, cell, text=i)
             col.set_min_width(110)
             tv.append_column(col)
-        body.pack_start(tv, False, False, 0)
-        body.pack_start(hint_label(
+        c.pack_start(tv, False, False, 0)
+        c.pack_start(hint_label(
             "Uncertainty is margin taken off every path for jitter and skew; before CTS it stands in for the skew "
             "the clock tree will add. Transition is the clock's slew. Latency is the delay from the clock source "
             "(source) and through the clock tree (network); once the clock tree is built, the real network "
             "latency is used."), False, False, 0)
 
         # Design rules.
-        body.pack_start(section("Inputs, outputs and design rules"), False, False, 0)
+        c = card("Inputs, outputs and design rules")
+        body.pack_start(c, False, False, 0)
         self.rule_units = hint_label("")
-        body.pack_start(self.rule_units, False, False, 0)
+        c.pack_start(self.rule_units, False, False, 0)
         grid = Gtk.Grid(column_spacing=12, row_spacing=4)
         self.rule_entries = {}
         rows = [("driving_cell", "Cell driving the inputs", "a buffer of the platform, such as BUF_X2"),
@@ -70,11 +72,12 @@ class TimingPage(InputPage):
             grid.attach(entry, 1, r, 1, 1)
             grid.attach(hint_label(tip), 2, r, 1, 1)
             self.rule_entries[key] = entry
-        body.pack_start(grid, False, False, 0)
+        c.pack_start(grid, False, False, 0)
 
         # Exceptions: type, value, check, then kind and names for from, through and to.
-        body.pack_start(section("Timing exceptions"), False, False, 0)
-        body.pack_start(hint_label(
+        c = card("Timing exceptions")
+        body.pack_start(c, False, False, 0)
+        c.pack_start(hint_label(
             "False path: not timed at all (for example a reset, or between unrelated clocks). Multicycle: the path "
             "may take N clock cycles. Max and min delay: a fixed limit instead of the clock period. Names may use "
             "* and ?; several names are separated by spaces."), False, False, 0)
@@ -89,13 +92,13 @@ class TimingPage(InputPage):
         for n, end in enumerate(("From", "Through", "To")):
             self.add_combo_col(f"{end}", 3 + 2 * n, kinds)
             self.add_text_col(f"{end} names", 4 + 2 * n, expand=True)
-        body.pack_start(self.ex_tv, False, False, 0)
+        c.pack_start(self.ex_tv, False, False, 0)
         row = Gtk.Box(spacing=6)
         for label, handler in (("Add exception", self.on_add), ("Remove", self.on_remove)):
             b = Gtk.Button(label=label)
             b.connect("clicked", handler)
             row.pack_start(b, False, False, 0)
-        body.pack_start(row, False, False, 0)
+        c.pack_start(row, False, False, 0)
 
         self.problem_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
         self.outside_label = Gtk.Label(xalign=0, wrap=True, selectable=True)

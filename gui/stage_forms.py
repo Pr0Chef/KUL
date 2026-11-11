@@ -14,7 +14,7 @@ from gi.repository import Gtk  # noqa: E402
 
 import fastroute  # noqa: E402
 import lef  # noqa: E402
-from input_page import ERROR, MUTED, InputPage, hint_label, markup, scrolled, section  # noqa: E402
+from input_page import ERROR, MUTED, InputPage, card, hint_label, markup, scrolled  # noqa: E402
 
 NUMBER_RE = re.compile(r"^-?\d+(\.\d+)?([eE][-+]?\d+)?$")
 
@@ -123,21 +123,20 @@ class FormPage(InputPage):
     def build(self):
         self.fields = {}      # variable: (kind, limits, widget, origin label, error label, reset button)
         self._filling = False
-        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
-        outer.pack_start(hint_label(self.intro), False, False, 0)
-        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10, margin_end=12)
-        # One grid for all groups, so the columns line up down the page.
-        grid = Gtk.Grid(column_spacing=12, row_spacing=2)
-        row = 0
+        # Size groups line the label and value columns up across the cards.
+        self.label_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
+        self.value_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, margin_start=20, margin_end=20,
+                       margin_top=12, margin_bottom=16)
         for title, fields in self.groups:
-            title_label = section(title)
-            title_label.set_margin_top(8 if row else 0)
-            grid.attach(title_label, 0, row, 4, 1)
-            row += 1
+            box = card(title)
+            grid = Gtk.Grid(column_spacing=14, row_spacing=2)
+            row = 0
             for var, label, kind, limits in fields:
                 row = self.add_field(grid, row, var, label, kind, limits)
-        if self.groups:
-            body.pack_start(grid, False, False, 0)
+            box.pack_start(grid, False, False, 0)
+            body.pack_start(box, False, False, 0)
         self.extra(body)
         outer.pack_start(self.wrap_body(scrolled(body)), True, True, 0)
         outer.pack_start(self.footer("Settings changed on any page are saved together into this config."),
@@ -168,6 +167,8 @@ class FormPage(InputPage):
         reset.connect("clicked", lambda *_: self.on_reset(var))
         error = Gtk.Label(xalign=0)
         desc = hint_label("")
+        self.label_group.add_widget(name)
+        self.value_group.add_widget(widget)
         grid.attach(name, 0, row, 1, 1)
         grid.attach(widget, 1, row, 1, 1)
         grid.attach(origin, 2, row, 1, 1)
@@ -313,8 +314,9 @@ class RoutingPage(FormPage):
              "the layers between the lowest and highest routing layer.")
     groups = ROUTING
 
-    def extra(self, body):
-        body.pack_start(section("Capacity per layer"), False, False, 0)
+    def extra(self, outer_body):
+        body = card("Capacity per layer")
+        outer_body.pack_start(body, False, False, 0)
         self.adj_note = hint_label("")
         body.pack_start(self.adj_note, False, False, 0)
         # layers ("metal2-metal3"), value ("0.5")

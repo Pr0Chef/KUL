@@ -18,7 +18,8 @@ from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 
 import floorplan as fp  # noqa: E402
 import lef  # noqa: E402
-from input_page import ERROR, MUTED, hint_label, markup, section  # noqa: E402
+import theme  # noqa: E402
+from input_page import ERROR, MUTED, card, hint_label, markup  # noqa: E402
 from stage_forms import FormPage  # noqa: E402
 
 UTILIZATION = [("CORE_UTILIZATION", "Core utilization (%)", "float", (1.0, 100.0)),
@@ -47,6 +48,13 @@ foreach inst [$block getInsts] {
 """
 # Table columns.
 NAME, MASTER, SIZE, X, Y, ORIENT, BY, EDITABLE = range(8)
+
+
+def rgba(name, alpha=1.0):
+    """A palette color as (r, g, b, a) for Cairo."""
+    c = Gdk.RGBA()
+    c.parse(theme.color(name))
+    return c.red, c.green, c.blue, alpha
 
 
 def read_last_run(openroad, odb):
@@ -87,8 +95,8 @@ class FloorplanPage(FormPage):
         self.drag = None
         return super().build()
 
-    def extra(self, body):
-        # The mode switch goes first, then the two sets of fields, then macros and the preview.
+    def extra(self, page_body):
+        # The mode switch goes first, then the two sets of fields, then macros; the preview is beside them.
         mode = Gtk.Box(spacing=12)
         util = Gtk.RadioButton.new_with_label(None, "Size from utilization")
         fixed = Gtk.RadioButton.new_with_label_from_widget(util, "Fixed die and core")
@@ -96,10 +104,11 @@ class FloorplanPage(FormPage):
             b.connect("toggled", self.on_mode, key)
             mode.pack_start(b, False, False, 0)
             self.mode_buttons[key] = b
-        body.pack_start(section("Die and core"), False, False, 0)
+        body = card("Die and core")
+        page_body.pack_start(body, False, False, 0)
         body.pack_start(mode, False, False, 0)
-        self.util_grid, self.fixed_grid = Gtk.Grid(column_spacing=12, row_spacing=2), Gtk.Grid(column_spacing=12,
-                                                                                                row_spacing=2)
+        self.util_grid = Gtk.Grid(column_spacing=14, row_spacing=2)
+        self.fixed_grid = Gtk.Grid(column_spacing=14, row_spacing=2)
         row = 0
         for var, label, kind, limits in UTILIZATION:
             row = self.add_field(self.util_grid, row, var, label, kind, limits)
@@ -111,8 +120,9 @@ class FloorplanPage(FormPage):
         self.estimate_label = hint_label("")
         body.pack_start(self.estimate_label, False, False, 0)
 
-        body.pack_start(section("Macros"), False, False, 0)
-        grid = Gtk.Grid(column_spacing=12, row_spacing=2)
+        body = card("Macros")
+        page_body.pack_start(body, False, False, 0)
+        grid = Gtk.Grid(column_spacing=14, row_spacing=2)
         row = 0
         for var, label, kind, limits in MACROS:
             row = self.add_field(grid, row, var, label, kind, limits)
@@ -127,8 +137,9 @@ class FloorplanPage(FormPage):
         self.area.connect("button-press-event", self.on_press)
         self.area.connect("motion-notify-event", self.on_motion)
         self.area.connect("button-release-event", self.on_release)
-        frame = Gtk.Frame()
-        frame.add(self.area)
+        frame = Gtk.Box()
+        frame.get_style_context().add_class("preview")
+        frame.pack_start(self.area, True, True, 0)
 
         # instance, master, size, x, y, orientation, placed by, editable
         self.store = Gtk.ListStore(str, str, str, str, str, str, str, bool)
@@ -150,7 +161,8 @@ class FloorplanPage(FormPage):
         self.tv.append_column(Gtk.TreeViewColumn("Placed by", Gtk.CellRendererText(foreground=MUTED), text=BY))
         self.tv.get_selection().connect("changed", lambda *_: self.area.queue_draw())
         # The preview and the macro table sit beside the fields (see wrap_body), always in view.
-        side = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin_start=6)
+        side = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_start=4, margin_end=20, margin_top=12,
+                       margin_bottom=16)
         side.pack_start(frame, True, True, 0)
         side.pack_start(hint_label(
             "Drag a macro placed on this page to move it. Grey dashed outlines are the last floorplan run; "
@@ -492,7 +504,9 @@ class FloorplanPage(FormPage):
         w, h = widget.get_allocated_width(), widget.get_allocated_height()
         self._view = self.view(w, h)
         s = self._view[0]
-        cr.set_source_rgb(0.98, 0.98, 0.97)
+        bg = Gdk.RGBA()
+        bg.parse(theme.color("surface"))
+        cr.set_source_rgba(bg.red, bg.green, bg.blue, 1)
         cr.paint()
 
         def rect(box, fill=None, stroke=None, dash=False, width=1.0):
@@ -508,13 +522,13 @@ class FloorplanPage(FormPage):
             cr.stroke()
 
         if self.last_run:
-            rect(self.last_run[0], stroke=(0.6, 0.6, 0.6, 1), dash=True)
-            rect(self.last_run[1], stroke=(0.7, 0.7, 0.7, 1), dash=True)
+            rect(self.last_run[0], stroke=rgba("text_muted"), dash=True)
+            rect(self.last_run[1], stroke=rgba("text_muted", 0.7), dash=True)
         die, core = self.die(), self.core()
         if die:
-            rect(die, fill=(0.93, 0.94, 0.96, 1), stroke=(0.2, 0.2, 0.25, 1), width=1.5)
+            rect(die, fill=rgba("bg"), stroke=rgba("text", 0.85), width=1.5)
         if core:
-            rect(core, fill=(1, 1, 1, 1), stroke=(0.35, 0.55, 0.85, 1))
+            rect(core, fill=rgba("surface"), stroke=rgba("accent", 0.8))
         if die:
             self.draw_pins(cr, die)
         sel = self.selected()
@@ -530,17 +544,17 @@ class FloorplanPage(FormPage):
                 if name in self.placements:
                     cx, cy = self.channel()
                     if cx or cy:
-                        rect((box[0] - cx, box[1] - cy, box[2] + cx, box[3] + cy), stroke=(0.9, 0.55, 0.1, 0.8),
+                        rect((box[0] - cx, box[1] - cy, box[2] + cx, box[3] + cy), stroke=rgba("warning", 0.8),
                              dash=True)
-                    color = (0.95, 0.6, 0.2, 0.85) if name in sel else (0.3, 0.5, 0.9, 0.75)
+                    color = rgba("warning", 0.85) if name in sel else rgba("accent", 0.75)
                 else:
-                    color = (0.55, 0.55, 0.6, 0.75)
-                rect(box, fill=color, stroke=(0.1, 0.1, 0.2, 1))
+                    color = rgba("text_muted", 0.75)
+                rect(box, fill=color, stroke=rgba("text", 0.9))
                 self.label(cr, name, box, s)
             elif name in last:
                 _, x, y, o, mw, mh = last[name]
                 mw, mh = fp.macro_size((mw, mh), o)
-                rect((x, y, x + mw, y + mh), fill=(0.8, 0.8, 0.8, 0.35), stroke=(0.6, 0.6, 0.6, 1), dash=True)
+                rect((x, y, x + mw, y + mh), fill=rgba("text_muted", 0.18), stroke=rgba("text_muted"), dash=True)
 
     def label(self, cr, text, box, s):
         x1, y1 = self.to_screen(box[0], box[3])

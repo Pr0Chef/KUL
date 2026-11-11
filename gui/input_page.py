@@ -36,6 +36,33 @@ def section(text):
     return label
 
 
+def card(title=None, hint=None):
+    """A white panel with a title, holding one group of settings; pack its content into it."""
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+    box.get_style_context().add_class("card")
+    if title:
+        label = Gtk.Label(label=title, xalign=0)
+        label.get_style_context().add_class("card-title")
+        box.pack_start(label, False, False, 0)
+    if hint:
+        box.pack_start(hint_label(hint), False, False, 0)
+    return box
+
+
+def page_header(title, subtitle=""):
+    """The big title and one-line description at the top of a page."""
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, margin_start=20, margin_end=20, margin_top=16,
+                  margin_bottom=4)
+    t = Gtk.Label(label=title, xalign=0)
+    t.get_style_context().add_class("page-title")
+    box.pack_start(t, False, False, 0)
+    if subtitle:
+        s = Gtk.Label(label=subtitle, xalign=0, wrap=True, max_width_chars=110)
+        s.get_style_context().add_class("page-subtitle")
+        box.pack_start(s, False, False, 0)
+    return box
+
+
 def scrolled(child):
     sw = Gtk.ScrolledWindow(hexpand=True, vexpand=True)
     sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -45,7 +72,8 @@ def scrolled(child):
 
 class InputPage:
     name = ""   # id in the Inputs stack
-    title = ""  # label in the Inputs sidebar
+    title = ""  # label in the Inputs sidebar and the page's title
+    intro = ""  # one or two sentences under the title
 
     def __init__(self, tab):
         self.tab = tab
@@ -78,7 +106,8 @@ class InputPage:
     # ---- shared widgets ----
     def footer(self, hint=""):
         """The bottom row: a hint, the Saved / Unsaved state, Revert and Save."""
-        box = Gtk.Box(spacing=8, margin_top=4)
+        box = Gtk.Box(spacing=8)
+        box.get_style_context().add_class("action-bar")
         box.pack_start(hint_label(hint), True, True, 0)
         self.state = Gtk.Label()
         self.revert_btn = Gtk.Button(label="Revert", tooltip_text="Throw away the unsaved changes on this page")

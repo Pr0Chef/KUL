@@ -12,7 +12,7 @@ from gi.repository import Gtk  # noqa: E402
 
 import lef  # noqa: E402
 import pdn  # noqa: E402
-from input_page import ERROR, MUTED, InputPage, hint_label, markup, scrolled, section  # noqa: E402
+from input_page import ERROR, MUTED, InputPage, card, hint_label, markup, scrolled  # noqa: E402
 
 # Table columns: command index, kind, layers, width, pitch or spacing, offset, follow pins, follow pins shown.
 IDX, KIND, LAYERS, WIDTH, PITCH, OFFSET, FOLLOW, FOLLOW_SHOWN = range(8)
@@ -25,16 +25,18 @@ COLUMNS = {"add_pdn_stripe": {LAYERS: "layer", WIDTH: "width", PITCH: "pitch", O
 
 class PdnPage(InputPage):
     name, title = "pdn", "Power grid"
+    intro = "The straps, rings and vias that carry VDD and VSS from the top layers down to the standard cells."
 
     def build(self):
         self.commands, self.text, self.mtime, self.dirty_ = [], "", None, False
-        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=10)
-        outer.pack_start(hint_label(
-            "Straps are parallel power and ground wires on one layer: width, pitch (distance between two straps of "
-            "the same net) and offset from the core edge, in microns. 'Follow pins' straps sit on the standard "
-            "cell rails. A ring runs around the core on two layers. Vias connect straps of two layers."),
-            False, False, 0)
-        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_end=12)
+        outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, margin_start=20, margin_end=20,
+                       margin_top=12, margin_bottom=16)
+        body = card("Grid", "Straps are parallel power and ground wires on one layer: width, pitch (distance "
+                            "between two straps of the same net) and offset from the core edge, in microns. 'Follow "
+                            "pins' straps sit on the standard cell rails. A ring runs around the core on two layers. "
+                            "Vias connect straps of two layers.")
+        page.pack_start(body, False, False, 0)
         self.file_note = hint_label("")
         body.pack_start(self.file_note, False, False, 0)
         row = Gtk.Box(spacing=8)
@@ -70,10 +72,11 @@ class PdnPage(InputPage):
         body.pack_start(btns, False, False, 0)
         self.layer_note = hint_label("")
         body.pack_start(self.layer_note, False, False, 0)
-        body.pack_start(section("Problems"), False, False, 0)
+        problems = card("Problems")
         self.problem_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
-        body.pack_start(self.problem_label, False, False, 0)
-        outer.pack_start(scrolled(body), True, True, 0)
+        problems.pack_start(self.problem_label, False, False, 0)
+        page.pack_start(problems, False, False, 0)
+        outer.pack_start(scrolled(page), True, True, 0)
         outer.pack_start(self.footer("Run the flow from floorplan after saving: the grid is built there."),
                          False, False, 0)
         return outer
