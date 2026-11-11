@@ -226,12 +226,14 @@ being torn down under memory pressure.
 only CVA6. Install it as a Debian package, which adds it to the app menu, or run it straight from the checkout.
 Step-by-step instructions are in [gui/README.md](gui/README.md#install), and the illustrated user guide with
 screenshots of real CVA6 runs is [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf).
+[docs/ORFS_flow_guide.md](docs/ORFS_flow_guide.md) goes through every stage and step from RTL to GDS: what each
+reads, which page of the app sets it, what it writes, and what to check when it fails.
 
 ![ORFS Flow Runner synthesising CVA6](docs/images/gui/running_parallel.png)
 
 ```bash
 gui/packaging/build_deb.sh                           # builds dist/orfs-flow-runner_<version>_all.deb
-sudo apt install ./dist/orfs-flow-runner_1.1.0_all.deb   # installs under /opt, with its dependencies
+sudo apt install ./dist/orfs-flow-runner_1.2.0_all.deb   # installs under /opt, with its dependencies
 orfs-flow-runner                                     # or start ORFS Flow Runner from the app menu
 python3 gui/orfs_app.py --flow /path/to/OpenROAD-flow-scripts/flow   # without installing
 ```
@@ -255,14 +257,19 @@ peak memory. Every run is logged to `~/.local/share/orfs-flow-runner/run_logs/`.
 
 The tabs on the right:
 
-- **Inputs**: edit what the run reads without a terminal: the clocks (clock ports read from the top module's
-  RTL, periods and how the clocks relate, set in a table), where the IO pins go (each port or part of a bus on an
-  edge, kept together and in order), the SDC (quick fields for the clock name, port and
-  period and the delays, a list of the design's ports after synthesis, input and output delays added for you, and
-  a check of the names with OpenROAD), every ORFS flow variable with its description and the value the flow uses (floorplan size,
-  utilization, placement density, routing layers and so on), and the design's files, with templates for IO pin
-  constraints and macro placement. **New config…** makes a variant with its own results folder. Saves keep a
-  backup and set **From stage** to the first stage the change affects
+- **Inputs**: every input from RTL to GDS, set in the app, one page per part of the flow:
+  - **Synthesis**, **Placement**, **Clock tree**, **Routing**: each stage's settings as checked fields, with
+    the platform's routing layers to pick from, and per-layer routing capacity;
+  - **Clocks** (clock ports read from the top module's RTL, periods and how the clocks relate), **Constraints**
+    (the SDC with quick fields, input and output delays, and a check with OpenROAD) and **Timing** (clock
+    uncertainty and latency, driving cell and load, max transition and fanout, false paths, multicycle paths,
+    max and min delays);
+  - **IO pins** (each port or part of a bus on an edge, together and in order), **Floorplan** (utilization or a
+    fixed die and core, a drawn preview, macros placed by dragging) and **Power grid** (straps, rings and vias);
+  - **All settings** (every ORFS variable) and **Files**.
+
+  **New design…** starts a design from RTL files. **New config…** makes a variant with its own results folder.
+  Saves keep a backup, can be undone, and set **From stage** to the first stage the change affects
   ([details](gui/README.md#the-inputs-tab)).
 - **Run output**: the live output of the run, errors in red and warnings in amber.
 - **Reports**: *QoR checks* (setup and hold slack, slew, cap and fanout violations, DRC, antenna, flow errors,
@@ -363,7 +370,7 @@ The four netlists are identical apart from the Yosys version comment. The parall
 pair, but the machine slowed down during runs 3 and 4 (20 to 27% more CPU time for the same work), and in that pair
 the parallel `abc_new` was slower. On average `abc_new` is 1.02× and the whole synthesis 1.12× faster, with noise as
 large as the effect, so more runs on a quiet machine are needed before quoting a single number. The method, charts and
-discussion are in section 8 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
+discussion are in section 9 of [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf). A run
 through to GDS with this build has not been done yet.
 
 ## Status
