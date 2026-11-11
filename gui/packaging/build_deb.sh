@@ -17,9 +17,9 @@ STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 ROOTFS="$STAGE/$NAME"
 
-# orfs_app.py imports the metrics code from flow_gui.py and the Inputs tab from inputs_tab.py, which reads
-# clocks with sdc_clocks.py and IO constraints with io_pins.py.
-for f in orfs_app.py flow_gui.py inputs_tab.py sdc_clocks.py io_pins.py; do
+# Every module of the app; tests are not installed.
+for f in "$GUI"/*.py; do
+	f="$(basename "$f")"
 	install -Dm644 "$GUI/$f" "$ROOTFS/opt/$NAME/$f"
 done
 install -Dm644 "$PKG_DIR/$NAME.desktop" "$ROOTFS/usr/share/applications/$NAME.desktop"

@@ -19,6 +19,12 @@ from gi.repository import GLib, Gtk, Pango  # noqa: E402
 
 import io_pins  # noqa: E402
 import sdc_clocks as sc  # noqa: E402
+import sdc_timing  # noqa: E402
+from floorplan_page import FloorplanPage  # noqa: E402
+from input_page import page_header  # noqa: E402
+from pdn_page import PdnPage  # noqa: E402
+from stage_forms import ClockTreePage, PlacementPage, RoutingPage, SynthesisPage  # noqa: E402
+from timing_page import TimingPage  # noqa: E402
 
 ASSIGN_RE = re.compile(r"^(\s*)(export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(\?=|::=|:=|\+=|=)\s*(.*)$")
 INCLUDE_RE = re.compile(r"^\s*-?include\s+(.+?)\s*$")
@@ -60,6 +66,14 @@ TEMPLATES = [
     ("Empty SDC file", "constraint_extra.sdc", None, ""),
 ]
 CSS_MUTED = "#8a8f98"
+# One line under the title of the pages built in this file.
+SUBTITLES = {
+    "clocks": "The design's clocks, read from its RTL and its SDC: their periods and how they relate.",
+    "sdc": "The SDC file: quick settings, input and output delays, a check with OpenROAD, and the whole file.",
+    "io": "Where each port, bus or part of a bus goes on the die edge.",
+    "settings": "Every ORFS variable, the value this config sets, and the value the flow uses.",
+    "files": "Every text file of the design, and shared files this config uses.",
+}
 CHANGED = "#3a7bd5"
 
 
@@ -132,7 +146,9 @@ def set_mk_vars(text, changes):
             val = re.sub(r"(?<!\\)#", r"\\#", val.strip())
         if var in last:
             a = last[var]
-            new = [] if val is None else [f"{a['indent']}{a['export']}{var} {a['op']} {val}\n"]
+            # An empty value must override what came before, which "?=" would not do.
+            op = "=" if val == "" and a["op"] == "?=" else a["op"]
+            new = [] if val is None else [f"{a['indent']}{a['export']}{var} {op} {val}\n"]
             edits.append((a["first"], a["last"], new))
         elif val is not None:
             append.append(f"export {var} = {val}\n")
@@ -292,24 +308,23 @@ class InputsTab:
         self.io_used, self.io_text, self.io_rows, self.io_dirty = False, "", [], False
         self.clocks = {"clocks": [], "generated": [], "groups": [], "delays": [], "error": None}
         self.period_vars = set()
+        self.pages = []          # the pages built from input_page.InputPage, in sidebar order
         self.widget = self.build()
 
     # ---------- layout ----------
     def build(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         self.stack = Gtk.Stack()
-        bar = Gtk.Box(spacing=8, margin=6)
         self.cfg_label = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.MIDDLE)
         new_cfg = Gtk.Button(label="New config…", tooltip_text="Make a new config of this design, based on this one,"
                                                                " with its own results folder")
         new_cfg.connect("clicked", self.on_new_config)
         # The config on its own line, so the page buttons never squeeze it.
-        head = Gtk.Box(spacing=8, margin_start=8, margin_end=8, margin_top=6)
+        head = Gtk.Box(spacing=8)
+        head.get_style_context().add_class("inputs-head")
         head.pack_start(self.cfg_label, True, True, 0)
         head.pack_start(new_cfg, False, False, 0)
         box.pack_start(head, False, False, 0)
-        bar.pack_start(Gtk.StackSwitcher(stack=self.stack, homogeneous=True), True, True, 0)
-        box.pack_start(bar, False, False, 0)
 
         self.info = Gtk.InfoBar(show_close_button=True)
         self.info_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
@@ -320,12 +335,43 @@ class InputsTab:
         self.info_label.show()
         box.pack_start(self.info, False, False, 0)
 
-        self.stack.add_titled(self.build_clocks(), "clocks", "Clocks")
-        self.stack.add_titled(self.build_sdc(), "sdc", "Constraints")
-        self.stack.add_titled(self.build_io(), "io", "IO pins")
-        self.stack.add_titled(self.build_settings(), "settings", "Flow settings")
-        self.stack.add_titled(self.build_files(), "files", "Files")
-        box.pack_start(self.stack, True, True, 0)
+        # Pages in the order the flow uses their inputs; the sidebar lists them.
+        synth, timing, floorplan, power = SynthesisPage(self), TimingPage(self), FloorplanPage(self), PdnPage(self)
+        place, cts, route = PlacementPage(self), ClockTreePage(self), RoutingPage(self)
+        self.pages = [synth, timing, floorplan, power, place, cts, route]
+        order = [(synth.widget, synth.name, synth.title),
+                 (self.build_clocks(), "clocks", "Clocks"),
+                 (self.build_sdc(), "sdc", "Constraints"),
+                 (timing.widget, timing.name, timing.title),
+                 (self.build_io(), "io", "IO pins"),
+                 (floorplan.widget, floorplan.name, floorplan.title),
+                 (power.widget, power.name, power.title),
+                 (place.widget, place.name, place.title),
+                 (cts.widget, cts.name, cts.title),
+                 (route.widget, route.name, route.title),
+                 (self.build_settings(), "settings", "All settings"),
+                 (self.build_files(), "files", "Files")]
+        intros = {p.name: p.intro for p in self.pages}
+        intros.update(SUBTITLES)
+        for widget, name, title in order:
+            page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            page.pack_start(page_header(title, intros.get(name, "")), False, False, 0)
+            if name in SUBTITLES:
+                # Pages built here sit on one card, like the cards of the other pages.
+                holder = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin_start=20, margin_end=20,
+                                 margin_top=12, margin_bottom=16)
+                holder.get_style_context().add_class("card")
+                holder.pack_start(widget, True, True, 0)
+                widget = holder
+            page.pack_start(widget, True, True, 0)
+            self.stack.add_titled(page, name, title)
+        body = Gtk.Box(spacing=0)
+        sidebar = Gtk.StackSidebar(stack=self.stack, width_request=150)
+        body.pack_start(sidebar, False, False, 0)
+        body.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 0)
+        body.pack_start(self.stack, True, True, 0)
+        box.pack_start(body, True, True, 0)
+        self.stack.set_visible_child_name("clocks")
         return box
 
     def build_clocks(self):
@@ -1145,7 +1191,7 @@ class InputsTab:
                          label="Click a value to change it; hover a row for its description. An empty value removes "
                                "it from this config, so the included file's or the default value applies.")
         self.set_revert = Gtk.Button(label="Revert")
-        self.set_revert.connect("clicked", lambda *_: (self.pending.clear(), self.fill_settings(), self.dirty()))
+        self.set_revert.connect("clicked", lambda *_: (self.pending.clear(), self.settings_changed()))
         self.set_save = Gtk.Button(label="Save")
         self.set_save.get_style_context().add_class("suggested-action")
         self.set_save.connect("clicked", self.on_settings_save)
@@ -1203,7 +1249,8 @@ class InputsTab:
         return self.file_tv.get_buffer().get_modified()
 
     def is_dirty(self):
-        return bool(self.pending) or self.sdc_dirty() or self.file_dirty() or self.io_dirty
+        return bool(self.pending) or self.sdc_dirty() or self.file_dirty() or self.io_dirty or \
+            any(p.is_dirty() for p in self.pages)
 
     def dirty(self):
         """Update the save buttons and tell the app whether there are unsaved inputs."""
@@ -1232,6 +1279,8 @@ class InputsTab:
         self.file_state.set_markup(colored_text("Shared with other designs: a change here affects them too.",
                                                 "#c88a00") if shared else
                                    self.state_markup(self.file_dirty()) if self.file_path else "")
+        for page in self.pages:
+            page.update_buttons(idle, why)
         self.app.inputs_dirty(self.is_dirty())
 
     def state_markup(self, dirty):
@@ -1264,6 +1313,8 @@ class InputsTab:
             self.last_save = []
             if self.file_path and not self.file_dirty():
                 self.file_path = None
+            for page in self.pages:
+                page.forget()
         self.cfg = cfg
         self.cfg_label.set_markup(f"Inputs of <b>{GLib.markup_escape_text(cfg)}</b>" if cfg else "Pick a design")
         self.cfg_label.set_tooltip_text(cfg)
@@ -1280,7 +1331,9 @@ class InputsTab:
         self.gen += 1
         gen, cfg, flow, env = self.gen, self.cfg, self.app.flow, self.app.make_env()
         cfg_path = (flow / cfg).resolve()
-        names = set(self.variables) | set(self.make_vars) | {"DESIGN_HOME", "DESIGN_NAME", "PLATFORM"}
+        names = set(self.variables) | set(self.make_vars) | {"DESIGN_HOME", "DESIGN_NAME", "PLATFORM", "PLATFORM_DIR",
+                                                              "RESULTS_DIR", "REPORTS_DIR", "LIB_FILES",
+                                                              "PLACE_SITE", "SC_LEF", "TECH_LEF"}
         names |= {v for v, _, _ in config_chain(cfg_path, {"DESIGN_HOME": str(flow / "designs")})}
 
         def work():
@@ -1329,6 +1382,8 @@ class InputsTab:
         self.load_sdc()
         self.load_io()
         self.fill_files()
+        for page in self.pages:
+            page.load()
         self.dirty()
         if then:
             then(eff)
@@ -1367,6 +1422,17 @@ class InputsTab:
 
     def design_dir(self):
         return self.cfg_path().parent
+
+    def platform_vars(self):
+        """Variables the platform's config.mk sets: the defaults a design config can override."""
+        pdir = self.effective.get("PLATFORM_DIR")
+        if not pdir:
+            return set()
+        path = self.resolve(pdir) / "config.mk"
+        if getattr(self, "_platform_key", None) != path:
+            subst = {"PLATFORM_DIR": str(path.parent), "FLOW_HOME": str(self.app.flow)}
+            self._platform_key, self._platform_vars = path, {v for v, _, _ in config_chain(path, subst)}
+        return self._platform_vars
 
     def resolve(self, value):
         p = Path(value)
@@ -1698,8 +1764,10 @@ class InputsTab:
         work_dir.mkdir(parents=True, exist_ok=True)
         sdc, tcl = work_dir / "sdc_check.sdc", work_dir / "sdc_check.tcl"
         sdc.write_text(text)
+        # The libraries are read too, so commands that name a cell (set_driving_cell) can find it.
+        libs = "".join(f"read_liberty {{{lib}}}\n" for lib in self.effective.get("LIB_FILES", "").split())
         tcl.write_text(
-            f"read_db {{{odb}}}\n"
+            libs + f"read_db {{{odb}}}\n"
             f"if {{[catch {{read_sdc {{{sdc}}}}} err]}} {{ puts \"ORFS_RUNNER_ERROR $err\" }}\n"
             "foreach c [all_clocks] { puts \"ORFS_RUNNER_CLOCK [get_name $c] [get_property $c period] "
             "[llength [get_property $c sources]]\" }\n")
@@ -1753,6 +1821,14 @@ class InputsTab:
     def on_sdc_save(self, *_):
         buf = self.sdc_tv.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
+        # The Timing page writes as you type, so an exception can be half done; don't let that reach the flow.
+        model, unknown = sdc_timing.parse(text)
+        probs = sdc_timing.problems(model, self.clock_names()) + [f"Line the Timing page can't read: {u}"
+                                                                   for u in unknown]
+        if probs:
+            self.app.message("The Timing page's settings have problems; fix them before saving the SDC:\n"
+                             + "\n".join(probs))
+            return
         if self.sdc_path and self.write([(self.sdc_path, text, self.sdc_mtime)]):
             buf.set_modified(False)
             self.after_save([self.sdc_path])
@@ -1843,14 +1919,55 @@ class InputsTab:
         self.store[it][1] = new
         self.store[it][6] = 700 if (new or here) else 400
         self.store[it][8] = var in self.pending
+        for page in self.pages:
+            page.settings_changed()
+        self.dirty()
+
+    def settings_changed(self, source=None):
+        """Pending flow settings changed on a page: show them in the table and on the other pages."""
+        self.fill_settings()
+        for page in self.pages:
+            if page is not source:
+                page.settings_changed()
         self.dirty()
 
     def on_settings_save(self, *_):
+        self.save_with_settings([])
+
+    def save_with_settings(self, files, extra=None):
+        """Write files [(path, text, mtime)] and the config with every pending setting (plus extra) in one save,
+        so Undo save takes all of them back together."""
+        changes = dict(self.pending, **(extra or {}))
         cfg = self.cfg_path()
-        text = set_mk_vars(cfg.read_text(errors="replace"), self.pending)
-        if self.write([(cfg, text, None)]):
-            self.pending.clear()
-            self.after_save([cfg])
+        if changes:
+            files = files + [(cfg, set_mk_vars(cfg.read_text(errors="replace"), changes), None)]
+        if not files or not self.write(files):
+            return False
+        self.pending.clear()
+        self.after_save([p for p, _, _ in files])
+        return True
+
+    def design_ref(self, path):
+        """How the config should name a file in the design folder, so it moves with the flow folder."""
+        return f"$(DESIGN_HOME)/$(PLATFORM)/{self.design_dir().name}/{path.name}"
+
+    def own_file(self, var, default_name):
+        """(file a page should write, value to set var to or None) for the file var points to.
+
+        A file in the design folder is edited in place. A file elsewhere (the platform's, shared with other designs)
+        is not touched: the page writes a copy into the design folder, under a name not yet taken, and var is
+        pointed at it.
+        """
+        value = self.effective.get(var, "")
+        current = self.resolve(value) if value else None
+        if current and self.design_dir() in current.parents:
+            return current, None
+        path = self.design_dir() / default_name
+        n = 2
+        while path.exists():
+            path = self.design_dir() / f"{Path(default_name).stem}_{n}{Path(default_name).suffix}"
+            n += 1
+        return path, self.design_ref(path)
 
     # ---------- files ----------
     def short(self, path):

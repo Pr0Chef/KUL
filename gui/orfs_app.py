@@ -32,8 +32,10 @@ from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from flow_gui import CHECK_COLUMNS, METRICS, evaluate, load_metrics, step_info  # noqa: E402
 from inputs_tab import InputsTab  # noqa: E402
+from new_design import NewDesignDialog  # noqa: E402
+import theme  # noqa: E402
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 APP_ID = "orfs-flow-runner"
 GUI_DIR = Path(__file__).resolve().parent
 ROOT = GUI_DIR.parent
@@ -69,13 +71,6 @@ ERR_LINE = re.compile(r"\[ERROR|\bError\b|error:|\*\*\* |FAILED|Killed")
 WARN_LINE = re.compile(r"\[WARNING|\bWarning\b")
 COLORS = {"pass": "#2e9e5b", "fail": "#e0533f", "warn": "#c88a00", "run": "#3a7bd5", "muted": "#8a8f98"}
 
-CSS = b"""
-.side { padding: 12px; }
-.section-title { font-weight: bold; margin-top: 8px; }
-.plan { font-family: monospace; font-size: 9pt; padding: 8px; border-radius: 6px;
-        background-color: alpha(currentColor, 0.06); }
-.statusbar { padding: 4px 10px; border-top: 1px solid alpha(currentColor, 0.15); }
-"""
 
 
 def default_flow():
@@ -276,6 +271,10 @@ class Job:
 
 class App(Gtk.Window):
     def __init__(self, flow):
+        theme.apply()
+        # Status colors follow the palette, so they read well in light and dark mode.
+        COLORS.update({"pass": theme.color("success"), "fail": theme.color("danger"), "warn": theme.color("warning"),
+                       "run": theme.color("info"), "muted": theme.color("text_muted")})
         super().__init__(title="ORFS Flow Runner")
         w, h = 1280, 820
         mon = Gdk.Display.get_default().get_primary_monitor() or Gdk.Display.get_default().get_monitor(0)
@@ -293,20 +292,22 @@ class App(Gtk.Window):
         self.settings = self.load_settings()
         self.connect("delete-event", self.on_close)
 
-        prov = Gtk.CssProvider()
-        prov.load_from_data(CSS)
-        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), prov,
-                                                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-
-        hb = Gtk.HeaderBar(show_close_button=True, title="ORFS Flow Runner")
+        hb = Gtk.HeaderBar(show_close_button=True)
         self.set_titlebar(hb)
         self.hb = hb
+        hb.set_custom_title(self.build_title())
         flow_btn = Gtk.Button(label="Flow folder…", tooltip_text="Choose the ORFS flow directory")
         flow_btn.connect("clicked", self.choose_flow)
         hb.pack_start(flow_btn)
         tools_btn = Gtk.Button(label="Tools…", tooltip_text="Choose the OpenROAD, Yosys and KLayout programs")
         tools_btn.connect("clicked", self.choose_tools)
         hb.pack_start(tools_btn)
+        new_btn = Gtk.Button(label="New design…", tooltip_text="Start a design from RTL files: the app writes its "
+                                                                "config and SDC")
+        new_btn.connect("clicked", self.on_new_design)
+        new_btn.get_style_context().add_class("suggested-action")
+        hb.pack_start(new_btn)
+        hb.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
 
         paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL, position=380)
         paned.pack1(self.build_side(), False, False)
@@ -333,6 +334,27 @@ class App(Gtk.Window):
         threading.Thread(target=self.probe_env, daemon=True).start()
         if not (flow / "Makefile").exists():
             GLib.idle_add(self.ask_for_flow)
+
+    def build_title(self):
+        """The app's mark and name, with the flow folder in use below the name."""
+        box = Gtk.Box(spacing=10)
+        mark = GUI_DIR / "packaging" / f"{APP_ID}.svg"
+        if Gtk.IconTheme.get_default().has_icon(APP_ID):
+            box.pack_start(Gtk.Image.new_from_icon_name(APP_ID, Gtk.IconSize.LARGE_TOOLBAR), False, False, 0)
+        elif mark.exists():
+            from gi.repository import GdkPixbuf
+            box.pack_start(Gtk.Image.new_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(str(mark), 26, 26)),
+                           False, False, 0)
+        names = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+        name = Gtk.Label(label="ORFS Flow Runner", xalign=0)
+        name.get_style_context().add_class("app-name")
+        self.path_label = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.START, max_width_chars=60)
+        self.path_label.get_style_context().add_class("app-path")
+        names.pack_start(name, False, False, 0)
+        names.pack_start(self.path_label, False, False, 0)
+        box.pack_start(names, False, False, 0)
+        box.show_all()
+        return box
 
     def ask_for_flow(self):
         self.message("No ORFS flow folder found yet. Choose the flow/ folder of your OpenROAD-flow-scripts "
@@ -428,7 +450,9 @@ class App(Gtk.Window):
         rows = [("Platform", self.platform_cb), ("Design", self.design_cb), ("Config", self.config_cb),
                 ("CPU cores", self.cores_cb), ("From stage", self.from_cb), ("To stage", self.to_cb)]
         for i, (label, w) in enumerate(rows):
-            grid.attach(Gtk.Label(label=label, xalign=0), 0, i, 1, 1)
+            name = Gtk.Label(label=label, xalign=0)
+            name.get_style_context().add_class("side-label")
+            grid.attach(name, 0, i, 1, 1)
             w.set_hexpand(True)
             grid.attach(w, 1, i, 1, 1)
         box.pack_start(grid, False, False, 0)
@@ -439,8 +463,8 @@ class App(Gtk.Window):
         for cb in (self.cores_cb, self.from_cb, self.to_cb):
             cb.connect("changed", lambda *_: (self.update_plan(), self.save_settings()))
 
-        t = Gtk.Label(label="Plan", xalign=0)
-        t.get_style_context().add_class("section-title")
+        t = Gtk.Label(label="PLAN", xalign=0)
+        t.get_style_context().add_class("eyebrow")
         box.pack_start(t, False, False, 0)
         self.plan_label = Gtk.Label(xalign=0, yalign=0, wrap=True, selectable=True,
                                     wrap_mode=Pango.WrapMode.WORD_CHAR)
@@ -458,14 +482,17 @@ class App(Gtk.Window):
         btns.pack_start(self.stop_btn, True, True, 0)
         box.pack_start(btns, False, False, 4)
 
-        t = Gtk.Label(label="Stages", xalign=0)
-        t.get_style_context().add_class("section-title")
+        t = Gtk.Label(label="STAGES", xalign=0)
+        t.get_style_context().add_class("eyebrow")
         box.pack_start(t, False, False, 0)
-        sgrid = Gtk.Grid(column_spacing=12, row_spacing=4)
+        sgrid = Gtk.Grid(column_spacing=14, row_spacing=7)
         self.stage_labels = {}
         for i, name in enumerate(STAGE_NAMES):
             st, tm = Gtk.Label(xalign=0), Gtk.Label(xalign=1, hexpand=True)
-            sgrid.attach(Gtk.Label(label=name, xalign=0), 0, i, 1, 1)
+            tm.get_style_context().add_class("stage-meta")
+            stage = Gtk.Label(label=name, xalign=0)
+            stage.get_style_context().add_class("stage-name")
+            sgrid.attach(stage, 0, i, 1, 1)
             sgrid.attach(st, 1, i, 1, 1)
             sgrid.attach(tm, 2, i, 1, 1)
             self.stage_labels[name] = (st, tm)
@@ -685,7 +712,7 @@ class App(Gtk.Window):
 
     def load_flow(self, flow):
         self.flow = flow
-        self.hb.set_subtitle(str(flow))
+        self.path_label.set_text(str(flow))
         self.platforms = discover(flow)
         self.platform_store.clear()
         for name, p in self.platforms.items():
@@ -746,6 +773,28 @@ class App(Gtk.Window):
         self.platforms = discover(self.flow)
         self.settings["config"] = name
         self.on_design()
+
+    def on_new_design(self, *_):
+        if self.inputs_unsaved:
+            self.message("Save or revert the changes on the Inputs tab first.")
+            return
+        dlg = NewDesignDialog(self)
+        made = None
+        while not made and dlg.run() == Gtk.ResponseType.OK:
+            made = dlg.create_design()
+        dlg.destroy()
+        if made:
+            platform, name = made
+            self.select_design(platform, name, "config.mk")
+            self.show_page("inputs")
+            self.set_status(f"Created designs/{platform}/{name}. Check its clock on the Inputs tab, then run it.")
+
+    def select_design(self, platform, design, config):
+        """Re-read the designs folder and select platform, design and config."""
+        self.settings.update(platform=platform, design=design, config=config)
+        self.load_flow(self.flow)
+        if self.platform_cb.get_active_id() == platform:
+            self.on_platform()
 
     def reload_designs(self):
         """Pick up config files added or removed in the app, keeping the selection."""
@@ -948,6 +997,11 @@ class App(Gtk.Window):
                     buf.place_cursor(buf.get_end_iter())
         return True
 
+    def unit_label(self, label):
+        """Metric labels name ps (asap7's time unit); other platforms report times in ns."""
+        platform = self.platform_cb.get_active_id()
+        return label if platform == "asap7" or not platform else label.replace("(ps)", "(ns)")
+
     def tick_status(self):
         logs = self.dir_of("LOG_DIR")
         files = sorted(logs.glob("*.log")) if logs and logs.is_dir() else []
@@ -969,7 +1023,7 @@ class App(Gtk.Window):
             else:
                 state, color = "not built", "muted"
             st, tm = self.stage_labels[name]
-            st.set_markup(colored(state, color))
+            st.set_markup(theme.status_dot(color, state))
             total = sum(s["elapsed_s"] or 0 for s in steps)
             peak = max((s["peak_mb"] or 0 for s in steps), default=0)
             tm.set_markup(colored(f"{fmt_dur(total)}" + (f" · {peak / 1024:.1f} GB" if peak else ""), "muted"))
@@ -1051,7 +1105,7 @@ class App(Gtk.Window):
         for label, key, kind, scale in METRICS:
             v = data[last].get(key) if isinstance(key, str) else None
             if kind != "info" and isinstance(v, (int, float)):
-                tiles.append((label, round(v * scale, 3), evaluate(kind, v)))
+                tiles.append((self.unit_label(label), round(v * scale, 3), evaluate(kind, v)))
         res, rep = self.dir_of("RESULTS_DIR"), self.dir_of("REPORTS_DIR")
         drc = rep / "5_route_drc.rpt" if rep else None
         if drc and drc.exists():
@@ -1060,20 +1114,28 @@ class App(Gtk.Window):
         gds = res and any(res.glob("6_final.gds*"))
         tiles.append(("Final GDS", "written" if gds else "not yet", "pass" if gds else "muted"))
         for label, value, state in tiles:
-            b = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, margin=6)
-            b.pack_start(Gtk.Label(label=label, xalign=0), False, False, 0)
-            v = Gtk.Label(xalign=0)
-            v.set_markup(f'<span size="x-large" weight="bold">{GLib.markup_escape_text(f"{value:,}" if isinstance(value, (int, float)) else str(value))}</span>  '
-                         + colored(state if state != "muted" else "pending", state))
-            b.pack_start(v, False, False, 0)
-            frame = Gtk.Frame()
-            frame.add(b)
-            self.checks_summary.add(frame)
+            # A card per check: its name, the value, and a pass / fail chip; the left edge carries the state color.
+            tile = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            for cls in ("card", "tile", f"tile-{state}"):
+                tile.get_style_context().add_class(cls)
+            name = Gtk.Label(label=label, xalign=0)
+            name.get_style_context().add_class("tile-name")
+            row = Gtk.Box(spacing=8)
+            v = Gtk.Label(label=f"{value:,}" if isinstance(value, (int, float)) else str(value), xalign=0)
+            v.get_style_context().add_class("tile-value")
+            chip = Gtk.Label(label=state if state != "muted" else "pending", valign=Gtk.Align.CENTER)
+            chip.get_style_context().add_class("chip")
+            chip.get_style_context().add_class(f"chip-{state}")
+            row.pack_start(v, False, False, 0)
+            row.pack_start(chip, False, False, 0)
+            tile.pack_start(name, False, False, 0)
+            tile.pack_start(row, False, False, 0)
+            self.checks_summary.add(tile)
 
         store = Gtk.ListStore(*([str] * (len(cols) + 1)))
         for label, key, kind, scale in METRICS:
             keys = key if isinstance(key, tuple) else (key,)
-            row, any_val = [GLib.markup_escape_text(label)], False
+            row, any_val = [GLib.markup_escape_text(self.unit_label(label))], False
             for c in cols:
                 v = next((data[c][k] for k in keys if k in data[c]), None)
                 if isinstance(v, (int, float)):

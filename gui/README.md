@@ -6,12 +6,13 @@ stage range from drop-down menus, press Run, and read the results in separate **
 tabs. No terminal is needed. It drives the stock ORFS Makefile and saves inputs into the design's own files, so a
 run here gives the same result as the same `make` command in a terminal.
 
-![ORFS Flow Runner synthesising CVA6](../docs/images/gui/running_parallel.png)
+![ORFS Flow Runner: the run panel, the Inputs pages and the Synthesis settings of gcd](../docs/images/gui/window.png)
 
 The illustrated user guide, [docs/ORFS_Flow_Runner_user_guide.pdf](../docs/ORFS_Flow_Runner_user_guide.pdf), walks
-through every part of the app with screenshots from real runs: setting the inputs (section 6: clocks, constraints,
-IO pins, flow settings, files) and a stock against parallel `abc_new`
-comparison ([A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) below).
+through every part of the app with screenshots from real runs: setting the inputs (section 6) and a stock against
+parallel `abc_new` comparison ([A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) below).
+[docs/ORFS_flow_guide.md](../docs/ORFS_flow_guide.md) explains every stage and step of the flow from RTL to GDS,
+which inputs each one reads and which page sets them, with a walkthrough on `gcd`.
 
 Contents: [Install](#install) · [Requirements](#requirements) · [Step by step](#step-by-step) · [The menus](#the-menus) ·
 [The Inputs tab](#the-inputs-tab) · [The tabs](#the-tabs) · [Common tasks](#common-tasks) · [A/B synthesis run](#ab-synthesis-run-stock-and-parallel-abc_new) ·
@@ -33,7 +34,7 @@ The app ships as a Debian package for Ubuntu (and other Debian-based systems). I
 2. **Install it.** apt also installs GTK, PyGObject, make and KLayout if they are missing:
 
    ```bash
-   sudo apt install ./dist/orfs-flow-runner_1.1.0_all.deb
+   sudo apt install ./dist/orfs-flow-runner_1.2.0_all.deb
    ```
 
 3. **Install OpenROAD, Yosys and an ORFS checkout** if you don't have them; the package doesn't include them
@@ -151,8 +152,30 @@ The app remembers your choices for the next start.
 
 ## The Inputs tab
 
-Everything a run reads, edited in the app and saved into the selected config's own files. The tab has five
-pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config is named at the top.
+Everything a run reads, edited in the app and saved into the selected config's own files. The pages are listed
+on the left in the order the flow uses them: **Synthesis**, **Clocks**, **Constraints**, **Timing**, **IO pins**,
+**Floorplan**, **Power grid**, **Placement**, **Clock tree**, **Routing**, **All settings** and **Files**. The
+selected config is named at the top. Every page has the same *Saved / Unsaved changes* label with **Revert** and
+**Save**.
+
+**New design…** (header bar) starts a design from RTL files: pick the files, and the app finds the top module
+(the module nothing else instantiates) and its clock port, asks for the period and utilization, and writes
+`designs/<platform>/<name>/config.mk` and `constraint.sdc`, copying the RTL into `designs/src/<name>/`.
+
+![New design: gcd.v added, top module and clock found from the RTL](../docs/images/gui/new_design.png)
+
+- **Synthesis, Placement, Clock tree, Routing:** the settings of each stage as proper fields: check boxes, numbers
+  with their allowed range, and lists of the platform's routing layers (read from its tech LEF). Each field shows
+  where its value comes from (*set in this config*, *platform default*, *ORFS default*), ORFS's description, and
+  **Use default** to remove it from this config. A value that can't be used (a density of 2, a layer the
+  platform doesn't have) is shown in red and not taken. Settings changed on any of these pages are pending
+  together and saved into the config by any page's **Save**; **All settings** shows the same pending values.
+  - **Routing** also edits the capacity held back per layer, the `set_global_routing_layer_adjustment` lines of
+    `FASTROUTE_TCL`. When that file is set (nangate45 sets it), `ROUTING_LAYER_ADJUSTMENT` is not used, and the
+    page says so at the field. The platform's file is shared, so the first save writes a copy into the design
+    folder and points `FASTROUTE_TCL` at it.
+
+  ![Inputs: routing layers and per-layer capacity](../docs/images/gui/inputs_routing.png)
 
 ![Inputs: clocks of chi_async_bridge taken from its RTL, with periods and their relationship set in the app](../docs/images/gui/inputs_clocks.png)
 
@@ -180,7 +203,7 @@ pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config 
 
 ![Inputs: the six clocks of ethmac and their logically exclusive groups, read from its SDC](../docs/images/gui/inputs_clocks_ethmac.png)
 
-![Inputs: the SDC of nangate45 CVA6 checked against the synthesized design](../docs/images/gui/inputs_constraints.png)
+![Inputs: the SDC of gcd checked against the synthesized design](../docs/images/gui/inputs_constraints.png)
 
 - **Constraints:** the SDC file the config uses (`SDC_FILE`). If other configs use the same SDC, the tab says so;
   **Use a separate copy for this config** copies it to `constraint_<config>.sdc` and points this config at the
@@ -206,10 +229,23 @@ pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config 
     the synthesized design (`1_synth.odb`), the same way the flow does. It lists every clock with its period and
     the number of ports it is on, any OpenROAD warning or error (for example `port 'clk_x' not found`), and
     unused variables.
+- **Timing:** what makes timing realistic, written into one marked block of the SDC
+  (`# >>> ORFS Flow Runner: timing`):
+  - per clock: setup and hold uncertainty, transition, source and network latency;
+  - inputs, outputs and design rules: the cell (and pin) driving the inputs, the load on the outputs, max
+    transition, max fanout and max capacitance;
+  - timing exceptions: false paths, multicycle paths (with *setup only* or *hold only*), and max or min delays,
+    from, through or to clocks, ports, pins, cells or nets, with `*` and `?` in names.
+  Lines elsewhere in the SDC that set the same things are listed below, read-only. An exception still being
+  filled in is kept in the block as a comment (`# incomplete:`), and the SDC can't be saved from any page until
+  every exception is complete, so the flow never reads a broken SDC.
+
+  ![Inputs: clock uncertainty, driving cell, load and two exceptions on gcd](../docs/images/gui/inputs_timing.png)
+
 - **IO pins:** where the design's pins go on the die edge, written as `set_io_pin_constraint` lines to the
   config's `IO_CONSTRAINTS` file, which the floorplan stage reads.
 
-  ![Inputs: IO pins of CVA6, with clock and reset on the left and boot_addr_i split between bottom and top](../docs/images/gui/inputs_io.png)
+  ![Inputs: IO pins of gcd, with clock and reset on the left and the response on the right](../docs/images/gui/inputs_io.png)
 
   - One row per port. A bus is one row with its pin count: widths come from the synthesized netlist, or from the
     RTL before synthesis when they are plain numbers (`[31:0]`); widths set by parameters or types show as `?`
@@ -231,7 +267,33 @@ pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config 
   - Checked in the flow on nangate45 `gcd`: with `clk`/`reset` on the left, `req_msg[31:16]` on the bottom
     (together, in order), `req_msg[15:0]` on top and `resp_msg` on the right, every pin was placed on its
     edge and the bottom bits came out in bit order.
-- **Flow settings:** every ORFS variable (from `scripts/variables.json`) with its value in this config, the value
+- **Floorplan:** the die and core, and the macros.
+  - *Size from utilization* (`CORE_UTILIZATION`, `CORE_ASPECT_RATIO`, `CORE_MARGIN`) or *Fixed die and core*
+    (`DIE_AREA`, `CORE_AREA`, each `x1 y1 x2 y2` in microns). ORFS stops when both are set, so switching removes
+    the other one. OpenROAD rounds a fixed core inward to whole sites and rows; the page shows the rounded core. In utilization mode the page estimates the die from the synthesis area.
+  - Macros are the netlist's instances of cells from `ADDITIONAL_LEFS`, with their size from the LEF. Select
+    some and **Place here**, then drag them in the preview or type X, Y and the orientation; **Let the flow
+    place** hands them back to the macro placer. Overlaps (counting `RTLMP_MIN_CHANNEL_SIZE`) and macros outside
+    the core are listed. Positions are saved as `place_macro` lines in a marked block of `MACRO_PLACEMENT_TCL`
+    (created as `macro_placement.tcl` if the config has none).
+  - The preview draws the die, core, macros and the IO pin regions; once the floorplan stage has run, the real
+    die, core and macro positions of that run are read with OpenROAD and drawn as grey dashed outlines.
+
+  ![Inputs: two RAM macros placed on the Floorplan page](../docs/images/gui/inputs_floorplan_macros.png)
+
+- **Power grid:** the grids of `PDN_TCL` (the standard cell grid and the grids around macros) as tables of
+  straps (layer, width, pitch, offset, *Follow pins* for the cell rails), rings (two layers, widths, spacings,
+  core offset) and vias between two layers. **Add strap**, **Add ring**, **Add vias**, **Remove**. A new ring
+  goes on two free layers below the top straps and is connected: the straps get `-extend_to_core_ring` and each
+  strap layer gets vias to the ring layer that crosses it. A ring no strap reaches would be left unpowered (the
+  final IR drop check stops on it), so the page lists one as a problem. Layers are
+  checked against the platform's routing layers and a pitch must be larger than its width. Edited commands are
+  rewritten as one line; everything else in the script is kept. The platform's script is shared, so the first
+  save writes a copy into the design folder and points `PDN_TCL` at it.
+
+  ![Inputs: the power grid of gcd with a ring added](../docs/images/gui/inputs_power_grid.png)
+
+- **All settings:** every ORFS variable (from `scripts/variables.json`) with its value in this config, the value
   the flow actually uses (`make` resolves it, including included configs and platform defaults), where that value
   is set, and the first stage that reads it. Hover a row for ORFS's description and default. The list opens on
   *Common settings* (die and core area, utilization, aspect ratio, margins, IO and macro placement files, PDN,
@@ -249,7 +311,7 @@ pages (Clocks, Constraints, IO pins, Flow settings, Files); the selected config 
     netlist (the 8 SRAMs of CVA6), with names written the way OpenROAD stores them.
   - an empty Tcl or SDC file.
 
-![Inputs: flow settings with CORE_UTILIZATION changed to 50](../docs/images/gui/inputs_settings.png)
+![Inputs: All settings, showing what gcd's config sets, with the placement density changed](../docs/images/gui/inputs_settings.png)
 
 **New config…** (top right) makes `config_<name>.mk` that includes the selected config and sets its own
 `FLOW_VARIANT`, then selects it: a variant to try settings on, with its results in a separate folder.
@@ -267,9 +329,18 @@ While a tab page has unsaved changes, **Run** and the Platform, Design and Confi
 revert first. Saving is disabled while a run is going, because the flow reads these files as it runs. If a file
 changed on disk since the app opened it (an editor, `git pull`), saving asks before replacing it.
 
+## Look and dark mode
+
+The app draws its own look on every desktop: GTK's Adwaita theme as the base, with one palette on top (a dark
+header bar, an indigo accent, cards for each group of settings, and colored dots and chips for states). It
+follows the desktop's dark mode; set `ORFS_RUNNER_THEME=light` or `ORFS_RUNNER_THEME=dark` to choose one. The
+palette and all styling are in `gui/theme.py`.
+
+![The Floorplan page in dark mode](../docs/images/gui/dark_mode.png)
+
 ## The tabs
 
-![QoR checks for CVA6 up to global routing](../docs/images/gui/qor.png)
+![QoR checks for gcd after the full flow: a card per sign-off check, then every metric by stage](../docs/images/gui/qor.png)
 
 - **Inputs:** the design's constraints, flow settings and files ([above](#the-inputs-tab)).
 - **Run output:** live output of the current run.
@@ -298,7 +369,7 @@ changed on disk since the app opened it (an editor, `git pull`), saving asks bef
 `4 of 8`, From *Continue*, To `finish`. The plan reads *Runs route, finish.* Detailed routing needs about 7 GB, so
 close heavy applications first and check **Debug → Environment → Memory**.
 
-**Try a different floorplan:** **Inputs → New config…** (for example `util50`), then in **Flow settings** set
+**Try a different floorplan:** **Inputs → New config…** (for example `util50`), then in **Floorplan** set
 `CORE_UTILIZATION` to `50` (or `DIE_AREA` and `CORE_AREA`) and save. The new config has its own results folder, so
 the original stays as it was. Run to `floorplan` and compare the two in **Reports**.
 
@@ -364,7 +435,7 @@ The four netlists are identical apart from the Yosys version comment (115,493 in
 is real in the cleanest pair but small on average, and the run-to-run noise on this machine is as large as the
 effect: runs 3 and 4 used 20 to 27% more CPU time for the same work, so the machine had slowed down, and in that pair
 the parallel `abc_new` was slower. Treat it as `abc_new` between 0.85× and 1.29× and the whole synthesis about 1.1×,
-until it is repeated on a quiet machine with more runs. The guide's section 8 has the method and the discussion.
+until it is repeated on a quiet machine with more runs. The guide's section 9 has the method and the discussion.
 
 ![Wall time of each run](../docs/images/gui/chart_wall.png)
 
@@ -387,7 +458,7 @@ takes 352 to 464 s) caps the saving.
 | The floorplan stops with `PPL-0061 Pins … were not found` | a pin name in `IO_CONSTRAINTS` doesn't exist: open **Inputs → IO pins** and press **Check with OpenROAD** |
 | **IO pins** shows `?` pins | the width comes from a parameter or type; it is known after synthesis |
 | A clock port is missing from **Clocks** | it isn't used with `posedge`, connected to a clock pin, or named like a clock; add it with **Add clock…** |
-| A value set in **Flow settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
+| A value set in **All settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
 
 Limits: one run at a time per window; only runs started from the app show as *running*; viewers show the last
@@ -398,9 +469,20 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | Path | What it is |
 | --- | --- |
 | `gui/orfs_app.py` | the app |
-| `gui/inputs_tab.py` | the Inputs tab |
+| `gui/inputs_tab.py` | the Inputs tab: loading a config, the Clocks, Constraints, IO pins, All settings and Files pages, saving with backups |
+| `gui/input_page.py` | what every newer Inputs page shares: load, unsaved state, Revert and Save |
+| `gui/stage_forms.py` | the Synthesis, Placement, Clock tree and Routing pages, built from field lists |
+| `gui/timing_page.py`, `gui/sdc_timing.py` | the Timing page, and the reader and writer of its SDC block |
+| `gui/floorplan_page.py`, `gui/floorplan.py` | the Floorplan page with its preview, and the die estimate and macro block |
+| `gui/pdn_page.py`, `gui/pdn.py` | the Power grid page, and the reader and editor of pdngen scripts |
+| `gui/fastroute.py` | reads and writes the per-layer capacity lines of `FASTROUTE_TCL` |
+| `gui/lef.py` | reads routing layers, macro sizes and site sizes from LEF files |
+| `gui/theme.py` | the look: the light and dark palettes and the CSS, on top of Adwaita |
+| `gui/new_design.py` | the New design dialog and the files it writes |
 | `gui/io_pins.py` | reads and writes the `set_io_pin_constraint` block of the `IO_CONSTRAINTS` file |
 | `gui/sdc_clocks.py` | reads clock ports from the RTL and clocks from an SDC (with `tclsh`), and writes the clocks block |
+| `gui/tests/` | unit tests (`test_units.py`), GUI tests and the end-to-end flow test, run off screen by `run_gui_tests.sh`; see [Testing](../docs/ORFS_flow_guide.md#testing-the-app) |
+| `docs/ORFS_flow_guide.md` | every stage and step from RTL to GDS, the inputs each reads and the page that sets them |
 | `gui/flow_gui.py` | the CVA6 web console; the app reuses its metric definitions, so keep both together |
 | `gui/install_launcher.sh` | adds or removes a menu and Desktop launcher for running from the checkout |
 | `gui/packaging/build_deb.sh` | builds the `.deb`; `orfs-flow-runner.desktop` and `.svg` are its menu entry and icon |
