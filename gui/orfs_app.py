@@ -33,9 +33,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from flow_gui import CHECK_COLUMNS, METRICS, evaluate, load_metrics, step_info  # noqa: E402
 from inputs_tab import InputsTab  # noqa: E402
 from new_design import NewDesignDialog  # noqa: E402
+from project_page import ProjectPage  # noqa: E402
+from rtl_page import RtlPage  # noqa: E402
+from verify_page import VerifyPage  # noqa: E402
+from fpga_page import FpgaPage  # noqa: E402
+from diagram_page import DiagramPage  # noqa: E402
+from lec_page import LecPage  # noqa: E402
+from agent_page import AgentPanel  # noqa: E402
+import workspace  # noqa: E402
+import eda_tools  # noqa: E402
 import theme  # noqa: E402
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 APP_ID = "orfs-flow-runner"
 GUI_DIR = Path(__file__).resolve().parent
 ROOT = GUI_DIR.parent
@@ -295,36 +304,56 @@ class App(Gtk.Window):
         hb = Gtk.HeaderBar(show_close_button=True)
         self.set_titlebar(hb)
         self.hb = hb
-        hb.set_custom_title(self.build_title())
-        flow_btn = Gtk.Button(label="Flow folder…", tooltip_text="Choose the ORFS flow directory")
-        flow_btn.connect("clicked", self.choose_flow)
-        hb.pack_start(flow_btn)
-        tools_btn = Gtk.Button(label="Tools…", tooltip_text="Choose the OpenROAD, Yosys and KLayout programs")
+        hb.pack_start(self.build_title())
+        # The sections of the app, switched from the middle of the header bar.
+        self.sections = Gtk.Stack()
+        switcher = Gtk.StackSwitcher(stack=self.sections)
+        switcher.get_style_context().add_class("sections")
+        hb.set_custom_title(switcher)
+        tools_btn = Gtk.Button(label="Tools…", tooltip_text="Choose the OpenROAD, Yosys and KLayout programs, and "
+                                                            "install the RTL and FPGA tools")
         tools_btn.connect("clicked", self.choose_tools)
-        hb.pack_start(tools_btn)
-        new_btn = Gtk.Button(label="New design…", tooltip_text="Start a design from RTL files: the app writes its "
-                                                                "config and SDC")
-        new_btn.connect("clicked", self.on_new_design)
-        new_btn.get_style_context().add_class("suggested-action")
-        hb.pack_start(new_btn)
-        hb.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
+        hb.pack_end(tools_btn)
+        self.assistant_btn = Gtk.ToggleButton(label="Assistant", tooltip_text="Show the AI design assistant "
+                                                                             "beside the sections (Ctrl+Shift+A)")
+        self.assistant_btn.connect("toggled", self.on_assistant)
+        accel = Gtk.AccelGroup()
+        self.add_accel_group(accel)
+        self.assistant_btn.add_accelerator("clicked", accel, Gdk.KEY_a, Gdk.ModifierType.CONTROL_MASK
+                                           | Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE)
+        hb.pack_end(self.assistant_btn)
+        self.project = None        # the RTL project in use (workspace.Project), shared by the sections
+        self.section_pages = {}    # name: page object with .widget, flow_changed() and project_changed()
 
         paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL, position=380)
         paned.pack1(self.build_side(), False, False)
         self.nb = Gtk.Notebook()
         self.inputs = InputsTab(self, MAKE_VARS, CACHE_DIR / "backups")
+        self.lec = LecPage(self)
         self.pages = {"inputs": self.inputs.widget, "console": self.build_console(), "reports": self.build_reports(),
-                      "logs": self.build_logs(), "debug": self.build_debug()}
+                      "lec": self.lec.widget, "logs": self.build_logs(), "debug": self.build_debug()}
         for key, label in (("inputs", "Inputs"), ("console", "Run output"), ("reports", "Reports"),
-                           ("logs", "Logs"), ("debug", "Debug")):
+                           ("lec", "LEC"), ("logs", "Logs"), ("debug", "Debug")):
             self.nb.append_page(self.pages[key], Gtk.Label(label=label))
         self.nb.connect("switch-page", lambda nb, page, n: GLib.idle_add(self.refresh_tab, n))
         paned.pack2(self.nb, True, False)
 
         self.status = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END)
         self.status.get_style_context().add_class("statusbar")
+        self.add_section(ProjectPage(self))
+        self.add_section(RtlPage(self))
+        self.add_section(DiagramPage(self))
+        self.add_section(VerifyPage(self))
+        self.add_section(FpgaPage(self))
+        self.sections.add_titled(paned, "asic", "ASIC")
+        self.assistant = AgentPanel(self)
+        self.main_paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        self.main_paned.pack1(self.sections, True, False)
+        self.main_paned.pack2(self.assistant.widget, False, False)
+        self.assistant.widget.set_no_show_all(True)
+        self.assistant.widget.hide()
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        vbox.pack_start(paned, True, True, 0)
+        vbox.pack_start(self.main_paned, True, True, 0)
         vbox.pack_start(self.status, False, False, 0)
         self.add(vbox)
 
@@ -356,6 +385,59 @@ class App(Gtk.Window):
         box.show_all()
         return box
 
+    # ---------- sections and the shared project ----------
+    def add_section(self, page):
+        self.section_pages[page.name] = page
+        self.sections.add_titled(page.widget, page.name, page.title)
+
+    def on_assistant(self, btn):
+        w = self.assistant.widget
+        if btn.get_active():
+            w.set_no_show_all(False)
+            w.show_all()
+            self.main_paned.set_position(max(self.main_paned.get_allocated_width() - 440, 600))
+            self.assistant.entry.grab_focus()
+        else:
+            w.hide()
+
+    def show_section(self, name):
+        self.sections.set_visible_child_name(name)
+
+    def rtl_tools(self):
+        """RTL and FPGA tools chosen by hand in Tools…: {tool: path}; the rest are found automatically."""
+        return self.settings.get("rtl_tools") or {}
+
+    def unsaved_sections(self):
+        return [page.title for page in self.section_pages.values() if getattr(page, "is_dirty", lambda: False)()]
+
+    def set_project(self, name):
+        """Make the project called name the one every section works on (None: no project)."""
+        current = self.project.name if self.project else None
+        if name != current and self.unsaved_sections() and not self.confirm(
+                "Switch project without saving?", f"Unsaved changes in {', '.join(self.unsaved_sections())} "
+                                                  "are lost."):
+            for page in self.section_pages.values():
+                page.project_changed() if page.name == "project" else None
+            return
+        if name and name in workspace.project_names(self.flow):
+            self.project = workspace.Project(self.flow, name)
+        else:
+            self.project = None
+        self.settings["project"] = self.project.name if self.project else ""
+        self.save_settings()
+        for page in self.section_pages.values():
+            page.project_changed()
+
+    def project_updated(self, source):
+        """The project's files or settings changed in one section: tell the others."""
+        for page in self.section_pages.values():
+            if page is not source and hasattr(page, "project_updated"):
+                page.project_updated()
+
+    def open_flow(self, path):
+        self.load_flow(Path(path))
+        self.save_settings()
+
     def ask_for_flow(self):
         self.message("No ORFS flow folder found yet. Choose the flow/ folder of your OpenROAD-flow-scripts "
                      "checkout (it can be changed later with Flow folder…).")
@@ -370,10 +452,12 @@ class App(Gtk.Window):
             return {}
 
     def save_settings(self):
-        s = {"flow": str(self.flow), "platform": self.platform_cb.get_active_id(),
+        s = {"flow": str(self.flow), "project": self.settings.get("project", ""),
+             "platform": self.platform_cb.get_active_id(),
              "design": self.design_cb.get_active_id(), "config": self.config_cb.get_active_id(),
              "cores": self.cores_cb.get_active_id(), "from": self.from_cb.get_active_id(),
-             "to": self.to_cb.get_active_id(), "tools": self.tools()}
+             "to": self.to_cb.get_active_id(), "tools": self.tools(), "rtl_tools": self.rtl_tools(),
+             "assistant": self.settings.get("assistant", {})}
         try:
             SETTINGS.parent.mkdir(parents=True, exist_ok=True)
             SETTINGS.write_text(json.dumps(s, indent=1))
@@ -384,44 +468,107 @@ class App(Gtk.Window):
         return self.settings.get("tools") or {}
 
     def choose_tools(self, *_):
-        dlg = Gtk.Dialog(title="Tools", transient_for=self, modal=True)
+        """Pick the ASIC programs and the RTL/FPGA tools, and install OSS CAD Suite."""
+        dlg = Gtk.Dialog(title="Tools", transient_for=self, modal=True, default_width=760)
         dlg.add_buttons("Cancel", Gtk.ResponseType.CANCEL, "Save", Gtk.ResponseType.OK)
-        grid = Gtk.Grid(column_spacing=10, row_spacing=8, margin=12)
-        grid.attach(Gtk.Label(label="Pick each program, or leave it on Automatic to use the one on PATH\n"
-                                    f"(or in {', '.join(TOOL_DIRS)}).", xalign=0), 0, 0, 3, 1)
-        pickers = {}
-        for row, (name, _, _) in enumerate(TOOLS, 1):
-            chosen = self.tools().get(name)
-            found = tool_path(name, {})
-            pick = Gtk.FileChooserButton(title=f"Choose {name}", action=Gtk.FileChooserAction.OPEN, hexpand=True)
-            if chosen:
-                pick.set_filename(chosen)
-            auto = Gtk.Button(label="Automatic",
-                              tooltip_text=f"Use {found}" if found else f"{name} was not found on PATH")
-            auto.connect("clicked", lambda _b, w=pick: w.unselect_all())
-            grid.attach(Gtk.Label(label=name, xalign=0), 0, row, 1, 1)
-            grid.attach(pick, 1, row, 1, 1)
-            grid.attach(auto, 2, row, 1, 1)
-            pickers[name] = pick
-        dlg.get_content_area().add(grid)
+        nb = Gtk.Notebook(margin=8)
+
+        def picker_grid(intro, rows, chosen):
+            grid = Gtk.Grid(column_spacing=10, row_spacing=8, margin=12)
+            grid.attach(Gtk.Label(label=intro, xalign=0, wrap=True), 0, 0, 4, 1)
+            pickers = {}
+            for row, (name, about, found) in enumerate(rows, 1):
+                pick = Gtk.FileChooserButton(title=f"Choose {name}", action=Gtk.FileChooserAction.OPEN,
+                                             hexpand=True)
+                if chosen.get(name):
+                    pick.set_filename(chosen[name])
+                auto = Gtk.Button(label="Automatic",
+                                  tooltip_text=f"Use {found}" if found else f"{name} was not found")
+                auto.connect("clicked", lambda _b, w=pick: w.unselect_all())
+                state = Gtk.Label(label="✓" if found or chosen.get(name) else "missing", xalign=0)
+                state.get_style_context().add_class("chip-pass" if found or chosen.get(name) else "chip-fail")
+                name_label = Gtk.Label(label=name, xalign=0, tooltip_text=about)
+                for col, w in enumerate((name_label, state, pick, auto)):
+                    grid.attach(w, col, row, 1, 1)
+                pickers[name] = pick
+            return grid, pickers
+
+        asic, asic_pickers = picker_grid(
+            "Pick each program, or leave it on Automatic to use the one on PATH\n"
+            f"(or in {', '.join(TOOL_DIRS)}).",
+            [(n, n, tool_path(n, {})) for n, _, _ in TOOLS], self.tools())
+        nb.append_page(asic, Gtk.Label(label="ASIC flow"))
+
+        rtl_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin=12)
+        suite = eda_tools.suite()
+        suite_label = Gtk.Label(xalign=0, wrap=True)
+        suite_label.set_markup(f"OSS CAD Suite: <b>{GLib.markup_escape_text(str(suite))}</b>" if suite else
+                               "OSS CAD Suite is not installed. It brings Icarus, Verilator, Yosys, SymbiYosys, "
+                               "nextpnr, the bitstream packers, GTKWave and openFPGALoader in one folder "
+                               "(about 700 MB download, 2 GB on disk, no admin rights).")
+        install = Gtk.Button(label="Update OSS CAD Suite…" if suite else "Install OSS CAD Suite…",
+                             halign=Gtk.Align.START)
+        progress = Gtk.ProgressBar(show_text=True, no_show_all=True)
+        cancel_install = threading.Event()
+        dlg.connect("destroy", lambda *_: cancel_install.set())
+
+        def on_install(_b):
+            if not self.confirm("Download OSS CAD Suite?", "About 700 MB from github.com/YosysHQ/oss-cad-suite-"
+                                                           "build, unpacked into the app's data folder."):
+                return
+            install.set_sensitive(False)
+            progress.show()
+
+            def report(text, fraction):
+                GLib.idle_add(lambda: (progress.set_text(text), progress.set_fraction(fraction), False)[-1])
+
+            def work():
+                try:
+                    folder = eda_tools.install_suite(report, cancel_install.is_set)
+                    msg = f"Installed in {folder}. Reopen Tools… to see the tools found."
+                except Exception as e:  # network, disk or archive trouble: show it, keep the app running
+                    msg = f"Install failed: {e}"
+                GLib.idle_add(lambda: (suite_label.set_text(msg), install.set_sensitive(True), False)[-1])
+            threading.Thread(target=work, daemon=True).start()
+        install.connect("clicked", on_install)
+        for w in (suite_label, install, progress):
+            rtl_box.pack_start(w, False, False, 0)
+        rtl_grid, rtl_pickers = picker_grid(
+            "Tools are taken from OSS CAD Suite first, then PATH. Pick one to override it.",
+            [(n, about, eda_tools.find(n)) for n, (about, _) in eda_tools.TOOLS.items()], self.rtl_tools())
+        rtl_grid.set_margin_start(0)
+        sw = Gtk.ScrolledWindow(min_content_height=360, hscrollbar_policy=Gtk.PolicyType.NEVER)
+        sw.add(rtl_grid)
+        rtl_box.pack_start(sw, True, True, 0)
+        nb.append_page(rtl_box, Gtk.Label(label="RTL and FPGA"))
+        dlg.get_content_area().add(nb)
         dlg.show_all()
         if dlg.run() == Gtk.ResponseType.OK:
-            tools = {n: w.get_filename() for n, w in pickers.items() if w.get_filename()}
-            bad = [p for p in tools.values() if not os.access(p, os.X_OK) or Path(p).is_dir()]
+            tools = {n: w.get_filename() for n, w in asic_pickers.items() if w.get_filename()}
+            rtl = {n: w.get_filename() for n, w in rtl_pickers.items() if w.get_filename()}
+            bad = [p for p in list(tools.values()) + list(rtl.values())
+                   if not os.access(p, os.X_OK) or Path(p).is_dir()]
             if bad:
                 self.message(f"Not a program: {', '.join(bad)}")
             else:
-                self.settings["tools"] = tools
+                self.settings["tools"], self.settings["rtl_tools"] = tools, rtl
                 self.save_settings()
                 threading.Thread(target=self.probe_env, daemon=True).start()
                 self.on_config()
+                for page in self.section_pages.values():
+                    page.flow_changed()
         dlg.destroy()
 
     # ---------- left panel ----------
     def build_side(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.get_style_context().add_class("side")
-        grid = Gtk.Grid(column_spacing=10, row_spacing=8)
+        new_btn = Gtk.Button(label="New design…", tooltip_text="Start an ASIC design from RTL files: the app writes "
+                                                                "its config and SDC")
+        new_btn.connect("clicked", self.on_new_design)
+        new_btn.get_style_context().add_class("suggested-action")
+        box.pack_start(new_btn, False, False, 0)
+        grid = Gtk.Grid(column_spacing=10, row_spacing=8, margin_top=6)
 
         def combo_with_store():
             store = Gtk.ListStore(str, str, bool)
@@ -721,6 +868,11 @@ class App(Gtk.Window):
             self.platform_store.append([name, label, p["available"]])
         ncfg = sum(len(c) for p in self.platforms.values() for c in p["designs"].values())
         self.set_status(f"{len(self.platforms)} platforms, {ncfg} design configs in {flow / 'designs'}")
+        for page in self.section_pages.values():
+            page.flow_changed()
+        names = workspace.project_names(flow)
+        want_project = self.settings.get("project")
+        self.set_project(want_project if want_project in names else (names[0] if names else None))
         s = self.settings
         self.cores_cb.set_active_id(s.get("cores") or str(os.cpu_count() or 1))
         self.from_cb.set_active_id(s.get("from") or "continue")
@@ -774,11 +926,14 @@ class App(Gtk.Window):
         self.settings["config"] = name
         self.on_design()
 
-    def on_new_design(self, *_):
+    def on_new_design(self, *_, files=None, name="", top="", copy=True):
+        """Ask for a new ASIC design; files, name and top prefill the dialog (from a project)."""
         if self.inputs_unsaved:
             self.message("Save or revert the changes on the Inputs tab first.")
             return
         dlg = NewDesignDialog(self)
+        if files:
+            dlg.prefill(name, files, top, copy)
         made = None
         while not made and dlg.run() == Gtk.ResponseType.OK:
             made = dlg.create_design()
@@ -942,11 +1097,13 @@ class App(Gtk.Window):
         self.stop_btn.set_sensitive(busy)
         self.inputs.set_busy(busy)
 
-    def on_run(self, *_):
+    def on_run(self, *_, confirmed=False):
+        """Start the planned run; confirmed skips the question (the assistant asked the user already)."""
         cmds, notes, err = self.plan()
         if err or (self.job and self.job.running()):
             return
-        if self.from_cb.get_active_id() != "continue" and any(n.startswith("Deletes") for n in notes):
+        if not confirmed and self.from_cb.get_active_id() != "continue" and any(n.startswith("Deletes")
+                                                                                 for n in notes):
             if not self.confirm("Delete earlier results and re-run?", "\n".join(notes)):
                 return
         cmd = self.command_line(cmds)
@@ -1066,6 +1223,8 @@ class App(Gtk.Window):
         return next((k for k, w in self.pages.items() if w is page), None)
 
     def show_page(self, key):
+        """Show a tab of the ASIC section."""
+        self.show_section("asic")
         self.nb.set_current_page(self.nb.page_num(self.pages[key]))
 
     def refresh_tab(self, n):
@@ -1076,6 +1235,8 @@ class App(Gtk.Window):
             self.refresh_logs()
         elif page == "debug":
             self.refresh_issues()
+        elif page == "lec":
+            self.lec.refresh()
         return False
 
     def refresh_reports(self):
@@ -1317,6 +1478,10 @@ class App(Gtk.Window):
     def on_close(self, *_):
         if self.inputs.is_dirty() and not self.confirm("Quit without saving the changes in Inputs?",
                                                         "They are lost if you quit now."):
+            return True
+        if self.unsaved_sections() and not self.confirm(
+                f"Quit without saving the changes in {', '.join(self.unsaved_sections())}?",
+                "They are lost if you quit now."):
             return True
         if self.job and self.job.running():
             if not self.confirm("A run is still going. Stop it and quit?",

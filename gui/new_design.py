@@ -18,6 +18,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk  # noqa: E402
 
 import sdc_clocks as sc  # noqa: E402
+import workspace  # noqa: E402
 from input_page import ERROR, MUTED, hint_label, markup  # noqa: E402
 
 HDL_SUFFIXES = (".v", ".sv", ".vh", ".svh")
@@ -106,7 +107,7 @@ def create(flow, name, platform, files, top, clock, period, utilization, copy=Tr
     files = [Path(f) for f in files]
     if not files:
         raise ValueError("Add the design's RTL files.")
-    if len({f.name for f in files}) != len(files):
+    if copy and len({f.name for f in files}) != len(files):
         raise ValueError("Two files have the same name; copying them would overwrite one.")
     try:
         float(period)
@@ -118,7 +119,10 @@ def create(flow, name, platform, files, top, clock, period, utilization, copy=Tr
             shutil.copy2(f, sdir / f.name)
         sources = [f"$(DESIGN_HOME)/src/{name}/{f.name}" for f in files]
     else:
-        sources = [str(f.resolve()) for f in files]
+        # Files already in the work area are named relative to it, so the design moves with the work area.
+        home = (flow / "designs").resolve()
+        sources = [f"$(DESIGN_HOME)/{f.resolve().relative_to(home)}" if home in f.resolve().parents
+                   else str(f.resolve()) for f in files]
     ddir.mkdir(parents=True)
     (ddir / "config.mk").write_text(config_text(name, top, platform, sources, utilization))
     (ddir / "constraint.sdc").write_text(sdc_text(top, clock, period))
@@ -136,9 +140,9 @@ class NewDesignDialog(Gtk.Dialog):
         grid = Gtk.Grid(column_spacing=10, row_spacing=8, margin=12)
         self.name = Gtk.Entry(hexpand=True, placeholder_text="for example my_core")
         self.platform = Gtk.ComboBoxText()
-        for pname, p in app.platforms.items():
-            if p["available"]:
-                self.platform.append(pname, pname)
+        # Every platform whose PDK is installed, not only those with designs already (a new work area has none).
+        for pname in workspace.platforms(app.flow):
+            self.platform.append(pname, pname)
         self.platform.set_active_id(app.platform_cb.get_active_id())
         self.platform.connect("changed", lambda *_: self.update_unit())
         self.file_label = Gtk.Label(xalign=0, wrap=True, max_width_chars=60)
@@ -186,8 +190,10 @@ class NewDesignDialog(Gtk.Dialog):
         grid.attach(Gtk.Label(label="Core utilization (%)", xalign=0), 0, r, 1, 1)
         grid.attach(self.util, 1, r, 1, 1)
         r += 1
-        grid.attach(hint_label("The flow sizes the core so the cells fill this share of it. Clocks, IO pins, "
-                               "floorplan and every other input can be changed on the Inputs pages afterwards."),
+        grid.attach(hint_label("The flow sizes the core so the cells fill this share of it. A very small design "
+                               "(a few hundred cells) needs a low value such as 5%, or the platform's power "
+                               "straps do not fit (PDN-0185). Clocks, IO pins, floorplan and every other input can "
+                               "be changed on the Inputs pages afterwards."),
                     0, r, 3, 1)
         r += 1
         grid.attach(self.error, 0, r, 3, 1)
@@ -196,6 +202,14 @@ class NewDesignDialog(Gtk.Dialog):
         self.set_files([])
         self.update_unit()
         self.show_all()
+
+    def prefill(self, name, files, top, copy=True):
+        """Start the dialog from a project's files instead of an empty form."""
+        self.name.set_text(name)
+        self.set_files(list(files))
+        if top:
+            self.top.set_active_id(top)
+        self.copy.set_active(copy)
 
     def update_unit(self):
         ps = self.platform.get_active_id() == "asap7"

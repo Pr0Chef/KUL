@@ -6,6 +6,13 @@ stage range from drop-down menus, press Run, and read the results in separate **
 tabs. No terminal is needed. It drives the stock ORFS Makefile and saves inputs into the design's own files, so a
 run here gives the same result as the same `make` command in a terminal.
 
+Around the ASIC flow the app is a full open-source EDA suite. The header bar switches between **Project** (work
+areas, new or cloned git projects), **RTL** (editor and lint), **Diagrams** (architecture and block diagrams),
+**Verify** (simulation, coverage, waveforms and formal), **FPGA** (iCE40, ECP5 and Gowin builds and programming)
+and **ASIC** (this flow, with a **LEC** tab for logical equivalence). The **Assistant** button opens an AI design
+assistant that reads and edits the design and runs every tool, asking before each change. These sections are
+described in [docs/EDA_suite_guide.md](../docs/EDA_suite_guide.md).
+
 ![ORFS Flow Runner: the run panel, the Inputs pages and the Synthesis settings of gcd](../docs/images/gui/window.png)
 
 The illustrated user guide, [docs/ORFS_Flow_Runner_user_guide.pdf](../docs/ORFS_Flow_Runner_user_guide.pdf), walks
@@ -34,11 +41,12 @@ The app ships as a Debian package for Ubuntu (and other Debian-based systems). I
 2. **Install it.** apt also installs GTK, PyGObject, make and KLayout if they are missing:
 
    ```bash
-   sudo apt install ./dist/orfs-flow-runner_1.2.0_all.deb
+   sudo apt install ./dist/orfs-flow-runner_1.3.0_all.deb
    ```
 
 3. **Install OpenROAD, Yosys and an ORFS checkout** if you don't have them; the package doesn't include them
-   (see [Requirements](#requirements)).
+   (see [Requirements](#requirements)). For the RTL, verification and FPGA sections, use **Tools… → RTL and
+   FPGA → Install OSS CAD Suite…** in the app.
 
 4. **Start ORFS Flow Runner** from the app menu. On the first start it asks for the ORFS `flow/` folder unless it
    finds one in `$ORFS_FLOW` or `~/OpenROAD-flow-scripts/flow`.
@@ -67,6 +75,8 @@ Tested on Ubuntu 24.04 with these versions:
 | Yosys | 0.69+274, with `read_slang` | Step 1 of the repo README; `read_slang` is needed for CVA6 |
 | KLayout | 0.28.16 | `sudo apt install klayout`; only the finish stage uses it, to write the GDS |
 | ORFS flow folder | `OpenROAD-flow-scripts/flow` | `git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts` |
+| OSS CAD Suite (RTL, Verify, FPGA, LEC) | build 2026-11-14 | **Tools… → RTL and FPGA → Install OSS CAD Suite…** |
+| Anthropic Python SDK (Assistant) | `anthropic` 2.8.0 | **Install Claude SDK** in the Assistant panel; needs `uv` or `pip` |
 
 The repo's vendored `orfs/flow` also works, but it only has the asap7 platform and the CVA6 design. The full ORFS
 clone has 85 designs on 9 platforms, 71 of them runnable (gf12 and gf55 need PDKs that are not public).
@@ -458,8 +468,12 @@ takes 352 to 464 s) caps the saving.
 | The floorplan stops with `PPL-0061 Pins … were not found` | a pin name in `IO_CONSTRAINTS` doesn't exist: open **Inputs → IO pins** and press **Check with OpenROAD** |
 | **IO pins** shows `?` pins | the width comes from a parameter or type; it is known after synthesis |
 | A clock port is missing from **Clocks** | it isn't used with `posedge`, connected to a clock pin, or named like a clock; add it with **Add clock…** |
+| The floorplan stops with `PDN-0185 Insufficient width … to add straps` | the core is smaller than the power grid's strap pitch (a tiny design): lower the core utilization on **Inputs → Floorplan** (for example to 5%) or reduce the strap pitch on **Inputs → Power grid** |
 | A value set in **All settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
+| RTL, Verify or FPGA say a tool is not installed | **Tools… → RTL and FPGA**: install OSS CAD Suite or pick the program |
+| The Assistant says the credentials were rejected | set a key with its gear button, or `ant auth login`; an unset `ANTHROPIC_API_KEY` is fine if a profile exists |
+| LEC says *not proven* | the listed points differ; open the check's log in `<results>/lec/`. A netlist edited by hand or an ECO is the usual cause |
 
 Limits: one run at a time per window; only runs started from the app show as *running*; viewers show the last
 4 MB of a log (the full output is always in the run log).
@@ -481,6 +495,16 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | `gui/new_design.py` | the New design dialog and the files it writes |
 | `gui/io_pins.py` | reads and writes the `set_io_pin_constraint` block of the `IO_CONSTRAINTS` file |
 | `gui/sdc_clocks.py` | reads clock ports from the RTL and clocks from an SDC (with `tclsh`), and writes the clocks block |
+| `gui/workspace.py`, `gui/project_page.py` | work areas and projects (`flowrunner.json`), cloning; the Project section |
+| `gui/hdl.py` | the Verilog reader (modules, ports, parameters, instances), testbench, formal and RTL templates |
+| `gui/code_editor.py`, `gui/rtl_page.py`, `gui/lint.py` | the editor, the RTL section, and the linters and their message reader |
+| `gui/sim.py`, `gui/vcd.py`, `gui/wave_view.py`, `gui/formal.py`, `gui/verify_page.py` | simulation, coverage, the VCD reader and wave viewer, SymbiYosys; the Verify section |
+| `gui/fpga.py`, `gui/fpga_page.py` | boards, pins, constraint files, the build and programming commands; the FPGA section |
+| `gui/diagram.py`, `gui/diagram_page.py` | the diagram model, drawing and export, block diagrams from RTL; the Diagrams section |
+| `gui/lec.py`, `gui/lec_page.py` | logical equivalence checks with Yosys; the LEC tab |
+| `gui/agent.py`, `gui/agent_page.py` | the assistant: its tools and conversation loop, and the chat panel |
+| `gui/eda_tools.py`, `gui/runner.py`, `gui/dialogs.py` | finding and installing the RTL/FPGA tools, running them with a console, shared dialogs |
+| `docs/EDA_suite_guide.md` | the Project, RTL, Diagrams, Verify, FPGA, LEC and Assistant sections |
 | `gui/tests/` | unit tests (`test_units.py`), GUI tests and the end-to-end flow test, run off screen by `run_gui_tests.sh`; see [Testing](../docs/ORFS_flow_guide.md#testing-the-app) |
 | `docs/ORFS_flow_guide.md` | every stage and step from RTL to GDS, the inputs each reads and the page that sets them |
 | `gui/flow_gui.py` | the CVA6 web console; the app reuses its metric definitions, so keep both together |

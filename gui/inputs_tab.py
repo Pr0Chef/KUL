@@ -1322,6 +1322,7 @@ class InputsTab:
 
     def refresh(self, then=None):
         if not self.cfg:
+            self.gen += 1      # a load still running for the previous config must not land
             return
         if not self.variables:
             try:
