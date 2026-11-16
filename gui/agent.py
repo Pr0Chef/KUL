@@ -21,7 +21,6 @@ from pathlib import Path
 
 import eda_tools
 import hdl
-import lint
 import workspace as ws
 
 PYLIB = eda_tools.DATA_DIR / "pylib"
@@ -34,9 +33,12 @@ LONG_RUN = 6 * 3600        # seconds a run tool waits for its result (an ASIC fl
 SYSTEM = """You are the design assistant inside ORFS Flow Runner, a desktop EDA suite built on open-source tools. \
 It has these sections, which share one project (a folder of RTL in the work area):
 - Project: the work area, projects, cloning repos, the top module, include folders, defines, git.
-- RTL: a Verilog/SystemVerilog editor with lint (Verilator, Icarus, Yosys) and testbench/formal templates.
+- RTL: a Verilog/SystemVerilog editor with lint (Verilator, Icarus, Yosys), design checks (latches, loops, \
+drivers), clock-domain-crossing analysis, waivers, and testbench/cocotb/formal templates.
 - Diagrams: architecture and block diagrams saved in the project's docs folder.
-- Verify: simulation tests (Icarus, Verilator, coverage), waveforms, and formal checks with SymbiYosys.
+- Verify: regressions in parallel with seeds and tags (Icarus, Verilator, cocotb), coverage (line, branch, \
+toggle, cover points) against goals, waveforms, formal checks with SymbiYosys, a verification plan, and a \
+sign-off gate with an HTML/JUnit report.
 - FPGA: Yosys + nextpnr builds for iCE40, ECP5 and Gowin boards, pin constraints, timing, programming.
 - ASIC: the OpenROAD flow (synth, floorplan, place, cts, route, finish), its inputs (config.mk, SDC), \
 reports, sign-off checks and logical equivalence (LEC) between RTL, the synthesized and the final netlist.
@@ -48,6 +50,10 @@ every claim about the design on what the tools return.
 testbench, and follow the style of the existing code.
 - After changing RTL, lint it; after changing behaviour, run the relevant tests or formal checks; report what \
 passed and what did not, with the real numbers.
+- For sign-off work: findings are fixed in the RTL, not waived, unless the user says a finding is acceptable \
+(then record the waiver with their reason). Close coverage holes by adding stimulus or tests for the lines, \
+branches and cover points never hit, not by lowering goals. A clock domain crossing needs a synchronizer that \
+fits the signal: two flops for a level, gray code or a handshake for a bus.
 - Runs can take long and edits change the user's files: the user approves them, and may deny one. If a tool \
 is denied, do not retry it; explain and ask.
 - Paths are relative to the project folder unless they start with the work area's own folders (designs/, \
@@ -289,17 +295,46 @@ class Toolbox:
         tree = hdl.hierarchy(mods, p.top()) if p.top() in mods else None
         return json.dumps({"top": p.top(), "modules": out, "hierarchy": tree}, indent=1, default=str)
 
-    @tool("read", "Latest results the app holds: lint problems, simulation tests, formal checks, LEC, the FPGA "
-                  "build, and the ASIC sign-off metrics. Logs are cut to their end.",
-          {"kind": {**S, "enum": ["lint", "tests", "formal", "lec", "fpga", "asic"]}}, ["kind"])
+    @tool("read", "Latest results the app holds. findings: lint, design-check and CDC findings with waivers "
+                  "marked; cdc: clock domains and every crossing; tests: each regression run; coverage: line, "
+                  "branch, toggle and cover points against the goals; plan: the verification plan's status; "
+                  "signoff: the gate's items and verdict; formal, lec, fpga, asic. Logs are cut to their end.",
+          {"kind": {**S, "enum": ["findings", "lint", "cdc", "tests", "coverage", "plan", "signoff", "formal", "lec",
+                                  "fpga", "asic"]}}, ["kind"])
     def get_results(self, kind):
         pages = self.app.section_pages
-        if kind == "lint":
-            return json.dumps(pages["rtl"].problems or [], indent=1) or "No lint run yet."
+        rtl, verify = pages["rtl"], pages["verify"]
+        if kind in ("findings", "lint"):
+            found = [f for f in rtl.findings if kind == "findings" or f.get("source") == "lint"]
+            not_run = [k for k, done in rtl.ran.items() if not done]
+            return json.dumps({"not_run_yet": not_run, "findings": found[:150]}, indent=1)
+        if kind == "cdc":
+            return json.dumps(rtl.cdc_result, indent=1) if rtl.cdc_result else "CDC has not been run (run_checks)."
+        if kind == "coverage":
+            cov = verify.results.get("coverage")
+            if not cov:
+                return "No coverage yet: run_tests with coverage on (Verilator tests)."
+            brief = {k: {"percent": v["percent"], "hit": v["hit"], "total": v["total"]} for k, v in cov.items()
+                     if isinstance(v, dict) and "total" in v}
+            return json.dumps({"goals": self.project()["goals"], "kinds": brief,
+                               "lines_never_run": {f: d["missed"][:60] for f, d in cov["line"]["files"].items()
+                                                   if d["missed"]},
+                               "cover_points": cov["cover"]["points"][:80],
+                               "bits_never_toggled": cov["toggle"]["missed"][:60]}, indent=1)
+        if kind == "plan":
+            import signoff
+            rows = signoff.plan_status(self.project()["plan"], verify.results)
+            return json.dumps([{**item, "status": state, "detail": detail} for item, state, detail in rows],
+                              indent=1) if rows else "The project has no verification plan (set_project(plan=…))."
+        if kind == "signoff":
+            self.project()
+            items, verdict, _f = verify.signoff_state()
+            return json.dumps({"verdict": verdict, "items": items}, indent=1)
         if kind in ("tests", "formal"):
-            res = pages["verify"].results.get(kind, {})
-            return json.dumps({k: {**v, "log": clip(v.get("log", ""), 4000)} for k, v in res.items()}, indent=1) \
-                if res else f"No {kind} results yet."
+            res = verify.results.get(kind, {})
+            # Passing runs need no log; failing ones keep the end of theirs.
+            return json.dumps({k: {**v, "log": "" if v.get("state") == "pass" else clip(v.get("log", ""), 2500)}
+                               for k, v in res.items()}, indent=1) if res else f"No {kind} results yet."
         if kind == "lec":
             res = self.app.lec.results
             return json.dumps(res, indent=1) if res else "No LEC results yet."
@@ -355,11 +390,16 @@ class Toolbox:
         return self.write(f, content, "Wrote" if f.exists() else "Created")
 
     @tool("edit", "Change project settings. Give only the fields to change. tests: list of {name, top, "
-                  "simulator (iverilog|verilator), files?, args?}; formal: list of {name, top, mode "
-                  "(bmc|prove|cover), depth, files?}; fpga: {board, family, device, package, mhz, io_standard, "
-                  "pins: {port[bit]: pin}, top}.",
+                  "simulator (iverilog|verilator), files, args?, seeds?, seed? (number or \"random\"), timeout?, "
+                  "tags?} or cocotb tests {name, kind: \"cocotb\", top: design top, module: python file}; formal: "
+                  "list of {name, top, mode (bmc|prove|cover), depth, files?}; fpga: {board, family, device, "
+                  "package, mhz, io_standard, pins: {port[bit]: pin}, top}; plan: the verification plan, list of "
+                  "{feature, description, tests: [names], formal: [names], cover: [cover point labels]}; goals: "
+                  "coverage goals in percent {line, branch, toggle, cover}; waivers: accepted findings, list of "
+                  "{source (lint|design|cdc), code, file, match (part of the message), reason}.",
           {"top": S, "include_dirs": {"type": "array"}, "defines": {"type": "array"}, "tests": {"type": "array"},
-           "formal": {"type": "array"}, "fpga": {"type": "object"}, "notes": S})
+           "formal": {"type": "array"}, "fpga": {"type": "object"}, "notes": S, "plan": {"type": "array"},
+           "goals": {"type": "object"}, "waivers": {"type": "array"}})
     def set_project(self, **changes):
         p = self.project()
         for key, value in changes.items():
@@ -440,27 +480,66 @@ class Toolbox:
 
     # ---------- runs ----------
     @tool("run", "Lint the project's design files; returns the problems with file and line.",
-          {"tool": {**S, "enum": ["verilator", "iverilog", "yosys"]}})
+          {"tool": {**S, "enum": ["verilator", "iverilog", "yosys", "all"]}})
     def run_lint(self, done, tool=""):
         self.project()
         rtl = self.app.section_pages["rtl"]
         if not rtl.run_lint(tool or None, then=lambda problems: done(
-                f"{lint.summary(problems)}\n" + json.dumps(problems[:80], indent=1))):
+                f"{rtl.count_text(problems)}\n" + json.dumps(problems[:80], indent=1))):
             done("Lint did not start: no linter is installed, or the project has no design files.")
 
-    @tool("run", "Run simulation tests (all of them when names is empty) and return pass/fail with log ends.",
-          {"names": {"type": "array", "items": S}})
-    def run_tests(self, done, names=()):
+    @tool("run", "Run the design checks (latches, combinational loops, multiple drivers, undriven nets) and the "
+                  "clock domain crossing analysis; returns the findings and the crossings. Lint is run_lint.")
+    def run_checks(self, done):
+        self.project()
+        rtl = self.app.section_pages["rtl"]
+
+        def report(result):
+            found = [f for f in rtl.findings if f.get("source") in ("design", "cdc")]
+            done(json.dumps({"findings": found[:120], "cdc": rtl.cdc_result and
+                             {"domains": rtl.cdc_result["domains"],
+                              "crossings": rtl.cdc_result["crossings"][:80]}}, indent=1))
+        if not rtl.run_cdc(then=report):
+            done("The checks did not start: Yosys is missing, a check is running, or there are no design files.")
+
+    @tool("run", "Run simulation tests in parallel (all of them when names is empty), every seed of each, with "
+                  "coverage when coverage is true (Verilator tests). Returns each run's verdict, failing logs, "
+                  "and the coverage percentages.",
+          {"names": {"type": "array", "items": S}, "coverage": {"type": "boolean"}})
+    def run_tests(self, done, names=(), coverage=False):
         p = self.project()
         tests = [t for t in p["tests"] if not names or t["name"] in names]
         if not tests:
             raise ToolError("No such tests. Add one with make_testbench or set_project(tests=…).")
         page = self.app.section_pages["verify"]
-        if page.console.busy():
+        if page.busy():
             raise ToolError("Something is already running in Verify.")
-        page.run_tests(tests, then=lambda res: done(json.dumps(
-            {t["name"]: {**res.get(t["name"], {}), "log": clip(res.get(t["name"], {}).get("log", ""), 3000)}
-             for t in tests}, indent=1)))
+        wanted = {t["name"] for t in tests}
+        if coverage:
+            page.cov_check.set_active(True)
+
+        def report(res):
+            runs = {k: {**r, "log": "" if r.get("state") == "pass" else clip(r.get("log", ""), 2500)}
+                    for k, r in res.items() if r.get("test", k) in wanted}
+            cov = page.results.get("coverage") or {}
+            done(json.dumps({"runs": runs, "coverage": {k: v["percent"] for k, v in cov.items()
+                                                        if isinstance(v, dict) and v.get("total")}}, indent=1))
+        if page.run_tests(tests, then=report, use_tag=False) is False:
+            raise ToolError("The tests did not start.")
+
+    @tool("run", "Run everything sign-off needs, in order: lint, design checks, CDC, the regression with "
+                  "coverage, and every formal task. Returns the gate's items and verdict. Can take minutes.")
+    def run_signoff(self, done):
+        self.project()
+        page = self.app.section_pages["verify"]
+        if page.busy():
+            raise ToolError("Something is already running in Verify.")
+
+        def report(verdict):
+            items, _v, _f = page.signoff_state()
+            folder = page.export_report()
+            done(json.dumps({"verdict": verdict, "items": items, "report": str(folder / "signoff.html")}, indent=1))
+        page.run_signoff(then=report)
 
     @tool("run", "Run one formal task (SymbiYosys) and return its verdict, failed properties and log end.",
           {"name": S}, ["name"])
@@ -470,7 +549,7 @@ class Toolbox:
         if not task:
             raise ToolError(f"No formal task {name}.")
         page = self.app.section_pages["verify"]
-        if page.console.busy():
+        if page.busy():
             raise ToolError("Something is already running in Verify.")
         page.on_run_formal(task, then=lambda r: done(json.dumps({**r, "log": clip(r.get("log", ""), 3000)},
                                                                 indent=1)))

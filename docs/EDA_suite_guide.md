@@ -7,16 +7,16 @@ design assistant beside any of them.
 | Section | What you do there | Tools it runs |
 | --- | --- | --- |
 | **Project** | Make a work area, create, clone or import projects, pick the top module, include folders, defines; git pull and commit | git |
-| **RTL** | Write Verilog/SystemVerilog in an editor with syntax colors, find, undo; lint; generate testbenches and formal wrappers | Verilator, Icarus, Yosys |
+| **RTL** | Write Verilog/SystemVerilog in an editor with syntax colors, find, undo; lint, design checks and clock-domain-crossing analysis with waivers; generate testbenches, cocotb tests and formal wrappers | Verilator, Icarus, Yosys |
 | **Diagrams** | Draw architecture diagrams like draw.io, or a block diagram from the RTL; export PNG/SVG | – |
-| **Verify** | Simulation tests and regressions, line coverage, waveforms, formal checks | Icarus, Verilator, SymbiYosys, GTKWave/Surfer |
+| **Verify** | Parallel regressions with seeds and tags, coverage against goals, waveforms, formal checks, a verification plan, and a sign-off gate with reports | Icarus, Verilator, cocotb, SymbiYosys, GTKWave/Surfer |
 | **FPGA** | Pick a board, assign pins, build, read Fmax and utilization, program the board | Yosys, nextpnr, icepack/ecppack/gowin_pack, openFPGALoader |
 | **ASIC** | The OpenROAD flow from RTL to GDS with every input in pages (see [ORFS_flow_guide.md](ORFS_flow_guide.md)), and **LEC** | Yosys, OpenROAD, KLayout |
 
 Everything is done in the app: no terminal is needed for any step below.
 
 Contents: [Install the tools](#install-the-rtl-and-fpga-tools) · [Project](#project) · [RTL](#rtl) ·
-[Diagrams](#diagrams) · [Verify](#verify) · [FPGA](#fpga) · [ASIC and LEC](#asic-and-lec) ·
+[Diagrams](#diagrams) · [Verify](#verify) · [Sign-off](#sign-off) · [FPGA](#fpga) · [ASIC and LEC](#asic-and-lec) ·
 [Assistant](#the-assistant) · [Walkthrough](#walkthrough-a-counter-from-an-empty-folder-to-gds-and-an-fpga) ·
 [Files](#where-things-are-saved) · [Testing](#testing)
 
@@ -47,6 +47,9 @@ Each **project** is a folder `designs/src/<name>/` in it, with its settings in `
   *Not used*. The app guesses from folder names (`tb/`, `sim/`, `verif/`) and module contents.
 - **Create ASIC design…** makes an ORFS design (`designs/<platform>/<name>/config.mk` with an SDC) that points at
   the project's files, so RTL edits reach the next ASIC run without copying.
+- **Filelist…** exports the project's compile order as a `.f` file (`+incdir+`, `+define+`, then the files), the
+  form simulators, linters and synthesis tools all read, or imports one: nested `-f` files, `$VAR` paths and
+  comments are handled. Files outside the project folder are listed, not used.
 - **Pull** and **Commit…** run git; Commit initialises a repository first if there is none.
 
 ## RTL
@@ -56,12 +59,45 @@ The left side has the project's **Files** and the module **Hierarchy** under the
 - The editor has line numbers, Verilog/SystemVerilog/Tcl/Make colors, auto-indent, **Ctrl+F** find,
   **Ctrl+/** comment, **Ctrl+Z / Ctrl+Shift+Z**, and **Ctrl+S** save. **New file…** offers templates (empty
   module, counter, state machine, synchronous FIFO).
-- **Lint** runs the chosen linter (Verilator, Icarus or Yosys) on the design files. Problems are listed with file
-  and line and underlined in the editor; double-click one to jump there. Tick **on save** to lint on every save.
-- **Testbench…** writes `tb/<module>_tb.v` for a module (clock, reset with the right polarity, waveform dump,
-  timeout, a PASS/FAIL line) and adds it to the tests.
-- **Formal…** writes `formal/<module>_formal.sv`, a wrapper that instantiates the module with starter
+- **F12** goes to the definition of the name under the cursor: a module opens in its file, a signal goes to its
+  declaration. **Instance…** inserts an instance of a module at the cursor with every port connected by name.
+- **Testbench…** writes a testbench for a module and adds it to the tests. *Verilog*: `tb/<module>_tb.v` with a
+  clock, a reset of the right polarity, a waveform dump, a seed (`+seed=<n>`), a timeout and a PASS/FAIL line.
+  *cocotb*: `tests/test_<module>.py`, where Python coroutines drive the module.
+- **Properties…** writes `formal/<module>_formal.sv`, a wrapper that instantiates the module with starter
   assumptions and assertions, and adds a formal task.
+
+### RTL checks
+
+Three checks put their findings in one **Problems** list, each with the check that found it, its file and line.
+Findings are underlined in the editor; double-click one to go there.
+
+| Check | Finds | How |
+| --- | --- | --- |
+| **Lint** | syntax and elaboration errors, width mismatches, unused and undriven signals, style | Verilator, Icarus or Yosys, or **All linters** (their reports are merged; one finding per line and code). **strict** adds the style and width warnings (`-Wall`); without it only likely bugs are reported. **on save** lints on every save. |
+| **Design checks** | inferred latches, combinational loops, nets with several drivers, nets used without a driver | Yosys elaborates the design (`proc`, `check`) |
+| **CDC** | signals crossing between clock domains unsafely | a structural analysis of the flattened netlist, below |
+
+**Clock domain crossings.** Every flip-flop belongs to the domain of the net on its clock pin (followed back
+through buffers and inverters). A crossing is a flop whose data input is reached from a flop of another domain:
+
+| Result | Meaning | Fix |
+| --- | --- | --- |
+| *synchronized* (not a finding) | the data comes straight from one flop of the other domain into a flop that is followed by a second flop of the receiving clock: a two-flop synchronizer | – |
+| `CDC-NOSYNC` (error) | the data comes straight across, but no second flop follows | add the second flop before the signal is used |
+| `CDC-LOGIC` (error) | combinational logic sits between the domains, so a glitch can be captured | register the signal in the sending domain, then synchronize it |
+| `CDC-BUS` (warning) | several bits of one register each go through their own synchronizer and can arrive in different cycles | gray code, a handshake or an asynchronous FIFO |
+
+The Output tab lists the domains with their flop counts and every crossing. Not covered: crossings through
+memories and latches, reset-domain crossings, and inputs of the top module (their domain is not in the RTL). As
+with any structural CDC tool, a clean report is evidence, not proof.
+
+**Waivers.** Select a finding and press **Waive…** to accept it on purpose, with a reason. A waived finding
+stays in the list (greyed, with its reason) and in the sign-off report, but no longer counts. Waivers are saved in
+the project's `flowrunner.json` and match by check, code, file and message, not by line number, so they survive
+edits elsewhere in the file. **Remove waiver** makes the finding count again.
+
+![RTL: a latch and an unsynchronized crossing found on their lines](images/gui/suite/s1_rtl_findings.png)
 
 ## Diagrams
 
@@ -76,21 +112,77 @@ Diagrams are saved as `docs/*.diagram.json` in the project and drawn the same on
 
 ## Verify
 
-**Tests.** Each test is a testbench top with its simulator (Icarus or Verilator), optional extra files,
-defines and run arguments. **Run** runs the selected test, **Run all** the regression. A test **passes** when it
-prints `PASS` and exits cleanly, **fails** on a non-zero exit, `FAIL`, `ERROR`, `$error`, `$fatal` or a failed
-assertion, and otherwise shows **ran**. Results are kept in `build/<project>/verify_results.json`.
+**Tests.** A test is a testbench top with how it runs: Icarus, Verilator, or **cocotb** (Python coroutines
+driving the design's top through Icarus). Each test can also have:
 
-**Coverage.** Tick *Measure line coverage (Verilator)*; the Coverage tab lists hit and total lines per file and
-the lines never run. Double-click a file to open it at the first missed line.
+| Setting | Meaning |
+| --- | --- |
+| Seeds | how many seeds to run it with. Each seed is its own run, named `<test>.s<seed>`, and gets `+seed=<n>` (read it with `$value$plusargs("seed=%d", seed)`). |
+| First seed | the first seed number, or `random` for new seeds every regression |
+| Timeout | seconds before a run is stopped and marked *timeout* (default 600) |
+| Tags | words such as `smoke` or `nightly`; the **Tag** menu makes **Run all** run only tests with that tag |
+| Run arguments | plusargs passed to the simulation |
+
+**Regressions.** **Run all** builds each test once and runs every seed, **Parallel runs** at a time, each run in
+its own folder so waveforms, logs and coverage never mix. **Run** runs the selected test, **Run failed** only
+the tests that did not pass, **Stop** ends the regression. The **Runs** tab lists every run with its seed,
+verdict, time and reason; double-click a run for its waveform, or **Show log** for its output. A run **passes**
+when it prints `PASS` and exits cleanly, **fails** on a non-zero exit, `FAIL`, `ERROR`, `$error`, `$fatal` or a
+failed assertion, and otherwise shows **ran**. Verilator runs check SystemVerilog assertions (`--assert`). The last
+regressions are listed under the table, and results are kept in `build/<project>/verify_results.json`.
+
+**Coverage.** Tick *Measure coverage* (Verilator tests). Coverage of all runs is merged, and only the design
+files count: a testbench covering itself proves nothing.
+
+| Kind | Measures |
+| --- | --- |
+| Line | statements of always blocks that ran |
+| Branch | both arms of each `if` and `case` |
+| Toggle | each bit of each signal seen going 0→1 and 1→0 |
+| Cover points | SystemVerilog `cover property` statements (functional coverage): how often each was hit |
+
+**Goals…** sets the percentage each kind must reach for sign-off (0: measured, not required). The Coverage tab
+shows each kind against its goal, the lines never run per file, and the cover points never hit and bits that
+never toggled; double-click to open the place. In the RTL editor, lines no test ran are tinted.
+
+![Coverage: kinds against goals, per file, and what is not covered](images/gui/suite/s4_coverage.png)
 
 **Waveforms.** The wave viewer opens the test's VCD at the first edges of its busiest clock. Search signals,
 add them with a double-click, **Ctrl+wheel** to zoom, **Shift+wheel** to pan, click to place the cursor, and pick
-the radix (hex, decimal, binary). **Open in GTKWave** or **Surfer** hands the same file to those viewers.
+the radix (hex, decimal, binary). **Open in GTKWave** or **Surfer** hands the same file to those viewers. After a
+regression the viewer shows a failing run first, since that is the one to debug.
 
 **Formal.** Each formal task has a top, a mode and a depth: *bmc* looks for a failing trace up to the depth,
 *prove* proves the assertions by induction, *cover* looks for traces that reach each `cover`. SymbiYosys runs it;
-a failure shows the failed assertions and opens the counterexample trace in the wave viewer.
+a failure shows the failed assertions and opens the counterexample trace in the wave viewer. **Run all** runs
+every task.
+
+**Verification plan.** The **Plan** tab lists the features the design must be shown to have, and for each the
+tests, formal tasks and cover points that show it. A feature is *covered* when every linked test passes on all
+its seeds, every linked proof passes and every linked cover point was hit; otherwise it shows what is missing.
+
+## Sign-off
+
+The **Sign-off** tab of Verify gives one verdict for the project:
+
+| Item | Passes when |
+| --- | --- |
+| Lint, Design checks, Clock domain crossings | the check was run and no errors are left (waived findings do not count; warnings are shown, not gating) |
+| Simulation tests | every run passed |
+| Formal checks | every task passed (optional when the project has none) |
+| Coverage | each kind with a goal reaches it |
+| Verification plan | every feature is covered (optional when there is no plan) |
+
+A check that was never run shows *not run* and does not pass: unverified is not verified. **Run everything** runs
+lint, the design checks, CDC, the regression with coverage and every formal task, in order. **Export report…**
+writes into `build/<project>/reports/`:
+
+- `signoff.html`: the verdict, every item, the plan, each run, coverage, every finding with its waiver reason,
+  and the regression history. Self-contained, for a review or a release record.
+- `junit.xml`: the runs and proofs as JUnit XML, which CI systems read.
+- `findings.json`: the items and findings for scripts.
+
+![Sign-off: one verdict over lint, design checks, CDC, tests, formal, coverage and the plan](images/gui/suite/s2_signoff.png)
 
 ## FPGA
 
@@ -142,9 +234,9 @@ open in the editor, the ASIC design) and has tools for every section:
 
 | Kind | Tools |
 | --- | --- |
-| Read (runs at once) | project overview, list, read and search files, module hierarchy, results of lint, tests, formal, LEC, FPGA and the ASIC metrics |
-| Edit (asks first) | edit or write a file (RTL, testbench, SDC, `config.mk`, docs), change project settings (top, tests, formal tasks, FPGA target and pins), create a project, generate a testbench or formal wrapper, draw a diagram |
-| Run (asks first) | lint, tests, formal, LEC, FPGA build, ASIC flow from one stage to another |
+| Read (runs at once) | project overview, list, read and search files, module hierarchy; findings of lint, design checks and CDC with waivers; every crossing; regression runs; coverage against goals; the plan's status; the sign-off gate; formal, LEC, FPGA and the ASIC metrics |
+| Edit (asks first) | edit or write a file (RTL, testbench, SDC, `config.mk`, docs), change project settings (top, tests with seeds and tags, formal tasks, the verification plan, coverage goals, waivers, FPGA target and pins), create a project, generate a testbench or formal wrapper, draw a diagram |
+| Run (asks first) | lint, design checks and CDC, tests in parallel with coverage, formal, the whole sign-off run, LEC, FPGA build, ASIC flow from one stage to another |
 
 Before an edit, the panel shows the diff; before a run, what it will run. **Allow** runs it once, **Allow for
 this chat** stops asking for that kind of action until **New chat**, **Deny** refuses it (the assistant is told
@@ -153,7 +245,8 @@ selected ASIC design's folder; reads to the work area and the ORFS flow. A file 
 is never overwritten.
 
 Things to ask: *"Review my RTL for bugs and lint it"*, *"Write a testbench for the FIFO that checks full and
-empty, and run it"*, *"Add formal properties for the arbiter and prove them"*, *"Draw the architecture"*,
+empty, and run it"*, *"Run sign-off and fix what fails"*, *"Coverage is at 82%: add tests for the lines never
+run"*, *"Add formal properties for the arbiter and prove them"*, *"Draw the architecture"*,
 *"Build for the ULX3S and tell me if timing is met"*, *"The route stage fails timing: find out why and fix the
 SDC"*.
 
@@ -186,7 +279,10 @@ This is what `gui/tests/test_gui_suite.py` does with the app's own buttons.
 | Path | What |
 | --- | --- |
 | `<work area>/designs/src/<project>/` | the project's RTL, `tb/`, `formal/`, `docs/*.diagram.json` and `flowrunner.json` |
-| `<work area>/build/<project>/sim/<test>/` | simulation builds, VCDs and coverage |
+| `<work area>/build/<project>/sim/<test>/` | the test's build, and its run's log, VCD and coverage; each seed in a subfolder `s<seed>/` |
+| `<work area>/build/<project>/checks/` | the design-check script and log, the flattened netlist CDC reads, and `findings.json` |
+| `<work area>/build/<project>/reports/` | `signoff.html`, `junit.xml`, `findings.json` |
+| `<work area>/build/<project>/regressions.json` | the history of the last 50 regressions |
 | `<work area>/build/<project>/formal/<task>/` | the `.sby` file and SymbiYosys's work folder with traces |
 | `<work area>/build/<project>/fpga/` | Yosys JSON, constraint file, nextpnr report and the bitstream |
 | `<work area>/build/<project>/verify_results.json` | the last test, formal and coverage results |
@@ -200,10 +296,20 @@ This is what `gui/tests/test_gui_suite.py` does with the app's own buttons.
 ```bash
 python3 -m unittest discover -s gui/tests -p 'test_suite_units.py' -v
 ```
-The RTL parser, work areas and projects, lint parsing, simulation/formal/LEC verdicts, the VCD reader, FPGA pins
-and constraint files, diagrams, the assistant's tools and input checks; and, when OSS CAD Suite is installed,
-real runs of Icarus, Verilator, lint, SymbiYosys (a proof and a failing check) and LEC (a proven and a broken
-netlist). About 30 seconds.
+The RTL parser, work areas, projects and filelists, lint parsing, waivers, coverage merging and goals, seeds and
+tags, the sign-off gate and its reports, simulation/formal/LEC verdicts, the VCD reader, FPGA pins and constraint
+files, diagrams, the assistant's tools and input checks; and, when OSS CAD Suite is installed, real runs: Icarus,
+Verilator, lint, SymbiYosys (a proof and a failing check), LEC (a proven and a broken netlist), the design checks
+and every CDC class on a design with one of each problem, and a parallel regression with seeds, a timeout,
+coverage and cocotb. About 30 seconds.
+
+```bash
+gui/tests/run_gui_tests.sh gui/tests/test_gui_signoff.py
+```
+RTL sign-off through the GUI on a two-clock design: the checks on clean RTL, a planted latch and a planted
+unsynchronized crossing found on their lines, a waiver, a regression with seeds on Verilator, Icarus and cocotb,
+merged coverage against goals, the plan, *Run everything* reaching *Signed off*, the HTML and JUnit reports,
+filelists, F12, and the assistant's view. About two minutes.
 
 ```bash
 gui/tests/run_gui_tests.sh gui/tests/test_gui_agent.py

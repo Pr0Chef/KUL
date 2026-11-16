@@ -1,11 +1,16 @@
-"""RTL section: write and browse a project's RTL, and lint it.
+"""RTL section: write and browse a project's RTL, and check it.
 
 Left: the project's files and its module hierarchy. Middle: the editor, one tab per open file. Bottom: the
-problems the linter found (double-click one to go to it) and the linter's output. New files start from templates;
-a testbench or a formal property file can be generated from the selected module.
+findings of the checks (double-click one to go to it) and the tools' output. Three checks feed the findings:
+lint (Verilator, Icarus, Yosys, or all of them), the design checks (latches, loops, drivers) and the clock domain
+crossing analysis. A finding can be waived with a reason; waived findings stay listed but no longer count. New
+files start from templates; a testbench, a cocotb test or a formal property file can be generated from a module.
 """
 
+import json
+import re
 import shutil
+import time
 from pathlib import Path
 
 import gi
@@ -13,6 +18,9 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import GLib, Gtk, Pango  # noqa: E402
 
+import cdc  # noqa: E402
+import coverage  # noqa: E402
+import designcheck as dc  # noqa: E402
 import dialogs  # noqa: E402
 import eda_tools  # noqa: E402
 import hdl  # noqa: E402
@@ -34,8 +42,21 @@ class RtlPage:
     def __init__(self, app):
         self.app = app
         self.docs = {}        # path: {"view": CodeView, "label": Gtk.Label, "mtime": float}
-        self.problems = []    # from the last lint run
+        self.sets = {"lint": [], "design": [], "cdc": []}    # findings of each check, from its last run
+        self.ran = {"lint": False, "design": False, "cdc": False}
+        self.cdc_result = None
+        self.cov = None       # coverage summary, to tint lines no test ran
         self.widget = self.build()
+
+    @property
+    def findings(self):
+        """Every finding of every check, with the project's waivers applied."""
+        p = self.app.project
+        return dc.apply_waivers(self.sets["lint"] + self.sets["design"] + self.sets["cdc"], p["waivers"] if p else [])
+
+    @property
+    def problems(self):
+        return self.findings
 
     # ---------- layout ----------
     def build(self):
@@ -61,12 +82,17 @@ class RtlPage:
         bar.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 4)
         self.linter_cb = Gtk.ComboBoxText(tooltip_text="The linter to run")
         bar.pack_start(self.linter_cb, False, False, 0)
+        self.strict = Gtk.CheckButton(label="strict", active=True,
+                                      tooltip_text="Also report style, width and unused-signal warnings (-Wall)")
+        bar.pack_start(self.strict, False, False, 0)
         button("Lint", lambda *_: self.run_lint(), "Check the project's design files with the linter")
         self.lint_on_save = Gtk.CheckButton(label="on save", tooltip_text="Lint every time a file is saved")
         bar.pack_start(self.lint_on_save, False, False, 0)
         bar.pack_start(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL), False, False, 4)
-        button("Testbench…", self.on_testbench, "Write a testbench skeleton for a module and add it as a test")
+        button("Testbench…", self.on_testbench, "Write a testbench for a module (Verilog, or Python with cocotb) "
+                                               "and add it as a test")
         button("Properties…", self.on_formal, "Write a formal property file for a module")
+        button("Instance…", self.on_instance, "Insert an instance of a module at the cursor")
         self.position = Gtk.Label(xalign=1, hexpand=True)
         self.position.get_style_context().add_class("muted")
         bar.pack_end(self.position, True, True, 0)
@@ -109,20 +135,46 @@ class RtlPage:
         self.editor_stack.add_named(self.nb, "editor")
 
         bottom = Gtk.Notebook()
-        # severity, file, line, message, color
-        self.pstore = Gtk.ListStore(str, str, int, str, str)
+        # severity, file, line, message, color, check, index into self.shown
+        self.pstore = Gtk.ListStore(str, str, int, str, str, str, int)
         ptv = Gtk.TreeView(model=self.pstore)
         ptv.append_column(Gtk.TreeViewColumn("", Gtk.CellRendererText(weight=700), text=0, foreground=4))
+        ptv.append_column(Gtk.TreeViewColumn("Check", Gtk.CellRendererText(foreground=MUTED), text=5))
         ptv.append_column(Gtk.TreeViewColumn("File", Gtk.CellRendererText(), text=1))
         ptv.append_column(Gtk.TreeViewColumn("Line", Gtk.CellRendererText(xalign=1), text=2))
         ptv.append_column(Gtk.TreeViewColumn("Problem", Gtk.CellRendererText(ellipsize=Pango.EllipsizeMode.END),
-                                             text=3))
+                                             text=3, foreground=4))
         ptv.connect("row-activated", self.on_problem)
-        sw = Gtk.ScrolledWindow()
+        ptv.set_tooltip_column(3)
+        self.ptv = ptv
+        self.shown = []
+        sw = Gtk.ScrolledWindow(vexpand=True)
         sw.add(ptv)
+        pbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        prow = Gtk.Box(spacing=6, margin=6)
+        for label, handler, tip in (
+                ("Design checks", lambda *_: self.run_design_checks(),
+                 "Elaborate the design with Yosys and report inferred latches, combinational loops, nets with "
+                 "several drivers and nets without one"),
+                ("CDC", lambda *_: self.run_cdc(),
+                 "Clock domain crossings: signals that pass between clocks without a synchronizer"),
+                ("Check all", lambda *_: self.run_all_checks(), "Lint, design checks and CDC, one after another"),
+                ("Waive…", self.on_waive, "Accept the selected finding, with a reason; it stops counting"),
+                ("Remove waiver", self.on_unwaive, "Make the selected waived finding count again")):
+            b = Gtk.Button(label=label, tooltip_text=tip)
+            b.connect("clicked", handler)
+            prow.pack_start(b, False, False, 0)
+        self.show_waived = Gtk.CheckButton(label="Show waived", active=True)
+        self.show_waived.connect("toggled", lambda *_: self.show_problems())
+        prow.pack_start(self.show_waived, False, False, 0)
+        self.checks_label = Gtk.Label(xalign=1, hexpand=True, ellipsize=Pango.EllipsizeMode.END)
+        self.checks_label.get_style_context().add_class("muted")
+        prow.pack_end(self.checks_label, True, True, 0)
+        pbox.pack_start(prow, False, False, 0)
+        pbox.pack_start(sw, True, True, 0)
         self.problems_label = Gtk.Label(label="Problems")
-        bottom.append_page(sw, self.problems_label)
-        self.console = Console("Linter output")
+        bottom.append_page(pbox, self.problems_label)
+        self.console = Console("Lint and check output")
         holder = Gtk.Box(margin=8)
         holder.pack_start(self.console, True, True, 0)
         bottom.append_page(holder, Gtk.Label(label="Output"))
@@ -140,8 +192,11 @@ class RtlPage:
     # ---------- project ----------
     def flow_changed(self):
         self.linter_cb.remove_all()
-        for tool, label in lint.available(self.app.rtl_tools()):
+        tools = lint.available(self.app.rtl_tools())
+        for tool, label in tools:
             self.linter_cb.append(tool, label)
+        if len(tools) > 1:
+            self.linter_cb.append("all", "All linters")
         self.linter_cb.set_active(0)
 
     def project_changed(self):
@@ -151,9 +206,11 @@ class RtlPage:
         p = self.app.project
         self.project_label.set_markup(f"Project <b>{GLib.markup_escape_text(p.name)}</b>" if p else
                                       markup("No project: make or clone one in the Project section.", MUTED))
-        self.pstore.clear()
-        self.problems = []
-        self.problems_label.set_text("Problems")
+        self.sets = {"lint": [], "design": [], "cdc": []}
+        self.ran = {"lint": False, "design": False, "cdc": False}
+        self.cdc_result, self.cov = None, None
+        self.load_checks()
+        self.show_problems(focus=False)
         self.fill_files()
         if p:
             top = p.top_module()
@@ -268,6 +325,9 @@ class RtlPage:
         from gi.repository import Gdk
         if event.state & Gdk.ModifierType.CONTROL_MASK and Gdk.keyval_name(event.keyval) in ("s", "S"):
             self.save_current()
+            return True
+        if Gdk.keyval_name(event.keyval) == "F12":
+            self.go_to_definition()
             return True
         return False
 
@@ -432,7 +492,7 @@ class RtlPage:
             self.app.project_updated(self)
 
     # ---------- generated files ----------
-    def pick_module(self, title, intro):
+    def pick_module(self, title, intro, ok="Create"):
         """Ask which design module to use; the Module, or None."""
         p = self.app.project
         mods = hdl.parse_files(p.paths(p.sources())) if p else {}
@@ -440,15 +500,40 @@ class RtlPage:
             self.app.message("The project has no design modules yet.")
             return None
         names = [p.top()] + sorted(n for n in mods if n != p.top()) if p.top() in mods else sorted(mods)
-        vals = dialogs.ask_fields(self.app, title, [("module", "Module", names[0], names)], intro=intro, ok="Create")
+        vals = dialogs.ask_fields(self.app, title, [("module", "Module", names[0], names)], intro=intro, ok=ok)
         return mods[vals["module"]] if vals else None
 
     def on_testbench(self, *_):
-        mod = self.pick_module("New testbench", "Writes tb/<module>_tb.v with a clock, a reset, a waveform dump, a "
-                                                "place for your stimulus and a PASS / FAIL line, and adds it to "
-                                                "the tests in the Verify section.")
-        if mod:
-            self.make_testbench(mod)
+        p = self.app.project
+        mods = hdl.parse_files(p.paths(p.sources())) if p else {}
+        if not mods:
+            self.app.message("The project has no design modules yet.")
+            return
+        names = [p.top()] + sorted(n for n in mods if n != p.top()) if p.top() in mods else sorted(mods)
+        kinds = ["Verilog testbench", "cocotb test (Python)"]
+        vals = dialogs.ask_fields(
+            self.app, "New testbench", [("module", "Module", names[0], names), ("kind", "Kind", kinds[0], kinds)],
+            intro="Verilog: writes tb/<module>_tb.v with a clock, a reset, a waveform dump, a seed, a place for your "
+                  "stimulus and a PASS / FAIL line. cocotb: writes tests/test_<module>.py, where Python coroutines "
+                  "drive the module (run with Icarus Verilog). Either is added to the tests in the Verify section.",
+            ok="Create")
+        if vals:
+            (self.make_cocotb if vals["kind"] == kinds[1] else self.make_testbench)(mods[vals["module"]])
+
+    def make_cocotb(self, mod):
+        """Write a cocotb test module for a design module and register it as a test; its path, or None."""
+        p = self.app.project
+        rel = f"tests/test_{mod.name}.py"
+        path = self.new_file(rel, hdl.cocotb_test(mod))
+        if path is None:
+            self.app.message(f"{rel} already exists; open it from the file list.")
+            return None
+        name = f"{mod.name}_cocotb"
+        p["tests"] = [t for t in p["tests"] if t.get("name") != name] + [
+            {"name": name, "kind": "cocotb", "top": mod.name, "module": rel, "simulator": "iverilog"}]
+        p.save()
+        self.app.project_updated(self)
+        return path
 
     def make_testbench(self, mod):
         """Write a testbench for a module and register it as a test; returns its path (None if it exists)."""
@@ -489,8 +574,40 @@ class RtlPage:
         return path
 
     # ---------- lint ----------
+    # ---------- checks: lint, design checks, CDC ----------
+    def checks_file(self):
+        p = self.app.project
+        return p.build("checks") / "findings.json" if p else None
+
+    def load_checks(self):
+        path = self.checks_file()
+        try:
+            data = json.loads(path.read_text()) if path else {}
+        except (OSError, ValueError):
+            data = {}
+        for key in self.sets:
+            self.sets[key] = data.get("sets", {}).get(key, [])
+            self.ran[key] = bool(data.get("ran", {}).get(key))
+        self.cdc_result = data.get("cdc")
+
+    def save_checks(self):
+        path = self.checks_file()
+        if path:
+            path.write_text(json.dumps({"sets": self.sets, "ran": self.ran, "cdc": self.cdc_result,
+                                        "when": time.strftime("%Y-%m-%d %H:%M:%S")}, indent=1))
+
+    def finished(self, source, findings):
+        """A check ended: keep its findings, show them, and tell the sign-off page."""
+        self.sets[source], self.ran[source] = findings, True
+        self.save_checks()
+        self.show_problems()
+        verify = self.app.section_pages.get("verify")
+        if verify:
+            verify.refresh_signoff()
+
     def run_lint(self, tool=None, then=None):
-        """Lint the project's design sources; then(problems) is called when it is done."""
+        """Lint the project's design sources; then(findings of lint) is called when it is done. tool "all" runs
+        every installed linter and merges what they find."""
         p = self.app.project
         tool = tool or self.linter_cb.get_active_id()
         if not p or not tool:
@@ -499,29 +616,208 @@ class RtlPage:
         if not p.sources():
             self.app.set_status("The project has no design files to lint.")
             return False
+        if self.console.busy():
+            self.app.set_status("A check is still running.")
+            return False
         self.save_all()
+        tools = [t for t, _ in lint.available(self.app.rtl_tools())] if tool == "all" else [tool]
+        found = []
 
-        def done(task):
-            self.problems = lint.parse(tool, task.text, root=p.dir)
-            self.show_problems()
-            self.app.set_status(f"Lint with {dict(lint.LINTERS)[tool]}: {lint.summary(self.problems)}")
+        def step(task=None, used=None):
+            if task is not None:
+                for f in lint.parse(used, task.text, root=p.dir):
+                    # Two linters often report the same thing: keep the first report of a line and code.
+                    if not any(o["file"] == f["file"] and o["line"] == f["line"] and
+                               (o["code"] == f["code"] or o["tool"] != f["tool"] and o["severity"] == f["severity"])
+                               for o in found):
+                        found.append(f)
+            if tools:
+                t = tools.pop(0)
+                self.console.run(lint.command(t, p, chosen=self.app.rtl_tools(), strict=self.strict.get_active()),
+                                 cwd=str(p.dir), env=eda_tools.env(self.app.rtl_tools()),
+                                 on_done=lambda task, t=t: step(task, t), label=f"Lint ({dict(lint.LINTERS)[t]})")
+                return
+            self.finished("lint", found)
+            mine = [f for f in self.findings if f["source"] == "lint"]
+            label = "all linters" if tool == "all" else dict(lint.LINTERS)[tool]
+            self.app.set_status(f"Lint with {label}: {self.count_text(mine)}")
             if then:
-                then(self.problems)
-        self.console.run(lint.command(tool, p, chosen=self.app.rtl_tools()), cwd=str(p.dir),
-                         env=eda_tools.env(self.app.rtl_tools()), on_done=done, label="Lint")
+                then(mine)
+        step()
         return True
 
-    def show_problems(self):
+    def run_design_checks(self, then=None):
+        """Structural checks with Yosys; then(findings of the design checks). Returns False if it can't start."""
+        p = self.app.project
+        if not p or not p.sources() or self.console.busy():
+            self.app.set_status("A check is still running." if p and p.sources() else "No design files to check.")
+            return False
+        if not eda_tools.find("yosys", self.app.rtl_tools()):
+            self.app.message("Yosys is not installed; install the RTL tools from Tools….")
+            return False
+        self.save_all()
+        folder, cmd = dc.command(p, self.app.rtl_tools())
+
+        def done(task):
+            log = (folder / "checks.log").read_text(errors="replace") if (folder / "checks.log").exists() else ""
+            self.finished("design", dc.parse(log + "\n" + task.text, root=p.dir))
+            mine = [f for f in self.findings if f["source"] == "design"]
+            self.app.set_status(f"Design checks: {self.count_text(mine)}")
+            if then:
+                then(mine)
+        self.console.run(cmd, cwd=str(folder), env=eda_tools.env(self.app.rtl_tools()), on_done=done,
+                         label="Design checks")
+        return True
+
+    def run_cdc(self, then=None):
+        """Clock domain crossing analysis (after the design checks, whose netlist it reads); then(result)."""
+        p = self.app.project
+
+        def analyze(_findings):
+            module = dc.load_netlist(p)
+            if module is None:
+                self.console.append("CDC needs the design to elaborate: fix the errors above first.\n", "err")
+                self.finished("cdc", [{"source": "cdc", "severity": "error", "code": "ELAB", "file": "", "line": 0,
+                                       "message": "The design did not elaborate, so crossings could not be "
+                                                  "analyzed"}])
+                result = None
+            else:
+                result = cdc.analyze(module, root=p.dir)
+                self.cdc_result = {"domains": result["domains"], "crossings": result["crossings"][:500]}
+                self.console.append("\nClock domain crossings\n", "cmd")
+                self.console.append(cdc.summary(result) + "\n")
+                for x in result["crossings"][:200]:
+                    self.console.append(f"  {x['kind']:13} {x['from']} ({x['from_clock']}) -> {x['to']} "
+                                        f"({x['to_clock']})  {x['file']}:{x['line']}\n",
+                                        "ok" if x["kind"] == "synchronized" else "err")
+                self.finished("cdc", result["findings"])
+                self.app.set_status("CDC: " + cdc.summary(result))
+            if then:
+                then(result)
+        return self.run_design_checks(then=analyze)
+
+    def run_all_checks(self, then=None):
+        """Lint, then the design checks and CDC; then() at the end."""
+        def after_lint(_f=None):
+            if not self.run_cdc(then=lambda _r: then and then()) and then:
+                then()
+        if not self.run_lint(None, then=after_lint):
+            after_lint()
+
+    @staticmethod
+    def count_text(findings):
+        errors, warnings, waived = dc.counts(findings)
+        if not findings:
+            return "no findings"
+        return f"{errors} error{'s' if errors != 1 else ''}, {warnings} warning{'s' if warnings != 1 else ''}" + \
+            (f", {waived} waived" if waived else "")
+
+    def show_problems(self, focus=True):
         from input_page import ERROR, WARN
         self.pstore.clear()
-        for pr in sorted(self.problems, key=lambda x: (x["severity"] != "error", x["file"], x["line"])):
+        every = self.findings
+        waived_too = self.show_waived.get_active()
+        self.shown = sorted((f for f in every if waived_too or not f.get("waived")),
+                            key=lambda x: (bool(x.get("waived")), x["severity"] != "error", x.get("source", ""),
+                                           x["file"], x["line"]))
+        for i, pr in enumerate(self.shown):
             code = f" [{pr['code']}]" if pr["code"] else ""
-            self.pstore.append(["error" if pr["severity"] == "error" else "warning", pr["file"], pr["line"],
-                                pr["message"] + code, ERROR if pr["severity"] == "error" else WARN])
-        self.problems_label.set_text(f"Problems ({len(self.problems)})" if self.problems else "Problems")
-        self.bottom.set_current_page(0 if self.problems else self.bottom.get_current_page())
+            if pr.get("waived"):
+                label, color, text = "waived", MUTED, f"{pr['message']}{code}  (waived: {pr['waived']})"
+            else:
+                label = "error" if pr["severity"] == "error" else "warning"
+                color, text = (ERROR if pr["severity"] == "error" else WARN), pr["message"] + code
+            self.pstore.append([label, pr["file"], pr["line"], text, color, pr.get("source", "lint"), i])
+        errors, warnings, _waived = dc.counts(every)
+        live = errors + warnings
+        self.problems_label.set_text(f"Problems ({live})" if live else "Problems")
+        not_run = [name for key, name in (("lint", "lint"), ("design", "design checks"), ("cdc", "CDC"))
+                   if not self.ran[key]]
+        self.checks_label.set_text((self.count_text(every) if every else "No findings") +
+                                   (f" · not run yet: {', '.join(not_run)}" if not_run else ""))
+        if focus and live:
+            self.bottom.set_current_page(0)
         for path in self.docs:
             self.mark_problems(path)
+
+    def selected_finding(self):
+        model, it = self.ptv.get_selection().get_selected()
+        return self.shown[model[it][6]] if it else None
+
+    def on_waive(self, *_):
+        f, p = self.selected_finding(), self.app.project
+        if not f or not p:
+            self.app.set_status("Select a finding to waive.")
+            return
+        if f.get("waived"):
+            self.app.set_status("That finding is already waived.")
+            return
+        vals = dialogs.ask_fields(
+            self.app, "Waive finding", [("reason", "Reason", "", "text")], ok="Waive",
+            intro=f"{f['message']}\n\nA waiver accepts this finding on purpose. It is kept in the project "
+                  "(flowrunner.json), shown in the sign-off report with its reason, and matches by file, code and "
+                  "message, so it survives edits elsewhere in the file.",
+            check=lambda v: None if len(v["reason"]) >= 3 else "Say why it is acceptable.")
+        if vals:
+            p["waivers"] = p["waivers"] + [dc.waiver_for(f, vals["reason"])]
+            p.save()
+            self.after_waivers()
+
+    def on_unwaive(self, *_):
+        f, p = self.selected_finding(), self.app.project
+        if f and p and f.get("waived"):
+            p["waivers"] = [w for w in p["waivers"] if not dc.matches(w, f)]
+            p.save()
+            self.after_waivers()
+
+    def after_waivers(self):
+        self.show_problems()
+        verify = self.app.section_pages.get("verify")
+        if verify:
+            verify.refresh_signoff()
+
+    # ---------- coverage marks, go to definition, instances ----------
+    def set_coverage(self, cov):
+        """Tint the lines no test ran in every open design file (cov: the Verify page's coverage summary)."""
+        self.cov = cov
+        for path in self.docs:
+            self.mark_problems(path)
+
+    def go_to_definition(self):
+        """F12: open the module named under the cursor, or go to where the signal is declared in this file."""
+        view, p = self.current_view(), self.app.project
+        word = view.word_at_cursor() if view else ""
+        if not word or not p:
+            return
+        mod = p.modules().get(word)
+        if mod:
+            self.open_file(mod.file, mod.line)
+            return
+        decl = re.compile(r"^\s*(?:input|output|inout|wire|reg|logic|bit|integer|int|parameter|localparam|genvar|"
+                          r"typedef|function|task)\b[^;]*?\b" + re.escape(word) + r"\b", re.M)
+        m = decl.search(view.text())
+        if m:
+            view.goto(view.text().count("\n", 0, m.start()) + 1 + m.group(0).count("\n"))
+        else:
+            self.app.set_status(f"No declaration of {word} in this file or module of that name in the project.")
+
+    def on_instance(self, *_):
+        view = self.current_view()
+        if not view:
+            self.app.set_status("Open the file to insert the instance into first.")
+            return
+        mod = self.pick_module("Insert instance", "Inserts an instance of the module at the cursor, with every "
+                                                  "port connected to a signal of the same name.", ok="Insert")
+        if mod:
+            view.insert_at_cursor(self.instance_text(mod))
+
+    @staticmethod
+    def instance_text(mod):
+        params = ""
+        if mod.params:
+            params = " #(\n" + ",\n".join(f"    .{n}({n})" for n, _ in mod.params) + "\n  )"
+        ports = ",\n".join(f"    .{name}({name})" for _d, name, _b in mod.ports)
+        return f"  {mod.name}{params} u_{mod.name} (\n{ports}\n  );\n"
 
     def problem_path(self, file):
         p = self.app.project
@@ -530,12 +826,20 @@ class RtlPage:
 
     def mark_problems(self, path):
         marks = {}
-        for pr in self.problems:
-            if pr["file"] and self.problem_path(pr["file"]).resolve() == path.resolve():
+        for pr in self.findings:
+            if pr["file"] and not pr.get("waived") and self.problem_path(pr["file"]).resolve() == path.resolve():
                 marks[pr["line"]] = (marks.get(pr["line"], "") + "\n" + pr["message"]).strip()
-        self.docs[path]["view"].set_problems(marks)
+        view, p = self.docs[path]["view"], self.app.project
+        view.set_problems(marks)
+        missed = []
+        if self.cov and p:
+            try:
+                missed = coverage.missed_lines(self.cov, str(path.resolve().relative_to(p.dir.resolve())))
+            except ValueError:
+                pass
+        view.set_uncovered(missed)
 
     def on_problem(self, _tv, tpath, _col):
         row = self.pstore[tpath]
         if row[1]:
-            self.open_file(self.problem_path(row[1]), row[2])
+            self.open_file(self.problem_path(row[1]), row[2] or None)

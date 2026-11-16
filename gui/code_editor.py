@@ -83,6 +83,7 @@ class CodeView(Gtk.Box):
                 tag.set_property("style", Pango.Style.ITALIC)
         self.buffer.create_tag("problem", underline=Pango.Underline.ERROR)
         self.buffer.create_tag("found", background=theme.color("accent_soft"))
+        self.buffer.create_tag("uncovered", paragraph_background=theme.color("uncovered"))
         sw = Gtk.ScrolledWindow(hexpand=True, vexpand=True)
         sw.add(self.view)
         self.pack_start(sw, True, True, 0)
@@ -276,6 +277,36 @@ class CodeView(Gtk.Box):
                     b.forward_to_line_end()
                 buf.apply_tag_by_name("problem", a, b)
         self.view.queue_draw()
+
+    def set_uncovered(self, lines):
+        """Tint the lines no test ran (1-based line numbers); an empty list clears the tint."""
+        buf = self.buffer
+        buf.remove_tag_by_name("uncovered", buf.get_start_iter(), buf.get_end_iter())
+        for line in lines:
+            if 1 <= line <= buf.get_line_count():
+                a = buf.get_iter_at_line(line - 1)
+                b = a.copy()
+                b.forward_line()
+                buf.apply_tag_by_name("uncovered", a, b)
+
+    def word_at_cursor(self):
+        """The identifier the cursor is in or next to."""
+        it = self.buffer.get_iter_at_mark(self.buffer.get_insert())
+        a, b = it.copy(), it.copy()
+
+        def ident(ch):
+            return ch.isalnum() or ch in "_$"
+        while not a.starts_line():
+            a.backward_char()
+            if not ident(a.get_char()):
+                a.forward_char()
+                break
+        while not b.ends_line() and ident(b.get_char()):
+            b.forward_char()
+        return self.buffer.get_text(a, b, False)
+
+    def insert_at_cursor(self, text):
+        self.buffer.insert_at_cursor(text)
 
     def on_tooltip(self, view, x, y, _keyboard, tooltip):
         bx, by = view.window_to_buffer_coords(Gtk.TextWindowType.WIDGET, x, y)

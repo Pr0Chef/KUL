@@ -8,7 +8,8 @@ run here gives the same result as the same `make` command in a terminal.
 
 Around the ASIC flow the app is a full open-source EDA suite. The header bar switches between **Project** (work
 areas, new or cloned git projects), **RTL** (editor and lint), **Diagrams** (architecture and block diagrams),
-**Verify** (simulation, coverage, waveforms and formal), **FPGA** (iCE40, ECP5 and Gowin builds and programming)
+**Verify** (parallel regressions with seeds, coverage goals, waveforms, formal, a verification plan and a
+sign-off gate; the RTL section adds design checks and clock-domain-crossing analysis with waivers), **FPGA** (iCE40, ECP5 and Gowin builds and programming)
 and **ASIC** (this flow, with a **LEC** tab for logical equivalence). The **Assistant** button opens an AI design
 assistant that reads and edits the design and runs every tool, asking before each change. These sections are
 described in [docs/EDA_suite_guide.md](../docs/EDA_suite_guide.md).
@@ -41,7 +42,7 @@ The app ships as a Debian package for Ubuntu (and other Debian-based systems). I
 2. **Install it.** apt also installs GTK, PyGObject, make and KLayout if they are missing:
 
    ```bash
-   sudo apt install ./dist/orfs-flow-runner_1.3.0_all.deb
+   sudo apt install ./dist/orfs-flow-runner_1.4.0_all.deb
    ```
 
 3. **Install OpenROAD, Yosys and an ORFS checkout** if you don't have them; the package doesn't include them
@@ -498,7 +499,10 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | `gui/workspace.py`, `gui/project_page.py` | work areas and projects (`flowrunner.json`), cloning; the Project section |
 | `gui/hdl.py` | the Verilog reader (modules, ports, parameters, instances), testbench, formal and RTL templates |
 | `gui/code_editor.py`, `gui/rtl_page.py`, `gui/lint.py` | the editor, the RTL section, and the linters and their message reader |
-| `gui/sim.py`, `gui/vcd.py`, `gui/wave_view.py`, `gui/formal.py`, `gui/verify_page.py` | simulation, coverage, the VCD reader and wave viewer, SymbiYosys; the Verify section |
+| `gui/designcheck.py`, `gui/cdc.py` | the Yosys design checks and waivers, and the clock-domain-crossing analysis |
+| `gui/sim.py`, `gui/regress.py`, `gui/coverage.py` | simulators and cocotb, the parallel regression engine with seeds and history, merged coverage and goals |
+| `gui/signoff.py` | the verification plan, the sign-off gate, and the HTML and JUnit reports |
+| `gui/vcd.py`, `gui/wave_view.py`, `gui/formal.py`, `gui/verify_page.py` | the VCD reader and wave viewer, SymbiYosys; the Verify section |
 | `gui/fpga.py`, `gui/fpga_page.py` | boards, pins, constraint files, the build and programming commands; the FPGA section |
 | `gui/diagram.py`, `gui/diagram_page.py` | the diagram model, drawing and export, block diagrams from RTL; the Diagrams section |
 | `gui/lec.py`, `gui/lec_page.py` | logical equivalence checks with Yosys; the LEC tab |
