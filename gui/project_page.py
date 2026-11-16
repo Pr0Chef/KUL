@@ -101,6 +101,7 @@ class ProjectPage:
         for label, handler, tip in (
                 ("Edit RTL", lambda *_: self.app.show_section("rtl"), "Open the project in the RTL editor"),
                 ("Create ASIC design…", self.on_asic, "Make an ORFS design (config and SDC) from this project"),
+                ("Filelist…", self.on_filelist, "Import the design files from a .f filelist, or export one"),
                 ("Pull", self.on_pull, "git pull in the project's folder"),
                 ("Commit…", self.on_commit, "git add and commit the project's changes")):
             b = Gtk.Button(label=label, tooltip_text=tip)
@@ -328,6 +329,40 @@ class ProjectPage:
             self.console.append(f"Deleted {p.dir}\n", "warn")
             self.app.set_project(None)
             self.fill_projects()
+
+    def on_filelist(self, *_):
+        """Import a .f filelist into the project, or export the project's compile order as one."""
+        p = self.app.project
+        if not p:
+            return
+        vals = dialogs.ask_fields(
+            self.app, "Filelist", [("what", "Do", "Export", ["Export", "Import"]),
+                                   ("path", "File", str(p.dir / f"{p.name}.f"), "text")],
+            intro="A filelist (.f) names the design files in compile order with +incdir+ and +define+ lines; "
+                  "simulators, linters and synthesis tools all read it. Export writes the project's files to it. "
+                  "Import makes the files, include folders and defines it lists the project's own.", ok="Go")
+        if not vals:
+            return
+        if vals["what"] == "Export":
+            path = ws.write_filelist(p, vals["path"])
+            self.console.append(f"Wrote {path}\n", "ok")
+        else:
+            self.import_filelist(vals["path"])
+
+    def import_filelist(self, path):
+        p = self.app.project
+        try:
+            outside = ws.apply_filelist(p, path)
+        except OSError as e:
+            self.app.message(f"Could not read {path}: {e}")
+            return
+        self.console.append(f"Read {path}: {len(p['sources'])} design files, {len(p['include_dirs'])} include "
+                            f"folders, {len(p['defines'])} defines\n", "ok")
+        if outside:
+            self.console.append("Not in the project folder, so not used (copy or import them first):\n  "
+                                + "\n  ".join(outside[:20]) + "\n", "warn")
+        self.app.project_updated(None)
+        self.project_changed()
 
     def on_asic(self, *_):
         p = self.app.project

@@ -27,7 +27,7 @@ TOOL_LABELS = {"get_overview": "Looked at the project", "list_files": "Listed fi
                "search": "Searched", "get_hierarchy": "Read the module hierarchy", "get_results": "Read results",
                "edit_file": "Edit", "write_file": "Write", "set_project": "Change project settings",
                "create_project": "Create project", "make_testbench": "Generate a testbench",
-               "make_formal": "Generate formal checks", "draw_diagram": "Draw diagram", "run_lint": "Lint",
+               "make_formal": "Generate formal checks", "draw_diagram": "Draw diagram", "run_lint": "Lint", "run_checks": "Design checks and CDC", "run_signoff": "Run sign-off",
                "run_tests": "Run tests", "run_formal": "Run formal", "run_lec": "Run LEC",
                "run_fpga": "Build for FPGA", "run_asic": "Run the ASIC flow"}
 KEY_FILE = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "orfs-flow-runner" / "assistant_key"

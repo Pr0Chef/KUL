@@ -21,18 +21,21 @@ def available(chosen=None):
     return [(tool, label) for tool, label in LINTERS if eda_tools.find(tool, chosen)]
 
 
-def command(tool, project, top=None, chosen=None, extra_files=()):
-    """The lint command for a project's design sources (plus extra_files), as an argument list."""
+def command(tool, project, top=None, chosen=None, extra_files=(), strict=True):
+    """The lint command for a project's design sources (plus extra_files), as an argument list. strict adds the
+    style and unused-signal checks (-Wall); without it only likely bugs are reported."""
     exe = eda_tools.find(tool, chosen)
     files = project.paths(project.sources()) + list(extra_files)
     top = top or project.top()
     defines = project["defines"]
     if tool == "verilator":
-        cmd = [exe, "--lint-only", "-Wall", "-Wno-fatal", "--timing", "-sv"] + project.include_flags("-I")
+        cmd = [exe, "--lint-only", "-Wno-fatal", "--timing", "-sv"] + (["-Wall"] if strict else [])
+        cmd += project.include_flags("-I")
         cmd += [f"-D{d}" for d in defines]
         return cmd + (["--top-module", top] if top else []) + files
     if tool == "iverilog":
-        cmd = [exe, "-g2012", "-Wall", "-t", "null"] + project.include_flags("-I") + [f"-D{d}" for d in defines]
+        cmd = [exe, "-g2012", "-t", "null"] + (["-Wall"] if strict else []) + project.include_flags("-I")
+        cmd += [f"-D{d}" for d in defines]
         return cmd + (["-s", top] if top else []) + files
     # Yosys reads every file, then checks the hierarchy under the top module.
     inc = " ".join(f"-I{d[2:]}" for d in project.include_flags("-I"))
@@ -43,7 +46,8 @@ def command(tool, project, top=None, chosen=None, extra_files=()):
 
 
 def parse(tool, output, root=None):
-    """Problems in a linter's output: [{"file", "line", "column", "severity", "code", "message"}].
+    """Problems in a linter's output: [{"source": "lint", "tool", "file", "line", "column", "severity", "code",
+    "message"}].
 
     severity is "error" or "warning"; file is as the tool printed it (made relative to root when it is inside).
     """
@@ -52,7 +56,7 @@ def parse(tool, output, root=None):
     def add(file, line, column, severity, code, message):
         if root and file.startswith(str(root)):
             file = file[len(str(root)):].lstrip("/")
-        item = {"file": file, "line": int(line), "column": int(column or 0),
+        item = {"source": "lint", "tool": tool, "file": file, "line": int(line), "column": int(column or 0),
                 "severity": "error" if severity.lower() in ("error", "sorry") else "warning",
                 "code": code or "", "message": message.strip()}
         if item not in out:

@@ -15,6 +15,9 @@ FLOW = GUI.parent / "orfs" / "flow"
 sys.path.insert(0, str(GUI))
 
 import agent  # noqa: E402
+import cdc  # noqa: E402
+import coverage  # noqa: E402
+import designcheck as dc  # noqa: E402
 import diagram as dg  # noqa: E402
 import eda_tools  # noqa: E402
 import formal  # noqa: E402
@@ -22,6 +25,8 @@ import fpga  # noqa: E402
 import hdl  # noqa: E402
 import lec  # noqa: E402
 import lint  # noqa: E402
+import regress  # noqa: E402
+import signoff  # noqa: E402
 import sim  # noqa: E402
 import vcd  # noqa: E402
 import workspace as ws  # noqa: E402
@@ -240,6 +245,228 @@ class AgentTest(unittest.TestCase):
     def test_diff_and_clip(self):
         self.assertIn("+b", agent.diff_text("a\n", "b\n", "f.v"))
         self.assertLess(len(agent.clip("x" * 200_000)), 70_000)
+
+
+BAD = """module sync2 (input clk, input d, output q);
+  reg a, b;
+  always @(posedge clk) begin a <= d; b <= a; end
+  assign q = b;
+endmodule
+module top (input clk_a, input clk_b, input rst_n, input [3:0] din, input sel, output reg [3:0] dout,
+            output reg lat, output w2, output loop_o, output reg single, output good, output reg [3:0] busx);
+  reg [3:0] ra;
+  reg flag_a;
+  wire undriven;
+  wire loop;
+  always @(posedge clk_a or negedge rst_n) if (!rst_n) ra <= 0; else ra <= din;
+  always @(posedge clk_a) flag_a <= sel;
+  always @(posedge clk_b) dout <= ra & {4{sel}};
+  always @(posedge clk_b) single <= flag_a;
+  sync2 u_sync (.clk(clk_b), .d(flag_a), .q(good));
+  reg [3:0] m1;
+  always @(posedge clk_b) begin m1 <= ra; busx <= m1; end
+  always @(*) if (sel) lat = din[0];
+  assign w2 = din[1];
+  assign w2 = din[2];
+  assign loop = loop ^ din[3];
+  assign loop_o = loop | undriven;
+endmodule
+"""
+
+
+class WaiverTest(unittest.TestCase):
+    def test_waiver_matches_by_code_file_and_message_not_line(self):
+        f = {"source": "lint", "severity": "warning", "code": "WIDTH", "file": "a.v", "line": 12,
+             "message": "Operator ASSIGN expects 4 bits but got 8 on 'q'"}
+        w = dc.waiver_for(f, "truncation intended")
+        moved = dict(f, line=40)
+        other = dict(f, message="Operator ASSIGN expects 4 bits but got 8 on 'r'")
+        found = dc.apply_waivers([moved, other, dict(f, file="b.v")], [w])
+        self.assertEqual([x.get("waived") for x in found], ["truncation intended", None, None])
+        self.assertEqual(dc.counts(found), (0, 2, 1))
+        self.assertEqual(dc.unused_waivers([other], [w]), [w])
+
+
+class CoverageTest(unittest.TestCase):
+    def dat(self, rows):
+        f = Path(tempfile.mkdtemp()) / "coverage.dat"
+        f.write_text("# SystemC::Coverage-3\n" + "".join(
+            "C '\x01f\x02%s\x01l\x02%d\x01n\x021\x01t\x02%s\x01o\x02%s\x01h\x02tb.dut' %d\n" % r for r in rows))
+        return f
+
+    def test_merge_kinds_and_goals(self):
+        a = self.dat([("d.v", 3, "line", "block", 5), ("d.v", 4, "line", "else", 0), ("d.v", 9, "user", "c_wrap", 0),
+                      ("d.v", 1, "toggle", "q[0]:0->1", 1), ("tb.v", 2, "line", "block", 1)])
+        b = self.dat([("d.v", 4, "line", "else", 2), ("d.v", 9, "user", "c_wrap", 3),
+                      ("d.v", 1, "toggle", "q[0]:1->0", 0)])
+        one = coverage.summarize(coverage.read([a]), ["d.v"])
+        self.assertEqual((one["line"]["hit"], one["line"]["total"], one["line"]["files"]["d.v"]["missed"]),
+                         (1, 2, [4]))
+        both = coverage.summarize(coverage.read([a, b]), ["d.v"])
+        self.assertEqual(both["line"]["percent"], 100.0)
+        self.assertEqual(both["cover"]["points"][0]["count"], 3)
+        self.assertEqual((both["toggle"]["hit"], both["toggle"]["total"]), (1, 2))
+        states = {k: s for k, _l, _p, _g, s in coverage.check_goals(both, {"line": 90, "toggle": 100, "cover": 100})}
+        self.assertEqual(states, {"line": "pass", "branch": "info", "toggle": "fail", "cover": "pass"})
+        self.assertEqual(coverage.missed_lines(one, "d.v"), [4])
+
+
+class RegressTest(unittest.TestCase):
+    def test_expand_seeds_and_tags(self):
+        tests = [{"name": "a", "seeds": 3, "seed": 10, "tags": ["nightly"]}, {"name": "b", "tags": ["smoke"]},
+                 {"name": "c", "seeds": 2, "seed": "random"}]
+        runs = regress.expand(tests)
+        self.assertEqual([r["id"] for r in runs[:4]], ["a.s10", "a.s11", "a.s12", "b"])
+        self.assertEqual(len({r["seed"] for r in runs[4:]}), 2)
+        self.assertEqual([r["id"] for r in regress.expand(tests, ["smoke"])], ["b"])
+        self.assertEqual(regress.tally({"x": {"state": "pass"}, "y": {"state": "timeout"}, "z": {"state": "ran"}}),
+                         {"total": 3, "passed": 1, "failed": 1, "other": 1})
+
+
+class SignoffTest(unittest.TestCase):
+    def setUp(self):
+        self.p = project_with({"top.v": TOP})
+        self.p["tests"] = [{"name": "t1"}, {"name": "t2", "seeds": 2}]
+        self.p["plan"] = [{"feature": "f", "tests": ["t2"], "formal": [], "cover": ["c"]}]
+        self.cov = {"line": {"hit": 9, "total": 10, "percent": 90.0, "files": {}},
+                    "branch": {"hit": 0, "total": 0, "percent": 0.0, "files": {}},
+                    "toggle": {"hit": 1, "total": 2, "percent": 50.0, "missed": []},
+                    "cover": {"hit": 1, "total": 1, "percent": 100.0, "points": [{"name": "c", "count": 2,
+                                                                                    "file": "top.v", "line": 3}]}}
+        self.results = {"tests": {"t1": {"state": "pass"}, "t2.s1": {"state": "pass", "test": "t2"},
+                                  "t2.s2": {"state": "pass", "test": "t2"}}, "formal": {}, "coverage": self.cov}
+        self.ran = {"lint": True, "design": True, "cdc": True}
+
+    def verdict(self, findings=(), ran=None, results=None):
+        return signoff.collect(self.p, list(findings), ran or self.ran, results or self.results)[1]
+
+    def test_gate(self):
+        self.assertEqual(self.verdict(), "pass")
+        err = {"source": "cdc", "severity": "error", "code": "CDC-NOSYNC", "file": "top.v", "line": 1, "message": "m"}
+        self.assertEqual(self.verdict([err]), "fail")
+        self.assertEqual(self.verdict([dict(err, waived="ok")]), "pass")
+        self.assertEqual(self.verdict([dict(err, severity="warning")]), "pass")
+        self.assertEqual(self.verdict(ran={"lint": True, "design": False, "cdc": True}), "fail")   # not run
+        failing = dict(self.results, tests=dict(self.results["tests"], **{"t2.s2": {"state": "fail", "test": "t2"}}))
+        self.assertEqual(self.verdict(results=failing), "fail")
+        self.assertEqual(signoff.plan_status(self.p["plan"], failing)[0][1], "fail")
+        self.p["goals"] = {"line": 95}
+        self.assertEqual(self.verdict(), "fail")
+
+    def test_reports(self):
+        items, verdict = signoff.collect(self.p, [], self.ran, self.results)
+        page = signoff.html_report(self.p, items, verdict, [], self.results, [])
+        self.assertIn("PASS", page)
+        self.assertIn("t2.s2", page)
+        from xml.etree import ElementTree
+        suite = ElementTree.fromstring(signoff.junit(self.p, dict(self.results, tests={
+            "t1": {"state": "fail", "why": "q <b> mismatch", "log": "x & y"}})))
+        self.assertEqual((suite.get("tests"), suite.get("failures")), ("1", "1"))
+
+
+class FilelistTest(unittest.TestCase):
+    def test_round_trip_and_nested(self):
+        p = project_with({"cnt.v": COUNTER, "top.v": TOP, "inc/defs.vh": "`define X 1\n"})
+        p["include_dirs"], p["defines"] = ["inc"], ["WIDTH=8", "FAST"]
+        p.save()
+        flist = ws.write_filelist(p)
+        data = ws.read_filelist(flist)
+        self.assertEqual([Path(f).name for f in data["files"]], ["cnt.v", "top.v"])
+        self.assertEqual(data["defines"], ["WIDTH=8", "FAST"])
+        outer = p.dir / "all.f"
+        outer.write_text(f"// wrapper\n-f {flist.name}\n+define+EXTRA  # trailing\n/outside/x.v\n")
+        p["sources"], p["defines"], p["include_dirs"] = ["top.v"], [], []
+        outside = ws.apply_filelist(p, outer)
+        self.assertEqual((p["sources"], p["defines"], p["include_dirs"]),
+                         (["cnt.v", "top.v"], ["WIDTH=8", "FAST", "EXTRA"], ["inc"]))
+        self.assertEqual(outside, ["/outside/x.v"])
+
+
+@unittest.skipUnless(HAVE_TOOLS, "OSS CAD Suite is not installed")
+class DesignCheckRunTest(unittest.TestCase):
+    """Yosys on a design with one of every problem: the design checks and the CDC classes."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.p = project_with({"top.v": BAD})
+        folder, cmd = dc.command(cls.p)
+        rc, out = run_sync(cmd, cwd=str(folder), env=eda_tools.env())
+        cls.findings = dc.parse((folder / "checks.log").read_text() + out, root=cls.p.dir)
+        cls.cdc = cdc.analyze(dc.load_netlist(cls.p), root=cls.p.dir)
+
+    def test_design_checks(self):
+        codes = {f["code"]: f for f in self.findings}
+        self.assertEqual(set(codes), {"LATCH", "MULTIDRIVEN", "UNDRIVEN", "COMBLOOP"})
+        self.assertEqual((codes["LATCH"]["file"], BAD.splitlines()[codes["LATCH"]["line"] - 1].strip()),
+                         ("top.v", "always @(*) if (sel) lat = din[0];"))
+        self.assertEqual(codes["COMBLOOP"]["severity"], "error")
+
+    def test_cdc_classes(self):
+        self.assertEqual(set(self.cdc["domains"]), {"clk_a", "clk_b"})
+        kinds = {}
+        for x in self.cdc["crossings"]:
+            kinds.setdefault(x["kind"], set()).add(x["to"].split("[")[0])
+        self.assertEqual(kinds, {"synchronized": {"u_sync.a"}, "CDC-BUS": {"m1"}, "CDC-NOSYNC": {"single"},
+                                 "CDC-LOGIC": {"dout"}})
+        by_code = {f["code"]: f for f in self.cdc["findings"]}
+        self.assertEqual({c: f["severity"] for c, f in by_code.items()},
+                         {"CDC-BUS": "warning", "CDC-NOSYNC": "error", "CDC-LOGIC": "error"})
+        line = BAD.splitlines()[by_code["CDC-NOSYNC"]["line"] - 1]
+        self.assertIn("single <= flag_a", line)
+
+    def test_single_clock_design_is_clean(self):
+        p = project_with({"cnt.v": COUNTER, "top.v": TOP})
+        folder, cmd = dc.command(p)
+        run_sync(cmd, cwd=str(folder), env=eda_tools.env())
+        result = cdc.analyze(dc.load_netlist(p))
+        self.assertEqual((list(result["domains"]), result["findings"]), (["clk"], []))
+        self.assertIn("One clock domain", cdc.summary(result))
+
+
+@unittest.skipUnless(HAVE_TOOLS, "OSS CAD Suite is not installed")
+class RegressionRunTest(unittest.TestCase):
+    """The regression engine with real simulators: seeds in parallel, a timeout, coverage, cocotb."""
+
+    TB = """`timescale 1ns/1ps
+module top_tb;
+  reg clk = 0, rst_n = 0; wire [3:0] led; integer seed, n;
+  top dut (.clk(clk), .rst_n(rst_n), .led(led));
+  always #5 clk = ~clk;
+  initial begin
+    if (!$value$plusargs("seed=%d", seed)) seed = 1;
+    $dumpfile("top_tb.vcd"); $dumpvars(0, top_tb);
+    n = 4 + seed;
+    #12 rst_n = 1; repeat (n) @(posedge clk); #1;
+    if (seed == 3) forever #100;
+    if (led == n[3:0]) $display("PASS seed=%0d", seed); else $display("FAIL: led=%0d", led);
+    $finish;
+  end
+endmodule
+"""
+
+    def test_seeds_timeout_coverage_and_cocotb(self):
+        p = project_with({"cnt.v": COUNTER, "top.v": TOP, "tb/top_tb.v": self.TB})
+        (p.dir / "tests").mkdir()
+        (p.dir / "tests" / "test_cnt.py").write_text(hdl.cocotb_test(p.modules()["cnt"]))
+        tests = [{"name": "rand", "top": "top_tb", "files": ["tb/top_tb.v"], "simulator": "verilator", "seeds": 3,
+                  "timeout": 4},
+                 {"name": "ivl", "top": "top_tb", "files": ["tb/top_tb.v"], "simulator": "iverilog"},
+                 {"name": "py", "kind": "cocotb", "top": "cnt", "module": "tests/test_cnt.py"}]
+        seen = []
+        reg = regress.Regression(p, regress.expand(tests), jobs=4, coverage=True,
+                                 on_update=lambda i, r: seen.append((i, r["state"]))).start()
+        self.assertTrue(reg.wait(600))
+        states = {k: r["state"] for k, r in reg.results.items()}
+        self.assertEqual(states, {"rand.s1": "pass", "rand.s2": "pass", "rand.s3": "timeout", "ivl": "pass",
+                                  "py": "pass"}, {k: r.get("why") for k, r in reg.results.items()})
+        self.assertIn("seed=2", reg.results["rand.s2"]["log"])
+        self.assertIn(("rand.s1", "running"), seen)
+        self.assertTrue(sim.waveforms(reg.results["py"]["folder"]))            # cocotb's FST, converted
+        cov = coverage.summarize(coverage.read(reg.coverage_files(), p.dir), p.sources())
+        self.assertGreater(cov["line"]["percent"], 50)
+        self.assertGreater(cov["toggle"]["total"], 4)
+        self.assertEqual(len(regress.add_history(p, reg.results, reg.seconds, cov)), 1)
+        self.assertEqual(regress.load_history(p)[0]["failed_runs"], ["rand.s3"])
 
 
 @unittest.skipUnless(HAVE_TOOLS, "OSS CAD Suite is not installed")

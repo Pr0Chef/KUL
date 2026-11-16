@@ -10,6 +10,7 @@ that folder, so it travels with the sources and can be committed with them.
 """
 
 import json
+import os
 import re
 import shutil
 import time
@@ -94,7 +95,10 @@ class Project:
     """One RTL project: its folder and the settings in flowrunner.json."""
 
     DEFAULTS = {"top": "", "sources": None, "testbenches": None, "include_dirs": [], "defines": [],
-                "tests": [], "formal": [], "fpga": {}, "notes": ""}
+                "tests": [], "formal": [], "fpga": {}, "notes": "",
+                # Sign-off: accepted findings, the verification plan, and the coverage goals in percent
+                # (0 means the kind is measured but not required).
+                "waivers": [], "plan": [], "goals": {"line": 90, "toggle": 0, "cover": 100}}
 
     def __init__(self, flow, name):
         self.flow, self.name = Path(flow), name
@@ -242,3 +246,72 @@ def delete_project(flow, name):
     """Remove a project's folder and its build outputs."""
     shutil.rmtree(src_dir(flow) / name, ignore_errors=True)
     shutil.rmtree(Path(flow) / "build" / name, ignore_errors=True)
+
+
+# ---------------------------------------------------------------- filelists (.f)
+def write_filelist(project, path=None):
+    """Write the project's compile order as a filelist every simulator and lint tool reads (+incdir+, +define+,
+    then the design files). Returns the path."""
+    path = Path(path) if path else project.dir / f"{project.name}.f"
+    lines = [f"// Filelist of {project.name}, written by ORFS Flow Runner. Paths are relative to this file."]
+    lines += [f"+incdir+{d}" for d in ["."] + list(project["include_dirs"])]
+    lines += [f"+define+{d}" for d in project["defines"]]
+    base = path.parent.resolve()
+    for f in project.sources():
+        full = (project.dir / f).resolve()
+        lines.append(os.path.relpath(full, base))
+    path.write_text("\n".join(lines) + "\n")
+    return path
+
+
+def read_filelist(path, _seen=()):
+    """{"files": [...], "incdirs": [...], "defines": [...]} from a .f file, as absolute paths. Follows -f / -F,
+    expands $VAR and ${VAR}, and skips comments and options it does not know."""
+    path = Path(path).resolve()
+    out = {"files": [], "incdirs": [], "defines": []}
+    if path in _seen:
+        return out
+    base = path.parent
+    text = re.sub(r"/\*.*?\*/", "", path.read_text(errors="replace"), flags=re.S)
+    words = []
+    for line in text.splitlines():
+        words += re.sub(r"(//|#).*", "", line).split()
+    i = 0
+    while i < len(words):
+        w = os.path.expandvars(words[i])
+        i += 1
+        if w in ("-f", "-F") and i < len(words):
+            sub = read_filelist(base / os.path.expandvars(words[i]), _seen + (path,))
+            for key in out:
+                out[key] += sub[key]
+            i += 1
+        elif w.startswith("+incdir+"):
+            out["incdirs"] += [str((base / d).resolve()) for d in w[8:].split("+") if d]
+        elif w.startswith("+define+"):
+            out["defines"] += [d for d in w[8:].split("+") if d]
+        elif w.startswith("-I") and len(w) > 2:
+            out["incdirs"].append(str((base / w[2:]).resolve()))
+        elif w.startswith("-D") and len(w) > 2:
+            out["defines"].append(w[2:])
+        elif w in ("-y", "-v", "-top", "--top-module") and i < len(words):
+            i += 1
+        elif not w.startswith(("-", "+")):
+            out["files"].append(str((base / w).resolve()))
+    return out
+
+
+def apply_filelist(project, path):
+    """Set the project's design files, include folders and defines from a filelist. Files outside the project
+    folder can't be used (a project is one folder); they are returned so the caller can say so."""
+    data = read_filelist(path)
+    root = project.dir.resolve()
+    inside, outside = [], []
+    for f in data["files"]:
+        fp = Path(f)
+        (inside if fp.is_relative_to(root) and fp.exists() else outside).append(f)
+    project["sources"] = [str(Path(f).relative_to(root)) for f in inside]
+    project["include_dirs"] = sorted({str(Path(d).relative_to(root)) for d in data["incdirs"]
+                                      if Path(d).is_relative_to(root) and Path(d) != root})
+    project["defines"] = list(dict.fromkeys(data["defines"]))
+    project.save()
+    return outside

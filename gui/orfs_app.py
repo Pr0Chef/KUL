@@ -44,7 +44,7 @@ import workspace  # noqa: E402
 import eda_tools  # noqa: E402
 import theme  # noqa: E402
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 APP_ID = "orfs-flow-runner"
 GUI_DIR = Path(__file__).resolve().parent
 ROOT = GUI_DIR.parent

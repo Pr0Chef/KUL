@@ -16,14 +16,14 @@ from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 PALETTES = {
     "light": {
         "bg": "#f3f5f8", "surface": "#ffffff", "surface_alt": "#f8f9fb", "border": "#dfe3ea",
-        "text": "#1c2230", "text_muted": "#6b7385", "hover": "#eef1f6", "code_bg": "#f4f6fa",
+        "text": "#1c2230", "text_muted": "#6b7385", "hover": "#eef1f6", "code_bg": "#f4f6fa", "uncovered": "#fdecec",
         "accent": "#3d5afe", "accent_text": "#ffffff", "accent_soft": "#e8ecff",
         "success": "#1e8e5a", "warning": "#b7791f", "danger": "#d64545", "info": "#2f6fd6",
         "header_bg": "#1b2130", "header_text": "#f2f4f8",
     },
     "dark": {
         "bg": "#171a21", "surface": "#1f232c", "surface_alt": "#1b1f27", "border": "#2e3440",
-        "text": "#e6e9ef", "text_muted": "#9aa3b5", "hover": "#272c37", "code_bg": "#1a1e26",
+        "text": "#e6e9ef", "text_muted": "#9aa3b5", "hover": "#272c37", "code_bg": "#1a1e26", "uncovered": "#3a2226",
         "accent": "#6c84ff", "accent_text": "#ffffff", "accent_soft": "#262d4a",
         "success": "#3ccf8e", "warning": "#e3b04b", "danger": "#ff6b6b", "info": "#6aa4ff",
         "header_bg": "#11141a", "header_text": "#e6e9ef",
