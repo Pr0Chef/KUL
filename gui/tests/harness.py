@@ -24,6 +24,10 @@ from pathlib import Path
 GUI = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(GUI))
 
+# The RTL and FPGA tools stay the user's installed ones (they are only read).
+_SUITE = Path(os.environ.get("XDG_DATA_HOME") or Path.home() / ".local" / "share") / "orfs-flow-runner" / "oss-cad-suite"
+if "OSS_CAD_SUITE" not in os.environ and (_SUITE / "bin" / "yosys").exists():
+    os.environ["OSS_CAD_SUITE"] = str(_SUITE)
 # A private settings, data and cache folder, so tests never touch the user's own.
 _HOME = Path(tempfile.mkdtemp(prefix="orfs-runner-test-"))
 for _k in ("CONFIG", "DATA", "CACHE"):

@@ -228,6 +228,10 @@ Step-by-step instructions are in [gui/README.md](gui/README.md#install), and the
 screenshots of real CVA6 runs is [docs/ORFS_Flow_Runner_user_guide.pdf](docs/ORFS_Flow_Runner_user_guide.pdf).
 [docs/ORFS_flow_guide.md](docs/ORFS_flow_guide.md) goes through every stage and step from RTL to GDS: what each
 reads, which page of the app sets it, what it writes, and what to check when it fails.
+Beyond the ASIC flow it is a full open-source EDA suite: projects cloned from git, an RTL editor with lint,
+simulation with coverage and waveforms, formal verification, FPGA builds for iCE40, ECP5 and Gowin boards,
+architecture diagrams, logical equivalence checks, and an AI design assistant; see
+[docs/EDA_suite_guide.md](docs/EDA_suite_guide.md).
 
 ![ORFS Flow Runner: the run panel, the Inputs pages and the Synthesis settings of gcd](docs/images/gui/window.png)
 

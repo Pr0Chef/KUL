@@ -187,6 +187,15 @@ macro layouts into one GDS with KLayout; `6_report` writes the final timing, pow
 `6_finish.rpt`; images `final_*.webp` (placement, routing, congestion, IR drop, worst path), shown on the
 Reports tab.
 
+## 7. Logical equivalence (LEC)
+
+**What it does.** The **LEC** tab next to Reports proves the netlists still do what the RTL does: RTL against
+the synthesized netlist `1_2_yosys.v`, the synthesized netlist against the final `6_final.v`, or against a
+netlist written from the floorplan, place, cts or route database. It runs Yosys's equivalence flow with the
+platform's Liberty cells; *equivalent* means every output and flip-flop was proven equal, *not proven* lists the
+points that differ. Results go to `<results>/lec/`. Details in
+[EDA_suite_guide.md](EDA_suite_guide.md#asic-and-lec).
+
 ## Running and re-running
 
 The side panel picks the config, the CPU cores and the stage range. **From stage**: *Continue* reuses stages that
@@ -250,6 +259,9 @@ gui/tests/run_gui_tests.sh gui/tests/test_flow_e2e.py
 Sets inputs only through the pages, runs the real flow from the app's Run button, and checks the results: the
 die and core (rounded as the page shows), the power ring layers, the routing file and placement density in the logs, the timing constraints
 in the final SDC, and two RAM macros where the Floorplan page put them (within half a micron). About ten minutes.
+
+The RTL, verification, FPGA, LEC and assistant parts have their own tests: see
+[EDA_suite_guide.md](EDA_suite_guide.md#testing).
 
 `gui/tests/run_gui_tests.sh` with no arguments runs every GUI test. Test designs are named `test_*` and removed
 afterwards.

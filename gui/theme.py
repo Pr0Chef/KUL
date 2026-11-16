@@ -46,8 +46,18 @@ headerbar button { background: alpha(@header_text, 0.07); color: @header_text;
         padding: 4px 12px; }
 headerbar button:hover { background: alpha(@header_text, 0.16); }
 headerbar button label { color: @header_text; }
+headerbar button:checked { background: @accent; }
+headerbar button:checked label { color: @accent_text; }
 headerbar button.titlebutton { background: transparent; border: none; padding: 4px; }
 headerbar separator { background: alpha(@header_text, 0.18); min-width: 1px; margin: 12px 6px; }
+
+/* The section switcher in the middle of the header bar. */
+headerbar .sections button { background: transparent; border: none; border-radius: 6px; padding: 5px 14px;
+        margin: 0 1px; }
+headerbar .sections button label { color: alpha(@header_text, 0.72); font-weight: 600; }
+headerbar .sections button:hover { background: alpha(@header_text, 0.10); }
+headerbar .sections button:checked { background: @accent; }
+headerbar .sections button:checked label { color: @accent_text; }
 
 /* Buttons, entries and lists. */
 button { border-radius: 6px; padding: 5px 12px; background-image: none; background-color: @surface; color: @text;
@@ -141,6 +151,23 @@ stacksidebar row:selected label { color: @accent; font-weight: 600; }
 .chip-warn { background-color: alpha(@warning, 0.16); color: @warning; }
 .chip-muted { background-color: alpha(@text_muted, 0.14); color: @text_muted; }
 flowboxchild { padding: 0; }
+
+/* The code editor. */
+.code-view text { background-color: @surface; color: @text; }
+.code-view { font-size: 10.5pt; }
+
+/* The assistant panel. */
+.assistant { background-color: @surface_alt; border-left: 1px solid @border; }
+.chat-user { background-color: alpha(@accent, 0.12); border-radius: 12px; padding: 8px 12px; }
+.chat-reply { padding: 2px 4px; }
+.chat-thinking { color: @text_muted; font-size: 9pt; padding: 4px 8px; }
+.chat-tool { background-color: @surface; border: 1px solid @border; border-radius: 8px; padding: 4px 8px; }
+.chat-tool-body { font-size: 8.5pt; color: @text_muted; padding: 6px 2px; }
+.chat-error { color: @danger; }
+.approval { border-left: 3px solid @warning; }
+.chat-entry text { background-color: @surface; }
+.chat-entry { border: 1px solid @border; border-radius: 8px; }
+.suggestion { border: 1px solid @border; border-radius: 8px; padding: 6px 10px; background-color: @surface; }
 
 /* Status bar. */
 .statusbar { background-color: @surface; border-top: 1px solid @border; color: @text_muted; padding: 6px 14px;
