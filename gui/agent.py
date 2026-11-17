@@ -9,6 +9,7 @@ puts it there with uv or pip. Credentials come from ANTHROPIC_API_KEY, an `ant a
 saved in the assistant's settings.
 """
 
+import base64
 import difflib
 import json
 import os
@@ -27,6 +28,7 @@ PYLIB = eda_tools.DATA_DIR / "pylib"
 MODELS = [("claude-opus-5-5", "Claude Opus 5.5 (best)"), ("claude-sonnet-5-5", "Claude Sonnet 5.5 (faster)"),
           ("claude-haiku-5-5", "Claude Haiku 5.5 (cheapest)")]
 EFFORTS = ["low", "medium", "high", "xhigh", "max"]
+PRICES = {"claude-opus-5-5": (4.0, 20.0), "claude-sonnet-5-5": (2.0, 10.0), "claude-haiku-5-5": (0.1, 0.5)}  # $/MTok
 MAX_READ = 60_000          # characters of a file or log handed to Claude at once
 LONG_RUN = 6 * 3600        # seconds a run tool waits for its result (an ASIC flow can take hours)
 
@@ -35,12 +37,13 @@ It has these sections, which share one project (a folder of RTL in the work area
 - Project: the work area, projects, cloning repos, the top module, include folders, defines, git.
 - RTL: a Verilog/SystemVerilog editor with lint (Verilator, Icarus, Yosys), design checks (latches, loops, \
 drivers), clock-domain-crossing analysis, waivers, and testbench/cocotb/formal templates.
-- Diagrams: architecture and block diagrams saved in the project's docs folder.
+- Diagrams: a draw.io-style editor for architecture and block diagrams, saved in the project's docs folder.
 - Verify: regressions in parallel with seeds and tags (Icarus, Verilator, cocotb), coverage (line, branch, \
 toggle, cover points) against goals, waveforms, formal checks with SymbiYosys, a verification plan, and a \
 sign-off gate with an HTML/JUnit report.
 - FPGA: Yosys + nextpnr builds for iCE40, ECP5 and Gowin boards, pin constraints, timing, programming.
-- ASIC: the OpenROAD flow (synth, floorplan, place, cts, route, finish), its inputs (config.mk, SDC), \
+- ASIC: the OpenROAD flow (synth, floorplan, place, cts, route, finish), its inputs (config.mk, SDC), a \
+Floorplan planner (area budget, checks such as power straps and pins fitting, macro placement), \
 reports, sign-off checks and logical equivalence (LEC) between RTL, the synthesized and the final netlist.
 
 How to work:
@@ -58,6 +61,12 @@ fits the signal: two flops for a level, gray code or a handshake for a bus.
 is denied, do not retry it; explain and ask.
 - Paths are relative to the project folder unless they start with the work area's own folders (designs/, \
 results/, reports/, logs/).
+- For a task of three or more steps, show the steps with update_tasks and keep them current. When a test \
+fails, read the waveform around the failure (read_waveform) before changing RTL. After drawing a diagram or \
+changing the floorplan, look at it (look) and fix what reads badly. Ask the user (ask_user) only for choices \
+that are theirs; remember what they tell you about the project (remember).
+- The <app_state> with each message says what the user is looking at and, at the start of a chat, the project \
+overview and its notes: use it instead of asking for it again.
 - Answer concisely, in plain words, for a hardware engineer. Use short code blocks for RTL or constraints."""
 
 
@@ -148,6 +157,18 @@ class Toolbox:
 
     def __init__(self, app):
         self.app = app
+        self.last_backup = None      # (path, text before or None) of the last file write
+
+    def restore(self, backup):
+        """Undo a file write: put the file back as it was (or remove it if the write created it)."""
+        f, old = backup
+        if old is None:
+            f.unlink(missing_ok=True)
+        else:
+            f.write_text(old)
+        self.app.section_pages["rtl"].reload_file(f)
+        self.app.project_updated(None)
+        return self.show(f)
 
     @classmethod
     def specs(cls):
@@ -356,12 +377,124 @@ class Toolbox:
             return "No ASIC metrics yet: run at least synthesis."
         return json.dumps({"stages_done": self.app.stage_done(), "metrics_by_stage": rows}, indent=1, default=str)
 
+    @tool("read", "Signal values from a simulation waveform. Without signals: the signals in the file. With "
+                  "signals: each one's value at every time one of them changes, between from_time and to_time "
+                  "(simulation time units), to see what happened around a failure. run: a run id from the "
+                  "regression (default: the waveform shown in Verify).",
+          {"run": S, "signals": {"type": "array", "items": S}, "from_time": I, "to_time": I})
+    def read_waveform(self, run="", signals=(), from_time=0, to_time=0):
+        import sim
+        import vcd
+        verify = self.app.section_pages["verify"]
+        path = verify.wave_file
+        if run:
+            r = verify.results["tests"].get(run)
+            waves = sim.waveforms(r["folder"]) if r and r.get("folder") else []
+            if not waves:
+                raise ToolError(f"Run {run} has no waveform. Runs: {', '.join(verify.results['tests']) or 'none'}.")
+            path = waves[0]
+        if not path or not Path(path).exists():
+            raise ToolError("No waveform yet: run a test whose testbench has $dumpfile and $dumpvars.")
+        try:
+            w = vcd.parse(path)
+        except (ValueError, OSError) as e:
+            raise ToolError(f"Could not read {path}: {e}")
+        if not signals:
+            names = list(w.signals)
+            return f"{path}: {len(names)} signals, time 0 to {w.end} x {w.timescale}\n" + "\n".join(
+                f"{n} [{w.signals[n].width}]" for n in names[:400])
+        picked = [next((n for n in w.signals if n == s or n.endswith("." + s)), None) for s in signals]
+        missing = [s for s, n in zip(signals, picked) if n is None]
+        if missing:
+            raise ToolError(f"No such signals: {', '.join(missing)}. Call read_waveform without signals to list them.")
+        end = to_time or w.end
+        times = sorted({t for n in picked for t in w.signals[n].times if from_time <= t <= end} | {from_time})
+        note = ""
+        if len(times) > 300:
+            note = f"\n({len(times)} change times; the first 300 are shown. Narrow from_time and to_time.)"
+            times = times[:300]
+        rows = ["time  " + "  ".join(signals)]
+        for t in times:
+            rows.append(f"{t}  " + "  ".join(vcd.format_value(w.signals[n].value_at(t), w.signals[n].width) or "-"
+                                             for n in picked))
+        return f"{path} (time unit {w.timescale})\n" + "\n".join(rows) + note
+
+    @tool("read", "The floorplan plan of the selected ASIC design (the Floorplan tab): settings, the core and die "
+                  "they give, and every check with its fix.")
+    def get_floorplan(self):
+        plan = self.planner()
+        return json.dumps({"settings": plan.s, "cell_area_from_synthesis": plan.area_from_synth,
+                           "plan": plan.plan, "checks": plan.checks, "macros": plan.masters,
+                           "placements": plan.placements, "applied_to_design": not plan.dirty}, indent=1)
+
+    def planner(self):
+        plan = self.app.planner
+        if not (self.app.flow and self.app.config_rel()):
+            raise ToolError("No ASIC design is selected.")
+        plan.refresh()
+        return plan
+
+    @tool("read", "Look at a picture of the current diagram (what=diagram) or of the floorplan plan "
+                  "(what=floorplan), to judge the layout the way the user sees it.",
+          {"what": {**S, "enum": ["diagram", "floorplan"]}}, ["what"])
+    def look(self, what):
+        import tempfile
+        out = Path(tempfile.mkdtemp(prefix="flowrunner-look-")) / f"{what}.png"
+        if what == "diagram":
+            import diagram as dg
+            d = self.app.section_pages["diagram"].d
+            if not d.shapes:
+                raise ToolError("The diagram is empty.")
+            dg.render_png(d, out)
+            return {"text": f"The diagram: {len(d.shapes)} shapes, {len(d.edges)} arrows.", "image": out}
+        plan = self.planner()
+        if not plan.plan:
+            raise ToolError("There is no floorplan plan yet (no cell area).")
+        plan.render_png(out)
+        return {"text": "The floorplan plan: die (outer box), core (blue), power straps, macros (green).",
+                "image": out}
+
+    @tool("read", "The diagram open in the Diagrams section as JSON (shapes with ids, kinds, boxes, labels and "
+                  "styles; arrows), to change it and write it back with draw_diagram.")
+    def read_diagram(self):
+        page = self.app.section_pages["diagram"]
+        return json.dumps({"file": page.path.name if page.path else None, "title": page.d.title,
+                           "shapes": page.d.shapes, "edges": page.d.edges}, indent=1)
+
+    @tool("read", "Show the user your plan for a task of several steps, and keep it current: give the whole list "
+                  "each time, with each step's status. Use it for work of three or more steps.",
+          {"tasks": {"type": "array", "items": {"type": "object"}}}, ["tasks"])
+    def update_tasks(self, tasks):
+        clean = [{"text": str(t.get("text", "")), "status": t.get("status", "pending")
+                  if t.get("status") in ("pending", "doing", "done") else "pending"}
+                 for t in tasks if isinstance(t, dict)]
+        self.tasks = clean
+        return "Shown."
+
+    @tool("ask", "Ask the user a question when the work depends on a choice only they can make (which of two "
+                 "fixes, a target, a trade-off). Give two to four short options; the user can also type another "
+                 "answer. Do not use it for things you can find out with the other tools.",
+          {"question": S, "options": {"type": "array", "items": S}}, ["question", "options"])
+    def ask_user(self, question, options):
+        raise NotImplementedError      # answered by the panel, see Agent.run_tool
+
+    @tool("read", "Keep a fact about this project for later chats (a convention, a decision, something the user "
+                  "told you): it is saved in the project and shown to you at the start of every chat.",
+          {"note": S}, ["note"])
+    def remember(self, note):
+        p = self.project()
+        p["notes"] = (p["notes"] + "\n" if p["notes"] else "") + "- " + note.strip()
+        p.save()
+        return "Saved in the project's notes."
+
     # ---------- editing ----------
     def write(self, f, text, verb):
         doc = self.app.section_pages["rtl"].doc_of(f)
         if doc and doc["view"].buffer.get_modified():
             raise ToolError(f"{self.show(f)} has unsaved edits in the RTL editor; ask the user to save them first.")
         f.parent.mkdir(parents=True, exist_ok=True)
+        # What the file was before, so the panel can offer Undo for this edit.
+        self.last_backup = (f, f.read_text(errors="replace") if f.exists() else None)
         f.write_text(text)
         self.app.section_pages["rtl"].reload_file(f)
         design = self.design_dir()
@@ -442,10 +575,14 @@ class Toolbox:
         return f"Wrote formal/{module}_formal.sv and added a formal task. Replace the starter properties."
 
     @tool("edit", "Draw a diagram and save it in the project's docs folder. Either from_rtl (a block diagram of "
-                  "that module) or shapes and edges. shapes: [{id, kind (block|module|rounded|ellipse|diamond|"
-                  "note|text|port), label, x, y, w?, h?, color (blue|green|amber|red|grey|purple|white)}]; "
-                  "edges: [{src, dst, label?, dashed?, bus?}] using the shape ids. Lay shapes out left to right on "
-                  "a 10 px grid, about 200 px apart.",
+                  "that module) or shapes and edges. shapes: [{id, kind, label, x, y, w?, h?, color (blue|green|"
+                  "amber|red|grey|purple|white), fill?, stroke? (hex), bold?, font?, align?, dashed?}]. kinds: "
+                  "block rounded ellipse diamond text note hexagon parallelogram triangle cylinder cloud container "
+                  "| terminator process decision data document | module port register mux adder fifo memory "
+                  "state clock bus | and or not xor nand nor buffer. edges: [{src, dst, label?, dashed?, bus?, "
+                  "style (orthogonal|straight|curved), head, tail (arrow|open|diamond|dot|none), src_side, "
+                  "dst_side (left|right|top|bottom), points: [[x, y]]}] using the shape ids. Lay shapes out left "
+                  "to right on a 10 px grid, about 200 px apart; then look(diagram) to check the result.",
           {"name": S, "from_rtl": S, "shapes": {"type": "array"}, "edges": {"type": "array"}}, ["name"])
     def draw_diagram(self, name, from_rtl="", shapes=(), edges=()):
         import diagram as dg
@@ -462,14 +599,19 @@ class Toolbox:
                 kind = s.get("kind", "block")
                 if kind not in dg.KINDS:
                     raise ToolError(f"Unknown shape kind {kind}.")
+                style = {k: s[k] for k in ("fill", "stroke", "bold", "font", "align", "dashed", "text_color")
+                         if k in s}
                 made = d.add_shape(kind, s.get("x", 0), s.get("y", 0), s.get("label", ""), s.get("w"), s.get("h"),
-                                   s.get("color", "blue") if s.get("color", "blue") in dg.COLORS else "blue")
+                                   s.get("color", "blue") if s.get("color", "blue") in dg.COLORS else "blue",
+                                   **style)
                 ids[str(s.get("id", made["id"]))] = made["id"]
             for e in edges:
                 src, dst = ids.get(str(e.get("src"))), ids.get(str(e.get("dst")))
                 if src is None or dst is None:
                     raise ToolError(f"Edge {e} names a shape that is not in shapes.")
-                d.connect(src, dst, e.get("label", ""), bool(e.get("dashed")), bus=int(e.get("bus", 0)))
+                style = {k: e[k] for k in ("style", "head", "tail", "src_side", "dst_side", "points", "color")
+                         if k in e}
+                d.connect(src, dst, e.get("label", ""), bool(e.get("dashed")), bus=int(e.get("bus", 0)), **style)
             d.title = name
         page = self.app.section_pages["diagram"]
         path = page.folder() / (re.sub(r"[^\w-]", "_", name) + SUFFIX)
@@ -477,6 +619,23 @@ class Toolbox:
         page.save(path)
         page.resize_area()
         return f"Saved {self.show(path.resolve())} with {len(d.shapes)} shapes and {len(d.edges)} connections."
+
+    @tool("edit", "Change the floorplan plan of the selected ASIC design and, with apply, write it into the "
+                  "design. mode: util (size from utilization) or fixed (die_w x die_h). place_macros gives the "
+                  "macros a first legal placement. Returns the plan and its checks; fix errors before applying.",
+          {"mode": {**S, "enum": ["util", "fixed"]}, "util": {"type": "number"}, "aspect": {"type": "number"},
+           "margin": {"type": "number"}, "die_w": {"type": "number"}, "die_h": {"type": "number"},
+           "place_macros": {"type": "boolean"}, "apply": {"type": "boolean"}})
+    def set_floorplan(self, place_macros=False, apply=False, **settings):
+        plan = self.planner()
+        if settings:
+            plan.set(**settings)
+            plan.fill()
+        if place_macros:
+            plan.place_macros()
+        applied = plan.apply() if apply else False
+        return json.dumps({"settings": plan.s, "plan": plan.plan, "checks": plan.checks,
+                           "applied_to_design": bool(applied)}, indent=1)
 
     # ---------- runs ----------
     @tool("run", "Lint the project's design files; returns the problems with file and line.",
@@ -619,6 +778,8 @@ class Agent:
         self.messages = []
         self.cancelled = threading.Event()
         self.allowed = set()      # tool kinds the user allowed for the rest of this chat
+        self.backups = {}         # undo token: (path, text before) of each file write this chat
+        self.usage = {"input": 0, "output": 0, "cached": 0}
 
     def make_client(self):
         if self.client is None:
@@ -628,8 +789,22 @@ class Agent:
             self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else anthropic.Anthropic()
         return self.client
 
-    def reset(self):
-        self.messages, self.allowed = [], set()
+    def reset(self, keep_allowed=False):
+        self.messages, self.backups = [], {}
+        self.usage = {"input": 0, "output": 0, "cached": 0}
+        if not keep_allowed:
+            self.allowed = set()
+
+    def undo(self, token):
+        """Put back the file an edit changed; the file's name, or None if the edit is not known any more."""
+        backup = self.backups.pop(token, None)
+        return self.toolbox.restore(backup) if backup else None
+
+    def cost(self):
+        """A rough cost of this chat in US dollars, from the token counts and the model's list price."""
+        price_in, price_out = PRICES.get(self.model, (4.0, 20.0))
+        u = self.usage
+        return (u["input"] * price_in + u["cached"] * price_in * 0.1 + u["output"] * price_out) / 1e6
 
     def send(self, text, context, bridge):
         """Add the user's message and loop until Claude stops asking for tools. Returns the final text."""
@@ -701,6 +876,13 @@ class Agent:
                     raise
                 continue
             self.messages.append({"role": "assistant", "content": response.content})
+            usage = getattr(response, "usage", None)
+            if usage is not None:
+                self.usage["input"] += (getattr(usage, "input_tokens", 0) or 0) + \
+                    (getattr(usage, "cache_creation_input_tokens", 0) or 0)
+                self.usage["cached"] += getattr(usage, "cache_read_input_tokens", 0) or 0
+                self.usage["output"] += getattr(usage, "output_tokens", 0) or 0
+                bridge.event("usage", dict(self.usage, cost=self.cost()))
             final = "".join(b.text for b in response.content if b.type == "text")
             if response.stop_reason == "pause_turn":
                 continue
@@ -719,9 +901,15 @@ class Agent:
             self.messages.append({"role": "user", "content": results})
 
     def run_tool(self, block, specs, bridge):
-        def result(text, error=False):
-            bridge.event("tool_done", {"id": block.id, "name": block.name, "text": text, "error": error})
-            return {"type": "tool_result", "tool_use_id": block.id, "content": text, "is_error": error}
+        def result(text, error=False, image=None, undo=None):
+            bridge.event("tool_done", {"id": block.id, "name": block.name, "text": text, "error": error,
+                                       "undo": undo})
+            content = text
+            if image:
+                data = base64.standard_b64encode(Path(image).read_bytes()).decode()
+                content = [{"type": "text", "text": text},
+                           {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": data}}]
+            return {"type": "tool_result", "tool_use_id": block.id, "content": content, "is_error": error}
         spec = specs.get(block.name)
         if spec is None:
             return result(f"Unknown tool {block.name}.", True)
@@ -731,7 +919,11 @@ class Agent:
         bridge.event("tool", {"id": block.id, "name": block.name, "input": block.input, "kind": spec["kind"]})
         if self.cancelled.is_set():
             return result("Stopped by the user before it ran.", True)
-        if spec["kind"] != "read" and spec["kind"] not in self.allowed:
+        if spec["kind"] == "ask":
+            answer = bridge.ask(block.input["question"], [str(o) for o in block.input["options"]][:4])
+            return result(f"The user answered: {answer}" if answer else "The user gave no answer; decide yourself "
+                          "and say what you assumed.")
+        if spec["kind"] not in ("read", "ask") and spec["kind"] not in self.allowed:
             detail = self.preview(block.name, block.input)
             answer = bridge.approve(block.name, spec["kind"], detail)
             if answer == "always":
@@ -740,6 +932,7 @@ class Agent:
                 return result("The user denied this. Do not retry it; ask what they want instead.", True)
         fn = getattr(self.toolbox, block.name)
         started = time.time()
+        self.toolbox.last_backup = None
         try:
             if spec["kind"] == "run":
                 text = bridge.start(fn, **block.input)
@@ -751,7 +944,16 @@ class Agent:
             return result(f"{type(e).__name__}: {e}", True)
         if spec["kind"] == "run":
             text = f"(took {time.time() - started:.0f} s)\n{text}"
-        return result(text)
+        if block.name == "update_tasks":
+            bridge.event("tasks", self.toolbox.tasks)
+        image = None
+        if isinstance(text, dict):
+            text, image = text["text"], text.get("image")
+        undo = None
+        if self.toolbox.last_backup:
+            undo = f"u{len(self.backups)}"
+            self.backups[undo] = self.toolbox.last_backup
+        return result(text, image=image, undo=undo)
 
     def preview(self, name, args):
         """What the user sees before approving: a diff for edits, the request for everything else."""

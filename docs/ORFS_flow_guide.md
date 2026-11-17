@@ -80,6 +80,9 @@ OpenROAD** reads the SDC against the netlist and lists every port, clock or cell
 
 ## 2. Floorplan
 
+Before running it, the **Floorplan** tab (next to Inputs) plans the die and core from the cell area and checks
+that the power straps, IO pins and macros fit; see [EDA_suite_guide.md](EDA_suite_guide.md#floorplan-planner).
+
 **What it does.**
 
 - `2_1_floorplan`: makes the die, the core and the standard cell rows, removes the buffers synthesis added and

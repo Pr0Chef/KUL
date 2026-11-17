@@ -39,12 +39,13 @@ from verify_page import VerifyPage  # noqa: E402
 from fpga_page import FpgaPage  # noqa: E402
 from diagram_page import DiagramPage  # noqa: E402
 from lec_page import LecPage  # noqa: E402
+from fplan_page import FloorplanPlanner  # noqa: E402
 from agent_page import AgentPanel  # noqa: E402
 import workspace  # noqa: E402
 import eda_tools  # noqa: E402
 import theme  # noqa: E402
 
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 APP_ID = "orfs-flow-runner"
 GUI_DIR = Path(__file__).resolve().parent
 ROOT = GUI_DIR.parent
@@ -330,9 +331,12 @@ class App(Gtk.Window):
         self.nb = Gtk.Notebook()
         self.inputs = InputsTab(self, MAKE_VARS, CACHE_DIR / "backups")
         self.lec = LecPage(self)
-        self.pages = {"inputs": self.inputs.widget, "console": self.build_console(), "reports": self.build_reports(),
+        self.planner = FloorplanPlanner(self)
+        self.pages = {"inputs": self.inputs.widget, "floorplan": self.planner.widget,
+                      "console": self.build_console(), "reports": self.build_reports(),
                       "lec": self.lec.widget, "logs": self.build_logs(), "debug": self.build_debug()}
-        for key, label in (("inputs", "Inputs"), ("console", "Run output"), ("reports", "Reports"),
+        for key, label in (("inputs", "Inputs"), ("floorplan", "Floorplan"), ("console", "Run output"),
+                           ("reports", "Reports"),
                            ("lec", "LEC"), ("logs", "Logs"), ("debug", "Debug")):
             self.nb.append_page(self.pages[key], Gtk.Label(label=label))
         self.nb.connect("switch-page", lambda nb, page, n: GLib.idle_add(self.refresh_tab, n))
@@ -1237,6 +1241,8 @@ class App(Gtk.Window):
             self.refresh_issues()
         elif page == "lec":
             self.lec.refresh()
+        elif page == "floorplan":
+            self.planner.refresh()
         return False
 
     def refresh_reports(self):

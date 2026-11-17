@@ -165,9 +165,19 @@ flowboxchild { padding: 0; }
 .chat-tool-body { font-size: 8.5pt; color: @text_muted; padding: 6px 2px; }
 .chat-error { color: @danger; }
 .approval { border-left: 3px solid @warning; }
+.question { border-left: 3px solid @accent; }
 .chat-entry text { background-color: @surface; }
 .chat-entry { border: 1px solid @border; border-radius: 8px; }
 .suggestion { border: 1px solid @border; border-radius: 8px; padding: 6px 10px; background-color: @surface; }
+
+/* The diagram editor and the floorplan planner: side panels and the palette. */
+.side-panel { background-color: @surface_alt; border-left: 1px solid @border; border-right: 1px solid @border; }
+.palette-title { font-weight: 700; font-size: 9pt; color: @text_muted; padding: 4px 0; }
+.palette-shape { padding: 2px; min-width: 0; min-height: 0; border-radius: 6px; }
+.palette-shape:hover { background-color: @hover; }
+.swatch { padding: 2px; min-width: 0; min-height: 0; }
+.diagram-edit, .diagram-edit text { background-color: @surface; color: @text; }
+.diagram-edit { border: 2px solid @accent; border-radius: 4px; }
 
 /* Status bar. */
 .statusbar { background-color: @surface; border-top: 1px solid @border; color: @text_muted; padding: 6px 14px;

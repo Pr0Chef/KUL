@@ -160,7 +160,8 @@ class RtlPage:
                  "Clock domain crossings: signals that pass between clocks without a synchronizer"),
                 ("Check all", lambda *_: self.run_all_checks(), "Lint, design checks and CDC, one after another"),
                 ("Waive…", self.on_waive, "Accept the selected finding, with a reason; it stops counting"),
-                ("Remove waiver", self.on_unwaive, "Make the selected waived finding count again")):
+                ("Remove waiver", self.on_unwaive, "Make the selected waived finding count again"),
+                ("Ask assistant", self.on_ask, "Have the assistant explain the selected finding and fix it")):
             b = Gtk.Button(label=label, tooltip_text=tip)
             b.connect("clicked", handler)
             prow.pack_start(b, False, False, 0)
@@ -762,6 +763,15 @@ class RtlPage:
             p["waivers"] = p["waivers"] + [dc.waiver_for(f, vals["reason"])]
             p.save()
             self.after_waivers()
+
+    def on_ask(self, *_):
+        f = self.selected_finding()
+        if not f:
+            self.app.set_status("Select a finding to ask about.")
+            return
+        where = f"{f['file']}:{f['line']}" if f.get("file") else "the design"
+        self.app.assistant.ask(f"Explain this {f.get('source', 'lint')} finding at {where} and fix it:\n"
+                               f"[{f.get('code', '')}] {f['message']}")
 
     def on_unwaive(self, *_):
         f, p = self.selected_finding(), self.app.project
