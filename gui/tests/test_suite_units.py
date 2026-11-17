@@ -20,7 +20,9 @@ import coverage  # noqa: E402
 import designcheck as dc  # noqa: E402
 import diagram as dg  # noqa: E402
 import eda_tools  # noqa: E402
+import floorplan as fp  # noqa: E402
 import formal  # noqa: E402
+import fplan  # noqa: E402
 import fpga  # noqa: E402
 import hdl  # noqa: E402
 import lec  # noqa: E402
@@ -272,6 +274,94 @@ module top (input clk_a, input clk_b, input rst_n, input [3:0] din, input sel, o
   assign loop_o = loop | undriven;
 endmodule
 """
+
+
+class DiagramEditTest(unittest.TestCase):
+    def setUp(self):
+        self.d = dg.Diagram()
+        self.a = self.d.add_shape("module", 0, 0, w=100, h=60)["id"]
+        self.b = self.d.add_shape("register", 300, 200, w=80, h=40)["id"]
+        self.e = self.d.connect(self.a, self.b, "data", bus=8)["id"]
+
+    def test_orthogonal_routing_and_sides(self):
+        pts = self.d.edge_points(self.d.edge(self.e))
+        self.assertEqual((pts[0], pts[-1]), ((100, 30), (300, 220)))
+        self.assertTrue(all(p[0] == q[0] or p[1] == q[1] for p, q in zip(pts, pts[1:])))
+        self.d.edge(self.e).update(src_side="bottom", dst_side="top", points=[[50, 120], [340, 120]])
+        pts = self.d.edge_points(self.d.edge(self.e))
+        self.assertEqual((pts[0], pts[-1]), ((50, 60), (340, 200)))
+        self.assertTrue(all(p[0] == q[0] or p[1] == q[1] for p, q in zip(pts, pts[1:])))
+
+    def test_copy_paste_group_align(self):
+        made = self.d.duplicate({self.a, self.b})
+        self.assertEqual((len(self.d.shapes), len(self.d.edges)), (4, 2))
+        copy = self.d.edge(next(i for i in made if self.d.edge(i)))
+        self.assertTrue({copy["src"], copy["dst"]} <= set(made))
+        gid = self.d.group({self.a, self.b})
+        self.assertTrue(gid)
+        self.assertEqual(self.d.with_groups({self.a}), {self.a, self.b})
+        self.d.align({self.a, self.b}, "left")
+        self.assertEqual(self.d.shape(self.a)["x"], self.d.shape(self.b)["x"])
+        self.d.reorder({self.a}, front=True)
+        self.assertEqual(self.d.shapes[-1]["id"], self.a)
+        self.d.remove({self.a})
+        self.assertFalse(any(e["src"] == self.a or e["dst"] == self.a for e in self.d.edges))
+
+    def test_every_kind_draws_and_exports(self):
+        d = dg.Diagram()
+        for i, kind in enumerate(dg.KINDS):
+            d.add_shape(kind, (i % 6) * 200, (i // 6) * 150)
+        out = Path(tempfile.mkdtemp())
+        for ext in ("png", "svg", "pdf", "drawio"):
+            dg.export(d, out / f"all.{ext}")
+            self.assertGreater((out / f"all.{ext}").stat().st_size, 1000, ext)
+        from xml.etree import ElementTree
+        cells = list(ElementTree.parse(out / "all.drawio").iter("mxCell"))
+        self.assertEqual(sum(c.get("vertex") == "1" for c in cells), len(dg.KINDS))
+
+
+class FloorplanPlanTest(unittest.TestCase):
+    PDN = """define_pdn_grid -name {grid} -voltage_domains {CORE}
+add_pdn_stripe -grid {grid} -layer {metal1} -width {0.17} -pitch {2.8} -offset {0} -followpins
+add_pdn_stripe -grid {grid} -layer {metal4} -width {0.48} -pitch {56.0} -offset {2}
+add_pdn_stripe -grid {grid} -layer {metal7} -width {1.40} -pitch {40.0} -offset {2}
+define_pdn_grid -macro -default -name CORE_macro_grid_1 -voltage_domains {CORE}
+add_pdn_stripe -grid {CORE_macro_grid_1} -layer {metal5} -width {0.93} -pitch {100.0} -offset {2}
+"""
+    LAYERS = [{"name": "metal4", "direction": "vertical", "pitch": 0.28},
+              {"name": "metal7", "direction": "horizontal", "pitch": 0.8}]
+
+    def test_straps_and_fix(self):
+        straps = fplan.straps(self.PDN)
+        self.assertEqual([s["layer"] for s in straps], ["metal4", "metal7"])   # rails and macro grids left out
+        self.assertAlmostEqual(fplan.strap_need(straps[0]), 30.48)
+        p = fplan.plan("util", 90.0, 50, 1.0, 2.0)                               # a 13.4 µm core
+        checks = fplan.check(p, 90.0, strap_list=straps, layers=self.LAYERS)
+        bad = next(c for c in checks if c["title"] == "Power straps do not fit")
+        fixed = fplan.plan("util", 90.0, bad["fix"]["set"]["util"], 1.0, 2.0)
+        self.assertGreaterEqual(fixed["core_w"], 30.48)
+        self.assertEqual(next(c["level"] for c in fplan.check(fixed, 90.0, strap_list=straps, layers=self.LAYERS)
+                              if c["title"].startswith("Power straps")), "ok")
+
+    def test_fixed_die_utilization_and_grow(self):
+        p = fplan.plan("fixed", 5000.0, margin=5, die_w=60, die_h=60, site=(0.19, 1.4))
+        self.assertGreater(p["utilization"], 100)
+        fix = next(c["fix"] for c in fplan.check(p, 5000.0, mode="fixed") if c["level"] == "error")
+        grown = fplan.plan("fixed", 5000.0, margin=5, die_w=fix["set"]["die_w"], die_h=fix["set"]["die_h"])
+        self.assertAlmostEqual(grown["utilization"], 60, delta=1)
+
+    def test_pins_rows_and_macros(self):
+        p = fplan.plan("fixed", 100.0, margin=2, die_w=20, die_h=20, site=(0.19, 1.4))
+        checks = fplan.check(p, 100.0, layers=self.LAYERS, pins=200, pin_layers=["metal4", "metal7"],
+                             site=(0.19, 1.4), mode="fixed")
+        self.assertEqual(next(c["level"] for c in checks if "IO pins" in c["title"]), "error")
+        placed = fplan.pack_macros({"m0": (20, 40), "m1": (20, 40), "m2": (30, 10)}, (2, 2, 100, 100), (4, 4))
+        self.assertEqual(set(placed), {"m0", "m1", "m2"})
+        sizes = {"M": (20, 40), "S": (30, 10)}
+        masters = {"m0": "M", "m1": "M", "m2": "S"}
+        self.assertEqual(fp.problems(placed, sizes, masters, (2, 2, 100, 100), (4, 4)), [])
+        with self.assertRaises(ValueError):
+            fplan.pack_macros({"big": (200, 10)}, (0, 0, 100, 100))
 
 
 class WaiverTest(unittest.TestCase):

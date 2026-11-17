@@ -42,7 +42,7 @@ The app ships as a Debian package for Ubuntu (and other Debian-based systems). I
 2. **Install it.** apt also installs GTK, PyGObject, make and KLayout if they are missing:
 
    ```bash
-   sudo apt install ./dist/orfs-flow-runner_1.4.0_all.deb
+   sudo apt install ./dist/orfs-flow-runner_1.5.0_all.deb
    ```
 
 3. **Install OpenROAD, Yosys and an ORFS checkout** if you don't have them; the package doesn't include them
@@ -469,7 +469,7 @@ takes 352 to 464 s) caps the saving.
 | The floorplan stops with `PPL-0061 Pins … were not found` | a pin name in `IO_CONSTRAINTS` doesn't exist: open **Inputs → IO pins** and press **Check with OpenROAD** |
 | **IO pins** shows `?` pins | the width comes from a parameter or type; it is known after synthesis |
 | A clock port is missing from **Clocks** | it isn't used with `posedge`, connected to a clock pin, or named like a clock; add it with **Add clock…** |
-| The floorplan stops with `PDN-0185 Insufficient width … to add straps` | the core is smaller than the power grid's strap pitch (a tiny design): lower the core utilization on **Inputs → Floorplan** (for example to 5%) or reduce the strap pitch on **Inputs → Power grid** |
+| The floorplan stops with `PDN-0185 Insufficient width … to add straps` | the core is smaller than the power grid's strap pitch (a tiny design). The **Floorplan** tab shows this before the run and offers the utilization that fits; or reduce the strap pitch on **Inputs → Power grid** |
 | A value set in **All settings** isn't used | the platform sets it with `=` after the design config is read; the *Value the flow uses* column shows what applies |
 | Open in OpenROAD GUI does nothing | it needs a display; see `~/.cache/orfs-flow-runner/openroad_gui.log` |
 | RTL, Verify or FPGA say a tool is not installed | **Tools… → RTL and FPGA**: install OSS CAD Suite or pick the program |
@@ -504,7 +504,8 @@ Limits: one run at a time per window; only runs started from the app show as *ru
 | `gui/signoff.py` | the verification plan, the sign-off gate, and the HTML and JUnit reports |
 | `gui/vcd.py`, `gui/wave_view.py`, `gui/formal.py`, `gui/verify_page.py` | the VCD reader and wave viewer, SymbiYosys; the Verify section |
 | `gui/fpga.py`, `gui/fpga_page.py` | boards, pins, constraint files, the build and programming commands; the FPGA section |
-| `gui/diagram.py`, `gui/diagram_page.py` | the diagram model, drawing and export, block diagrams from RTL; the Diagrams section |
+| `gui/diagram.py`, `gui/diagram_page.py` | the diagram model (34 shapes, arrow routing), drawing and export (PNG, SVG, PDF, draw.io), block diagrams from RTL; the draw.io-style editor |
+| `gui/fplan.py`, `gui/fplan_page.py` | floorplan planning: the area budget, the checks (straps, pins, rows, macros) and macro packing; the Floorplan tab |
 | `gui/lec.py`, `gui/lec_page.py` | logical equivalence checks with Yosys; the LEC tab |
 | `gui/agent.py`, `gui/agent_page.py` | the assistant: its tools and conversation loop, and the chat panel |
 | `gui/eda_tools.py`, `gui/runner.py`, `gui/dialogs.py` | finding and installing the RTL/FPGA tools, running them with a console, shared dialogs |

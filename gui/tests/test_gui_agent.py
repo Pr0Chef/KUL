@@ -164,4 +164,104 @@ h.check("escape outside the work area refused", res and res[0]["is_error"] and "
 
 panel.on_new_chat()
 h.check("new chat clears history", panel.agent.messages == [])
+
+# 4. the newer tools: plan checklist, a question, a waveform, a diagram it looks at, undo, notes
+VCD = """$timescale 1ns $end
+$scope module cnt_tb $end
+$var wire 1 ! clk $end
+$var wire 4 " q [3:0] $end
+$upscope $end
+$enddefinitions $end
+#0
+0!
+b0000 "
+#5
+1!
+b0001 "
+#10
+0!
+#15
+1!
+b0010 "
+"""
+wave = proj.dir / "waves.vcd"
+wave.write_text(VCD)
+app.section_pages["verify"].wave_file = wave
+before = (proj.dir / "cnt.v").read_text()
+client4 = FakeClient([
+    {"text": "Plan first.", "tools": [("update_tasks", {"tasks": [{"text": "Read the waveform", "status": "doing"},
+                                                                  {"text": "Fix the RTL", "status": "pending"}]}),
+                                      ("read_waveform", {"signals": ["q", "clk"], "from_time": 0, "to_time": 20})]},
+    {"text": "Which width?", "tools": [("ask_user", {"question": "Widen the counter?", "options": ["8 bits",
+                                                                                                   "Keep 4"]})]},
+    {"text": "Widening.", "tools": [("edit_file", {"path": "cnt.v", "old_text": "reg [3:0] q",
+                                                   "new_text": "reg [7:0] q"}),
+                                    ("remember", {"note": "Counters in this project are 8 bits wide."})]},
+    {"text": "Drawing.", "tools": [("draw_diagram", {"name": "blocks", "shapes": [
+        {"id": "a", "kind": "register", "label": "q", "x": 0, "y": 0},
+        {"id": "b", "kind": "adder", "x": 220, "y": 0}], "edges": [
+        {"src": "b", "dst": "a", "style": "curved", "head": "open", "bus": 8}]}),
+        ("look", {"what": "diagram"})]},
+    {"text": "Done: **8 bits** now."},
+])
+panel.agent.client = client4
+panel.mode_cb.set_active_id("edits")        # edits run without asking; the question still waits for the user
+
+
+def answer_question():
+    for card in panel.list.get_children():
+        if "question" in card.get_style_context().list_classes():
+            flow = card.get_children()[1]
+            if isinstance(flow, hn.Gtk.FlowBox):
+                flow.get_children()[0].get_child().clicked()
+                return False
+    return panel.busy()
+
+
+hn.GLib.timeout_add(200, answer_question)
+panel.on_send("The counter wraps too early")
+h.check("chat with the newer tools finishes", h.wait(lambda: not panel.busy(), 60))
+first = client4.requests[0]["messages"][0]["content"]
+h.check("a new chat starts with the project overview", "Project overview" in str(first) and '"name": "cnt"' in str(first))
+res = tool_results(client4, 1)
+h.check("waveform values at each change", res and "0  0  0" in res[1]["content"] and "15  2  1" in res[1]["content"],
+        res[1]["content"] if len(res) > 1 else res)
+h.check("the plan shows as a checklist", panel.tasks_card is not None and "0 of 2 done" in
+        panel.tasks_card.get_children()[0].get_text())
+h.check("the user's answer went back", "The user answered: 8 bits" in tool_results(client4, 2)[0]["content"])
+h.check("edit ran without asking in 'edit without asking' mode", "reg [7:0] q" in (proj.dir / "cnt.v").read_text())
+h.check("note kept in the project", "8 bits wide" in app.project["notes"])
+look = tool_results(client4, 4)
+h.check("the assistant sees the diagram as a picture", isinstance(look[1]["content"], list)
+        and look[1]["content"][1]["type"] == "image" and len(look[1]["content"][1]["source"]["data"]) > 1000, look)
+d = app.section_pages["diagram"].d
+h.check("diagram with new shape kinds and arrow styles", [s["kind"] for s in d.shapes] == ["register", "adder"]
+        and d.edges[0]["style"] == "curved" and d.edges[0]["head"] == "open")
+undo_rows = [row for row in panel.tool_rows.values()
+             if any(getattr(w, "get_label", lambda: "")() == "Undo" for w in row[2].get_children())]
+h.check("the edit has an Undo button", len(undo_rows) == 1)
+h.shot("assistant_tools")
+next(w for w in undo_rows[0][2].get_children() if getattr(w, "get_label", lambda: "")() == "Undo").clicked()
+h.check("Undo puts the file back", (proj.dir / "cnt.v").read_text() == before)
+h.check("the mode survives a new chat", (panel.on_new_chat() or True) and panel.agent.allowed == {"edit"})
+panel.mode_cb.set_active_id("ask")
+h.check("ask mode asks again", panel.agent.allowed == set())
+
+# 5. suggestions from the state of the project
+rtl = app.section_pages["rtl"]
+rtl.sets["cdc"] = [{"source": "cdc", "severity": "error", "code": "CDC-NOSYNC", "file": "cnt.v", "line": 2,
+                    "message": "a (clk_a) to b (clk_b): no synchronizer"}]
+app.section_pages["verify"].results["tests"] = {"cnt_tb": {"state": "fail", "why": "FAIL q=3", "test": "cnt_tb"}}
+panel.update_chips()
+labels = [c.get_child().get_label() for c in panel.chips.get_children()]
+h.check("suggestions follow the project's problems", labels[:2] == ["Fix 1 CDC error", "Debug cnt_tb"], labels)
+client5 = FakeClient([{"text": "Looking."}])
+panel.agent.client = client5
+rtl.shown = rtl.sets["cdc"]
+rtl.pstore.clear()
+rtl.pstore.append(["error", "cnt.v", 2, "m", "#000", "cdc", 0])
+rtl.ptv.get_selection().select_path(0)
+rtl.on_ask()
+h.wait(lambda: not panel.busy(), 30)
+h.check("Ask assistant on a finding sends it", "CDC-NOSYNC" in str(client5.requests[0]["messages"][0]["content"]))
 h.done()

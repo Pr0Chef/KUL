@@ -101,14 +101,49 @@ edits elsewhere in the file. **Remove waiver** makes the finding count again.
 
 ## Diagrams
 
-Diagrams are saved as `docs/*.diagram.json` in the project and drawn the same on screen, in PNG and in SVG.
+A diagram editor in the style of draw.io. Diagrams are saved as `docs/*.diagram.json` in the project and drawn
+the same on screen and in every export.
 
-- Tools: **Select**, **Connect**, and shapes *block, module, rounded, ellipse, diamond, note, text, port*. Click to
-  place, drag to move, drag the corner handle to resize, double-click to edit a label, **Delete** to remove,
-  **Ctrl+Z** to undo, **Ctrl+wheel** to zoom. Connections can carry a label and a bus width.
-- **From RTL…** draws a module's block diagram: its ports, its submodule instances and the nets between them
-  (through `assign` aliases too). Edit the result freely.
-- **Export…** writes PNG or SVG for documents.
+**Shapes.** The palette on the left has 34 shapes in four groups. Click one to add it in the middle of the view,
+or drag it onto the canvas.
+
+| Group | Shapes |
+| --- | --- |
+| General | rectangle, rounded, ellipse, diamond, text, note, hexagon, parallelogram, triangle, cylinder, cloud, container |
+| Flowchart | start / end, process, decision, data, document |
+| Digital design | module, port, register, mux, adder, FIFO, memory, FSM state, clock, bus |
+| Logic gates | AND, OR, NOT, XOR, NAND, NOR, buffer |
+
+**On the canvas.**
+- Click selects, **Shift+click** adds, dragging on empty space draws a selection box. Clicking one shape of a
+  group selects the group.
+- Drag to move. Moves snap to the grid and to the edges and centers of other shapes; a pink guide line shows the
+  match. Arrow keys nudge by the grid (Shift: by one unit).
+- A selected shape has eight resize handles.
+- Hovering a shape shows four blue connection points: drag from one onto another shape to draw an arrow. A
+  selected arrow shows the middle of each segment: drag one to add a waypoint and route the arrow your way; drag
+  a waypoint back onto the line to remove it.
+- Double-click (or **F2**) edits a label in place; **Enter** finishes, **Shift+Enter** adds a line, **Escape**
+  cancels.
+- The wheel scrolls, **Ctrl+wheel** zooms about the pointer, middle-drag or **Space+drag** pans, **Fit** shows it
+  all. Right-click opens the menu of the commands below.
+
+**Format panel** (right), for what is selected:
+- Shape: color presets, fill and line colors, dashed line; text size, color, alignment and bold.
+- Arrow: route (orthogonal, straight or curved), start and end heads (arrow, open, diamond, dot, none), bus width,
+  dashed; **Straighten** removes waypoints, **Reverse** swaps the ends.
+- Arrange: align left, center, right, top, middle, bottom; space evenly across or down; same width or height;
+  bring to front, send to back; group and ungroup.
+- Diagram: title, grid and snapping.
+
+**Keys.** Delete; Ctrl+Z / Ctrl+Y undo and redo (200 steps); Ctrl+A, Ctrl+C, Ctrl+X, Ctrl+V; Ctrl+D duplicate;
+Ctrl+G / Ctrl+Shift+G group and ungroup; Ctrl+S save.
+
+**From RTL…** draws a module's block diagram: its ports, its submodule instances and the nets between them
+(through `assign` aliases too). Edit the result freely. **Export…** writes PNG, SVG, PDF, or a `.drawio` file to
+keep editing in draw.io (diagrams.net).
+
+![The diagram editor: palette, canvas and format panel](images/gui/suite/diagram_editor.png)
 
 ## Verify
 
@@ -202,6 +237,35 @@ The ASIC section is the ORFS flow described in [ORFS_flow_guide.md](ORFS_flow_gu
 design and stages, the Inputs tab sets every input (SDC, floorplan, IO pins, power grid, placement, clock tree,
 routing), and Reports shows the sign-off checks.
 
+### Floorplan planner
+
+The **Floorplan** tab, next to Inputs, plans the chip's floorplan before anything runs. The settings are a
+what-if until **Apply** writes them into the design (through Inputs → Floorplan, so the two always agree).
+
+- **Area budget**: the cell area (from synthesis once it has run; type an estimate before), then either a target
+  utilization with an aspect ratio and a core margin, or a fixed die. The core and die it gives, and the
+  resulting utilization, update as you type.
+- **Checks**, each with a plain reason and, where a number fixes it, a button that applies the fix:
+
+| Check | Fails when | Fix offered |
+| --- | --- | --- |
+| Utilization | the cells do not fit, or it is above 80% (warning) or below 10% (warning) | 60 to 65%, or a die grown for 60% |
+| Power straps | a strap layer of the power grid script needs more core than there is: the cause of OpenROAD's `PDN-0185` | the highest utilization, or the die size, at which they fit |
+| IO pins | the die edge has fewer places on the pin layers than the top module has pin bits | – |
+| Cell rows | the core has fewer than four rows | – |
+| Aspect ratio | the core is more than three times longer one way | – |
+| Macros | a macro is outside the core, overlaps another (with the channel), or macros take most of the core | – |
+
+- **The drawing**, to scale: die, core, cell rows, the power straps (drawn only where they fit), macros with
+  their channels, and the last floorplan run dashed in grey. Drag a macro to move it; it snaps to the placement
+  grid. **Place macros** gives a first legal placement along the core's left edge.
+- **Run floorplan** applies the plan and runs the flow up to the floorplan stage; the drawing then shows the real
+  die and core beside the plan.
+
+![Floorplan planner: the power straps do not fit at 50%, with the fix offered](images/gui/suite/floorplan_planner.png)
+
+### LEC
+
 **LEC** (logical equivalence checking) is a tab next to Reports. It proves that the flow did not change what the
 design does:
 
@@ -226,32 +290,47 @@ can watch it work in the editor, the wave viewer or the flow.
    `~/.local/share/orfs-flow-runner/pylib` with `uv` or `pip`; no admin rights are needed.
 2. Give it a Claude API key with the gear button (kept in `~/.config/orfs-flow-runner/assistant_key`, readable
    only by you), or set `ANTHROPIC_API_KEY`, or sign in with `ant auth login`.
-3. The gear also picks the model (Claude Opus 5.5 by default; Sonnet 5.5 and Haiku 5.5 are faster and cheaper)
-   and the effort (how long it thinks; *high* by default).
 
-**What it can do.** It sees the app's state with each message (the section shown, the project, the file and line
-open in the editor, the ASIC design) and has tools for every section:
+**Using it.**
+- Type and press **Enter** (**Shift+Enter** for a new line). Above the box, **suggestions** follow the project's
+  state: *Fix 2 CDC errors*, *Debug fifo_tb.s3*, *Raise line coverage from 82% to 90%*, *Fix the floorplan plan*,
+  *Why did the ASIC run fail?*; click one to send it.
+- **Ask assistant** buttons send a question about what you are looking at: on a finding in RTL → Problems, and on
+  a run in Verify → Runs.
+- Under the header, pick the **model** (Claude Opus 5.5 by default; Sonnet 5.5 is faster, Haiku 5.5 the cheapest)
+  and **how much it may do without asking**: *Ask before edits and runs*, *Edit without asking*, or *Edit and run
+  without asking*. Reads never ask. The gear sets the effort (how long it thinks; *high* by default) and the key.
+- The line under the chat shows the tokens the chat has used and a rough cost at list price.
+
+**What it knows.** A new chat starts with the project overview and the project's notes. Each message carries
+what you are looking at: the section, the project, the file and line in the editor, any text you selected there,
+and the ASIC design.
+
+**What it can do.**
 
 | Kind | Tools |
 | --- | --- |
-| Read (runs at once) | project overview, list, read and search files, module hierarchy; findings of lint, design checks and CDC with waivers; every crossing; regression runs; coverage against goals; the plan's status; the sign-off gate; formal, LEC, FPGA and the ASIC metrics |
-| Edit (asks first) | edit or write a file (RTL, testbench, SDC, `config.mk`, docs), change project settings (top, tests with seeds and tags, formal tasks, the verification plan, coverage goals, waivers, FPGA target and pins), create a project, generate a testbench or formal wrapper, draw a diagram |
-| Run (asks first) | lint, design checks and CDC, tests in parallel with coverage, formal, the whole sign-off run, LEC, FPGA build, ASIC flow from one stage to another |
+| Read (runs at once) | project overview, list, read and search files, module hierarchy; findings of lint, design checks and CDC with waivers; every crossing; regression runs; coverage against goals; the plan's status; the sign-off gate; **signal values from a waveform** around a failure; **the floorplan plan and its checks**; **the diagram** as data; **a picture** of the diagram or the floorplan, to judge the layout as you see it; formal, LEC, FPGA and the ASIC metrics |
+| Plan and ask | **a checklist** of its plan for longer tasks, kept current in the chat; **a question** with option buttons when a choice is yours; **notes** about the project, kept for later chats |
+| Edit | edit or write a file (RTL, testbench, SDC, `config.mk`, docs), change project settings (tests with seeds and tags, formal tasks, the verification plan, coverage goals, waivers, FPGA target and pins), create a project, generate a testbench or formal wrapper, draw or redraw a diagram with any shape and arrow style, **change and apply the floorplan plan** |
+| Run | lint, design checks and CDC, tests in parallel with coverage, formal, the whole sign-off run, LEC, FPGA build, ASIC flow from one stage to another |
 
-Before an edit, the panel shows the diff; before a run, what it will run. **Allow** runs it once, **Allow for
-this chat** stops asking for that kind of action until **New chat**, **Deny** refuses it (the assistant is told
-not to retry). **Stop** ends the turn after the current step. Writes are limited to the project folder and the
-selected ASIC design's folder; reads to the work area and the ORFS flow. A file with unsaved edits in the editor
-is never overwritten.
+When it asks, the panel shows the diff before an edit and what it will start before a run. **Allow** runs it
+once, **Allow for this chat** stops asking for that kind until **New chat**, **Deny** refuses it (the assistant is
+told not to retry). Every file edit has an **Undo** button in the chat that puts the file back as it was. **Stop**
+ends the turn after the current step. Writes are limited to the project folder and the selected ASIC design's
+folder; reads to the work area and the ORFS flow. A file with unsaved edits in the editor is never overwritten.
 
 Things to ask: *"Review my RTL for bugs and lint it"*, *"Write a testbench for the FIFO that checks full and
-empty, and run it"*, *"Run sign-off and fix what fails"*, *"Coverage is at 82%: add tests for the lines never
-run"*, *"Add formal properties for the arbiter and prove them"*, *"Draw the architecture"*,
-*"Build for the ULX3S and tell me if timing is met"*, *"The route stage fails timing: find out why and fix the
-SDC"*.
+empty, and run it"*, *"fifo_tb fails: find out why from the waveform and fix it"*, *"Run sign-off and fix what
+fails"*, *"Coverage is at 82%: add tests for the lines never run"*, *"Draw the architecture of the SoC, with the
+bus widths"*, *"Plan the floorplan for 60% utilization and place the RAMs"*, *"The route stage fails timing:
+find out why and fix the SDC"*.
 
 Every message is sent to the Claude API and billed to the key's account. The panel shows each tool call and its
 result, so you can see what was read and changed.
+
+![The assistant: a question with options, an edit with Undo, and a diagram it looked at](images/gui/suite/assistant_tools.png)
 
 ## Walkthrough: a counter from an empty folder to GDS and an FPGA
 
@@ -304,6 +383,21 @@ and every CDC class on a design with one of each problem, and a parallel regress
 coverage and cocotb. About 30 seconds.
 
 ```bash
+gui/tests/run_gui_tests.sh gui/tests/test_gui_diagram.py
+```
+The diagram editor through its mouse and key handlers: selection (click, Shift+click, box), moving with snapping
+to the grid and to other shapes, resizing, drawing an arrow from a connection point, waypoints, in-place label
+editing, styles, copy/paste/duplicate, align and distribute, groups, stacking, undo/redo, zoom and fit, save and
+reload, the four export formats, and a block diagram from RTL. Under a minute.
+
+```bash
+gui/tests/run_gui_tests.sh gui/tests/test_gui_floorplan.py
+```
+The Floorplan planner on a tiny counter (the power straps do not fit at 50%; the offered fix is applied and the
+real floorplan stage then passes at the planned size) and on a design with two RAM macros (legal placement, an
+overlap found after a drag, the macro file written). About two minutes.
+
+```bash
 gui/tests/run_gui_tests.sh gui/tests/test_gui_signoff.py
 ```
 RTL sign-off through the GUI on a two-clock design: the checks on clean RTL, a planted latch and a planted
@@ -315,8 +409,9 @@ filelists, F12, and the assistant's view. About two minutes.
 gui/tests/run_gui_tests.sh gui/tests/test_gui_agent.py
 ```
 The assistant panel against a scripted stand-in for the Claude API: reads, an approved edit landing on disk,
-a denied write that does not, lint run through the assistant, bad tool input, and a path outside the project.
-No key or network needed.
+a denied write that does not, lint run through the assistant, bad tool input, a path outside the project, the
+plan checklist, a question answered with a button, waveform values, a picture of a diagram, notes, Undo, the
+approval modes, suggestions from the project's state, and Ask assistant on a finding. No key or network needed.
 
 ```bash
 gui/tests/run_gui_tests.sh gui/tests/test_gui_suite.py

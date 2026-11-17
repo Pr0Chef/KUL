@@ -223,6 +223,9 @@ class VerifyPage:
         box.pack_start(sw, True, True, 0)
         box.pack_start(buttons([("Show log", lambda *_: self.on_run_row(True), "Print the run's output", False),
                                 ("Open waveform", lambda *_: self.on_run_row(False), "Show the run's waveform",
+                                 False),
+                                ("Ask assistant", lambda *_: self.on_ask_run(), "Have the assistant find why the "
+                                                                                "selected run fails and fix it",
                                  False)]), False, False, 0)
         self.history_label = hint_label("")
         box.pack_start(self.history_label, False, False, 0)
@@ -543,6 +546,14 @@ class VerifyPage:
     def selected_run(self):
         model, it = self.rtv.get_selection().get_selected()
         return (model[it][0], self.results["tests"].get(model[it][0])) if it else (None, None)
+
+    def on_ask_run(self):
+        run_id, r = self.selected_run()
+        if not r:
+            self.app.set_status("Select a run to ask about.")
+            return
+        self.app.assistant.ask(f"The test run {run_id} ended as {r.get('state')} ({r.get('why', '')}). Read its "
+                               "log and its waveform around the failure, find the cause, fix it, and run it again.")
 
     def on_run_row(self, log):
         run_id, r = self.selected_run()
